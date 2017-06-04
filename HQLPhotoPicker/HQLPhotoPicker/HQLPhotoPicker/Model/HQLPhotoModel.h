@@ -14,6 +14,7 @@ typedef enum : NSUInteger {
     HQLPhotoModelMediaTypePhoto = 0, // 照片
     HQLPhotoModelMediaTypeLivePhoto, // LivePhoto
     HQLPhotoModelMediaTypePhotoGif,  // gif图
+//    HQLPhotoModelMediaTypePhotoiCloud, // 在iCloud上的照片
     HQLPhotoModelMediaTypeVideo,     // 视频
     HQLPhotoModelMediaTypeAudio,     // 音频
     HQLPhotoModelMediaTypeCameraPhoto,   // 通过相机拍的照片

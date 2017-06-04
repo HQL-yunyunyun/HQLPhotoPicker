@@ -16,6 +16,8 @@
 @interface HQLPhotoManager () <PHPhotoLibraryChangeObserver>
 
 @property (strong, nonatomic) PHPhotoLibrary *photoLibrary;
+//@property (strong, nonatomic) PHImageManager *imageManager;
+@property (strong, nonatomic) PHCachingImageManager *imageManager;
 
 @end
 
@@ -137,6 +139,14 @@
 }
 
 #pragma mark - getter
+
+- (PHCachingImageManager *)imageManager {
+    if (!_imageManager) {
+        _imageManager = [PHCachingImageManager defaultManager];
+        
+    }
+    return _imageManager;
+}
 
 - (PHPhotoLibrary *)photoLibrary {
     if (!_photoLibrary) {
