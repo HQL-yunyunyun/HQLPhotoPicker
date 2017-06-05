@@ -8,29 +8,25 @@
 
 /* Begin PBXBuildFile section */
 		4A9CF0621EE136E7009ED1E7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A9CF0611EE136E7009ED1E7 /* main.m */; };
-		4A9CF06B1EE136E7009ED1E7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4A9CF0691EE136E7009ED1E7 /* Main.storyboard */; };
 		4A9CF06D1EE136E7009ED1E7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4A9CF06C1EE136E7009ED1E7 /* Assets.xcassets */; };
 		4A9CF0701EE136E7009ED1E7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4A9CF06E1EE136E7009ED1E7 /* LaunchScreen.storyboard */; };
 		4A9CF0781EE15C5A009ED1E7 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4A9CF0771EE15C5A009ED1E7 /* Info.plist */; };
 		4A9CF0831EE15C71009ED1E7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A9CF0801EE15C71009ED1E7 /* AppDelegate.m */; };
-		4A9CF0841EE15C71009ED1E7 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A9CF0821EE15C71009ED1E7 /* ViewController.m */; };
 		4A9CF0871EE15CBC009ED1E7 /* HQLPhotoManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A9CF0861EE15CBC009ED1E7 /* HQLPhotoManager.m */; };
 		4A9CF08A1EE266D2009ED1E7 /* HQLPhotoAlbumModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A9CF0891EE266D2009ED1E7 /* HQLPhotoAlbumModel.m */; };
 		4A9CF08D1EE26E25009ED1E7 /* HQLPhotoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A9CF08C1EE26E25009ED1E7 /* HQLPhotoModel.m */; };
 		4A9CF0931EE2B35B009ED1E7 /* HQLPhotoHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A9CF0921EE2B35B009ED1E7 /* HQLPhotoHelper.m */; };
+		4A9CF0971EE56C24009ED1E7 /* HQLMainController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A9CF0961EE56C24009ED1E7 /* HQLMainController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		4A9CF05D1EE136E7009ED1E7 /* HQLPhotoPicker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HQLPhotoPicker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4A9CF0611EE136E7009ED1E7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		4A9CF06A1EE136E7009ED1E7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		4A9CF06C1EE136E7009ED1E7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = ../Assets.xcassets; sourceTree = "<group>"; };
 		4A9CF06F1EE136E7009ED1E7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4A9CF0771EE15C5A009ED1E7 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4A9CF07F1EE15C71009ED1E7 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		4A9CF0801EE15C71009ED1E7 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		4A9CF0811EE15C71009ED1E7 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		4A9CF0821EE15C71009ED1E7 /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		4A9CF0851EE15CBC009ED1E7 /* HQLPhotoManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLPhotoManager.h; sourceTree = "<group>"; };
 		4A9CF0861EE15CBC009ED1E7 /* HQLPhotoManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLPhotoManager.m; sourceTree = "<group>"; };
 		4A9CF0881EE266D2009ED1E7 /* HQLPhotoAlbumModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLPhotoAlbumModel.h; sourceTree = "<group>"; };
@@ -39,6 +35,8 @@
 		4A9CF08C1EE26E25009ED1E7 /* HQLPhotoModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLPhotoModel.m; sourceTree = "<group>"; };
 		4A9CF0911EE2B35B009ED1E7 /* HQLPhotoHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLPhotoHelper.h; sourceTree = "<group>"; };
 		4A9CF0921EE2B35B009ED1E7 /* HQLPhotoHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLPhotoHelper.m; sourceTree = "<group>"; };
+		4A9CF0951EE56C24009ED1E7 /* HQLMainController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLMainController.h; sourceTree = "<group>"; };
+		4A9CF0961EE56C24009ED1E7 /* HQLMainController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLMainController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +99,8 @@
 		4A9CF07A1EE15C66009ED1E7 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				4A9CF0951EE56C24009ED1E7 /* HQLMainController.h */,
+				4A9CF0961EE56C24009ED1E7 /* HQLMainController.m */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -138,12 +138,9 @@
 			isa = PBXGroup;
 			children = (
 				4A9CF06C1EE136E7009ED1E7 /* Assets.xcassets */,
-				4A9CF0691EE136E7009ED1E7 /* Main.storyboard */,
 				4A9CF06E1EE136E7009ED1E7 /* LaunchScreen.storyboard */,
 				4A9CF07F1EE15C71009ED1E7 /* AppDelegate.h */,
 				4A9CF0801EE15C71009ED1E7 /* AppDelegate.m */,
-				4A9CF0811EE15C71009ED1E7 /* ViewController.h */,
-				4A9CF0821EE15C71009ED1E7 /* ViewController.m */,
 			);
 			path = Other;
 			sourceTree = "<group>";
@@ -211,7 +208,6 @@
 				4A9CF0781EE15C5A009ED1E7 /* Info.plist in Resources */,
 				4A9CF0701EE136E7009ED1E7 /* LaunchScreen.storyboard in Resources */,
 				4A9CF06D1EE136E7009ED1E7 /* Assets.xcassets in Resources */,
-				4A9CF06B1EE136E7009ED1E7 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -223,9 +219,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				4A9CF08D1EE26E25009ED1E7 /* HQLPhotoModel.m in Sources */,
-				4A9CF0841EE15C71009ED1E7 /* ViewController.m in Sources */,
 				4A9CF0831EE15C71009ED1E7 /* AppDelegate.m in Sources */,
 				4A9CF08A1EE266D2009ED1E7 /* HQLPhotoAlbumModel.m in Sources */,
+				4A9CF0971EE56C24009ED1E7 /* HQLMainController.m in Sources */,
 				4A9CF0931EE2B35B009ED1E7 /* HQLPhotoHelper.m in Sources */,
 				4A9CF0871EE15CBC009ED1E7 /* HQLPhotoManager.m in Sources */,
 				4A9CF0621EE136E7009ED1E7 /* main.m in Sources */,
@@ -235,15 +231,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		4A9CF0691EE136E7009ED1E7 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				4A9CF06A1EE136E7009ED1E7 /* Base */,
-			);
-			name = Main.storyboard;
-			path = ..;
-			sourceTree = "<group>";
-		};
 		4A9CF06E1EE136E7009ED1E7 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (

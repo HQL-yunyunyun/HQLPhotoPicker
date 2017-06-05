@@ -13,11 +13,12 @@
 
 #import <Photos/Photos.h>
 
+#define HQLScreenScale [UIScreen mainScreen].scale
+
 @interface HQLPhotoManager () <PHPhotoLibraryChangeObserver>
 
 @property (strong, nonatomic) PHPhotoLibrary *photoLibrary;
 //@property (strong, nonatomic) PHImageManager *imageManager;
-@property (strong, nonatomic) PHCachingImageManager *imageManager;
 
 @end
 
@@ -122,10 +123,124 @@
     completeBlock ? completeBlock(array) : nil;
 }
 
+#pragma mark - fetch photo method
+
+// 获取图片
+- (PHImageRequestID)fetchImageWithPHAsset:(PHAsset *)asset photoQuality:(HQLPhotoQuality)photoQuality photoSize:(CGSize)photoSize progressHandler:(PHAssetImageProgressHandler)progressHandler resultHandler:(void (^)(UIImage *, NSDictionary *))resultHandler {
+    
+    CGSize targetSize = CGSizeMake(photoSize.width * HQLScreenScale, photoSize.height * HQLScreenScale);
+    PHImageRequestOptions *option = [[PHImageRequestOptions alloc] init];
+    option.networkAccessAllowed = YES;
+    switch (photoQuality) {
+        case HQLPhotoQualityLarger: {
+            option.deliveryMode = PHImageRequestOptionsDeliveryModeHighQualityFormat;
+            break;
+        }
+        case HQLPhotoQualityMedium: {
+            option.deliveryMode = PHImageRequestOptionsDeliveryModeOpportunistic;
+            break;
+        }
+        case HQLPhotoQualityThumbnails: {
+            option.deliveryMode = PHImageRequestOptionsDeliveryModeFastFormat;
+            break;
+        }
+    }
+    option.progressHandler = progressHandler;
+    
+    return [self.imageManager requestImageForAsset:asset targetSize:targetSize contentMode:PHImageContentModeDefault options:option resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            resultHandler ? resultHandler(result, info) : nil;
+        });
+    }];
+}
+
+// 获取imageData
+- (PHImageRequestID)fetchimageDataWithPHAsset:(PHAsset *)asset progressHandler:(PHAssetImageProgressHandler)progressHandler resultHandler:(void (^)(NSData *, NSString *, UIImageOrientation, NSDictionary *))resultHandler {
+    
+    PHImageRequestOptions *option = [[PHImageRequestOptions alloc] init];
+    option.networkAccessAllowed = YES;
+    option.progressHandler = progressHandler;
+    
+    return [self.imageManager requestImageDataForAsset:asset options:option resultHandler:^(NSData * _Nullable imageData, NSString * _Nullable dataUTI, UIImageOrientation orientation, NSDictionary * _Nullable info) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            resultHandler ? resultHandler(imageData, dataUTI, orientation, info) : nil;
+        });
+    }];
+}
+
+// 获取livePhoto
+- (PHImageRequestID)fetchLivePhotoWithPHAsset:(PHAsset *)asset photoQuality:(HQLPhotoQuality)photoQuality photoSize:(CGSize)photoSize progressHandler:(PHAssetImageProgressHandler)progressHandler resultHandler:(void (^)(PHLivePhoto *, NSDictionary *))resultHandler {
+    
+    CGSize targetSize = CGSizeMake(photoSize.width * HQLScreenScale, photoSize.height * HQLScreenScale);
+    PHLivePhotoRequestOptions *option = [[PHLivePhotoRequestOptions alloc] init];
+    option.networkAccessAllowed = YES;
+    switch (photoQuality) {
+        case HQLPhotoQualityLarger: {
+            option.deliveryMode = PHImageRequestOptionsDeliveryModeHighQualityFormat;
+            break;
+        }
+        case HQLPhotoQualityMedium: {
+            option.deliveryMode = PHImageRequestOptionsDeliveryModeOpportunistic;
+            break;
+        }
+        case HQLPhotoQualityThumbnails: {
+            option.deliveryMode = PHImageRequestOptionsDeliveryModeFastFormat;
+            break;
+        }
+    }
+    option.progressHandler = progressHandler;
+    
+    return [self.imageManager requestLivePhotoForAsset:asset targetSize:targetSize contentMode:PHImageContentModeDefault options:option resultHandler:^(PHLivePhoto * _Nullable livePhoto, NSDictionary * _Nullable info) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            resultHandler ? resultHandler(livePhoto, info) : nil;
+        });
+    }];
+}
+
+// 获取playerItem
+- (PHImageRequestID)fetchPlayerItemForVideo:(PHAsset *)asset progressHandler:(PHAssetVideoProgressHandler)progressHandler resultHandler:(void (^)(AVPlayerItem *, NSDictionary *))resultHandler {
+    
+    PHVideoRequestOptions *option = [[PHVideoRequestOptions alloc] init];
+    option.networkAccessAllowed = YES;
+    option.progressHandler = progressHandler;
+    
+    return [self.imageManager requestPlayerItemForVideo:asset options:option resultHandler:^(AVPlayerItem * _Nullable playerItem, NSDictionary * _Nullable info) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            resultHandler ? resultHandler(playerItem, info) : nil;
+        });
+    }];
+}
+
+- (PHImageRequestID)fetchExportSessionForVideo:(PHAsset *)asset exportPreset:(NSString *)exportPreset progressHandler:(PHAssetVideoProgressHandler)progressHandler resultHandler:(void (^)(AVAssetExportSession *, NSDictionary *))resultHandler {
+    
+    PHVideoRequestOptions *option = [[PHVideoRequestOptions alloc] init];
+    option.networkAccessAllowed = YES;
+    option.progressHandler = progressHandler;
+    
+    return [self.imageManager requestExportSessionForVideo:asset options:option exportPreset:exportPreset resultHandler:^(AVAssetExportSession * _Nullable exportSession, NSDictionary * _Nullable info) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            resultHandler ? resultHandler(exportSession, info) : nil;
+        });
+    }];
+}
+
+- (PHImageRequestID)fetchAVAssetForVideo:(PHAsset *)asset progressHandler:(PHAssetVideoProgressHandler)progressHandler resultHandler:(void (^)(AVAsset *, AVAudioMix *, NSDictionary *))resultHandler {
+    
+    PHVideoRequestOptions *option = [[PHVideoRequestOptions alloc] init];
+    option.networkAccessAllowed = YES;
+    option.progressHandler = progressHandler;
+    
+    return [self.imageManager requestAVAssetForVideo:asset options:option resultHandler:^(AVAsset * _Nullable asset, AVAudioMix * _Nullable audioMix, NSDictionary * _Nullable info) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            resultHandler ? resultHandler(asset, audioMix, info) : nil;
+        });
+    }];
+}
+
 #pragma mark - photo library change observer
 
 - (void)photoLibraryDidChange:(PHChange *)changeInstance {
-
+    
 }
 
 #pragma mark - setter
@@ -142,7 +257,7 @@
 
 - (PHCachingImageManager *)imageManager {
     if (!_imageManager) {
-        _imageManager = [PHCachingImageManager defaultManager];
+        _imageManager = [[PHCachingImageManager alloc] init];
         
     }
     return _imageManager;

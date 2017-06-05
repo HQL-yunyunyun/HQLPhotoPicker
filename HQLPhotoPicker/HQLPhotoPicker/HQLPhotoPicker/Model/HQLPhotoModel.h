@@ -28,12 +28,12 @@ typedef enum : NSUInteger {
 @property (assign, nonatomic) HQLPhotoModelMediaType mediaType; // 类型
 @property (copy, nonatomic) NSString *assetLocalizationIdentifer; // 资源的唯一标识
 
-@property (assign, nonatomic) BOOL isSelected; // 是否选中
-
 /* 这是自己拍时的资源 */
 @property (strong, nonatomic) AVAsset *videoAsset; // 拍摄的视频 资源
 //@property (strong, nonatomic) AVPlayerItem *playerItem;
 @property (assign, nonatomic) NSString *videoTime;
 @property (strong, nonatomic) NSData *imageData; // 拍照 的照片data
+
+@property (assign, nonatomic) BOOL isSelected; // 是否选中
 
 @end
