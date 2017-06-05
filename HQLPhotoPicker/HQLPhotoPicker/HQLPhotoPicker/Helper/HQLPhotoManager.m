@@ -31,6 +31,9 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         manager = [[HQLPhotoManager alloc] init];
+        [manager requestPhotoAuthorizationWithCompleteHandler:^(PHAuthorizationStatus status) {
+            NSLog(@"%ld", (long)status);
+        }];
     });
     return manager;
 }
@@ -41,6 +44,16 @@
 }
 
 #pragma mark - event
+
+- (void)requestPhotoAuthorizationWithCompleteHandler:(void (^)(PHAuthorizationStatus))completeHandler {
+    [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {
+        completeHandler ? completeHandler(status) : nil;
+    }];
+}
+
+- (PHAuthorizationStatus)currentPhotoAuthorizationStatus {
+    return [PHPhotoLibrary authorizationStatus];
+}
 
 #pragma mark - fetch method
 

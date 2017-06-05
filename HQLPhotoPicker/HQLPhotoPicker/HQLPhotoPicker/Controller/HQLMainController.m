@@ -34,6 +34,10 @@
     [self.view setBackgroundColor:[UIColor whiteColor]];
     self.automaticallyAdjustsScrollViewInsets = NO;
     
+    if (self.photoManager.currentPhotoAuthorizationStatus) {
+        
+    }
+    
     HQLWeakSelf;
     [self.photoManager fetchAllAlbumWithCompleteBlock:^(NSMutableArray<HQLPhotoAlbumModel *> *albumArray) {
         [weakSelf.tableView reloadData];
@@ -54,7 +58,7 @@
 //    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"tableViewCellID"];
     UITableViewCell *cell = [[UITableViewCell alloc] init];
     HQLPhotoAlbumModel *model = self.photoManager.albumArray[indexPath.row];
-    cell.textLabel.text = model.albumName;
+    cell.textLabel.text = [NSString stringWithFormat:@"%@(%ld)", model.albumName, model.count];
     return cell;
 }
 

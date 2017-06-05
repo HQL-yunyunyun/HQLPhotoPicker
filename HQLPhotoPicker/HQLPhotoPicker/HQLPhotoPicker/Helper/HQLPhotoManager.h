@@ -35,6 +35,9 @@ typedef enum {
 
 + (instancetype)shareManager;
 
+- (void)requestPhotoAuthorizationWithCompleteHandler:(void(^)(PHAuthorizationStatus status))completeHandler;
+- (PHAuthorizationStatus)currentPhotoAuthorizationStatus;
+
 /* fetch method */
 
 /**
