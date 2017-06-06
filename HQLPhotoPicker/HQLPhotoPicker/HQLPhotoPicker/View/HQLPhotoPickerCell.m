@@ -32,21 +32,9 @@
 - (void)setPhotoModel:(HQLPhotoModel *)photoModel {
     _photoModel = photoModel;
     HQLWeakSelf;
-    
-    if (photoModel.thumbnailImage) {
-        self.imageView.image = photoModel.thumbnailImage;
-    } else {
-        self.imageView.image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"defaultImage" ofType:@"png"]];
-        [[HQLPhotoManager shareManager] fetchImageWithPHAsset:photoModel.asset photoQuality:HQLPhotoQualityThumbnails photoSize:self.frame.size progressHandler:^(double progress, NSError * _Nullable error, BOOL * _Nonnull stop, NSDictionary * _Nullable info) {
-            NSLog(@"progress : %g", progress);
-            if (error) {
-                NSLog(@"progress error : %@", error);
-            }
-        } resultHandler:^(UIImage *image, NSDictionary *info) {
-            weakSelf.imageView.image = image;
-            photoModel.thumbnailImage = image; // 记录缩略图
-        }];
-    }
+    [photoModel requestThumbnailImage:^(UIImage *thumbnail) {
+        weakSelf.imageView.image = thumbnail;
+    }];
 }
 
 #pragma mark - getter

@@ -21,4 +21,14 @@
  */
 + (NSString *)transFormPhotoTitle:(NSString *)englishName;
 
+/**
+ 获取数组里面图片的大小
+ */
++ (NSString *)fetchPhotosBytes:(NSArray <NSData *>*)photos;
+
+/**
+ 获取数组里面图片的大小
+ */
++ (void)fetchPhotosBytes:(NSArray <UIImage *>*)photos resultHandler:(void(^)(NSString *bytes))resultHandler;
+
 @end

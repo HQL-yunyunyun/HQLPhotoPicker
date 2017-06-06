@@ -101,20 +101,9 @@
     HQLPhotoAlbumModel *album = self.photoManager.albumArray[indexPath.row];
     HQLPhotoModel *photo = album.albumCover;
     // 设置封面
-    if (photo.thumbnailImage) {
-        cell.imageView.image = photo.thumbnailImage;
-    } else {
-        cell.imageView.image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"defaultImage" ofType:@"png"]];
-        [self.photoManager fetchImageWithPHAsset:photo.asset photoQuality:HQLPhotoQualityThumbnails photoSize:CGSizeMake(kTableViewCellHeight, kTableViewCellHeight) progressHandler:^(double progress, NSError * _Nullable error, BOOL * _Nonnull stop, NSDictionary * _Nullable info) {
-            NSLog(@"progress : %g", progress);
-            if (error) {
-                NSLog(@"progress error : %@", error);
-            }
-        } resultHandler:^(UIImage *image, NSDictionary *info) {
-            cell.imageView.image = image;
-            photo.thumbnailImage = image; // 记录缩略图
-        }];
-    }
+    [photo requestThumbnailImage:^(UIImage *thumbnail) {
+        cell.imageView.image = thumbnail;
+    }];
     
     cell.textLabel.text = [NSString stringWithFormat:@"%@(%ld)", album.albumName, album.count];
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;

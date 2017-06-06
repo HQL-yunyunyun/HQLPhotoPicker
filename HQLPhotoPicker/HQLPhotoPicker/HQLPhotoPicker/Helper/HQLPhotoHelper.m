@@ -66,4 +66,41 @@
     return photoName;
 }
 
++ (NSString *)fetchPhotosBytes:(NSArray<NSData *> *)photos {
+    NSInteger length = 0;
+    for (NSData *data in photos) {
+        length += data.length;
+    }
+    return [self getBytesFromDataLength:length];
+}
+
++ (void)fetchPhotosBytes:(NSArray<UIImage *> *)photos resultHandler:(void (^)(NSString *))resultHandler {
+    __block NSInteger dataLength = 0;
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        for (UIImage *image in photos) {
+            NSData *imageData = UIImagePNGRepresentation(image); // png
+            if (!imageData) {
+                //返回为JPEG图像。
+                imageData = UIImageJPEGRepresentation(image, 1.0);
+            }
+            dataLength += imageData.length;
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            resultHandler ? resultHandler([self getBytesFromDataLength:dataLength]) : nil;
+        });
+    });
+}
+
++ (NSString *)getBytesFromDataLength:(NSInteger)dataLength {
+    NSString *bytes;
+    if (dataLength >= 0.1 * (1024 * 1024)) {
+        bytes = [NSString stringWithFormat:@"%0.1fM",dataLength/1024/1024.0];
+    } else if (dataLength >= 1024) {
+        bytes = [NSString stringWithFormat:@"%0.0fK",dataLength/1024.0];
+    } else {
+        bytes = [NSString stringWithFormat:@"%zdB",dataLength];
+    }
+    return bytes;
+}
+
 @end

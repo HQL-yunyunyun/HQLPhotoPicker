@@ -159,11 +159,16 @@
         }
         case HQLPhotoQualityThumbnails: {
             option.deliveryMode = PHImageRequestOptionsDeliveryModeFastFormat;
+            option.resizeMode = PHImageRequestOptionsResizeModeExact;
             break;
         }
     }
     option.progressHandler = progressHandler;
-    option.resizeMode = PHImageRequestOptionsResizeModeExact;
+    
+    if (photoQuality == HQLPhotoQualityLarger || photoQuality == HQLPhotoQualityMedium) {
+        // 开启缓存
+        [self.imageManager startCachingImagesForAssets:@[asset] targetSize:targetSize contentMode:PHImageContentModeAspectFill options:option];
+    }
     
     return [self.imageManager requestImageForAsset:asset targetSize:targetSize contentMode:PHImageContentModeAspectFill options:option resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
         dispatch_async(dispatch_get_main_queue(), ^{

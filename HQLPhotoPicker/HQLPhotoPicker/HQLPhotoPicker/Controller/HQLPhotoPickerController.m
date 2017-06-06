@@ -82,6 +82,7 @@
         _collectionView.showsVerticalScrollIndicator = NO;
         _collectionView.showsHorizontalScrollIndicator = NO;
         [_collectionView setBackgroundColor:[UIColor whiteColor]];
+        [_collectionView setContentInset:UIEdgeInsetsMake(1, 1, 1, 1)];
         
         [_collectionView registerClass:[HQLPhotoPickerCell class] forCellWithReuseIdentifier:HQLPhotoPickerCellReuseId];
         
