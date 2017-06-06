@@ -17,6 +17,10 @@
 		4A9CF08D1EE26E25009ED1E7 /* HQLPhotoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A9CF08C1EE26E25009ED1E7 /* HQLPhotoModel.m */; };
 		4A9CF0931EE2B35B009ED1E7 /* HQLPhotoHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A9CF0921EE2B35B009ED1E7 /* HQLPhotoHelper.m */; };
 		4A9CF0971EE56C24009ED1E7 /* HQLMainController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A9CF0961EE56C24009ED1E7 /* HQLMainController.m */; };
+		4A9CF09B1EE67CEB009ED1E7 /* UIView+Frame.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A9CF09A1EE67CEB009ED1E7 /* UIView+Frame.m */; };
+		4A9CF0A31EE680FA009ED1E7 /* HQLPhotoPickerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A9CF0A21EE680FA009ED1E7 /* HQLPhotoPickerController.m */; };
+		4A9CF0A61EE6811B009ED1E7 /* HQLPhotoPickerCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A9CF0A51EE6811B009ED1E7 /* HQLPhotoPickerCell.m */; };
+		4A9CF0AD1EE69A29009ED1E7 /* defaultImage.png in Resources */ = {isa = PBXBuildFile; fileRef = 4A9CF0AC1EE69A29009ED1E7 /* defaultImage.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +41,14 @@
 		4A9CF0921EE2B35B009ED1E7 /* HQLPhotoHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLPhotoHelper.m; sourceTree = "<group>"; };
 		4A9CF0951EE56C24009ED1E7 /* HQLMainController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLMainController.h; sourceTree = "<group>"; };
 		4A9CF0961EE56C24009ED1E7 /* HQLMainController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLMainController.m; sourceTree = "<group>"; };
+		4A9CF0991EE67CEB009ED1E7 /* UIView+Frame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Frame.h"; sourceTree = "<group>"; };
+		4A9CF09A1EE67CEB009ED1E7 /* UIView+Frame.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Frame.m"; sourceTree = "<group>"; };
+		4A9CF0A01EE67DD8009ED1E7 /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
+		4A9CF0A11EE680FA009ED1E7 /* HQLPhotoPickerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLPhotoPickerController.h; sourceTree = "<group>"; };
+		4A9CF0A21EE680FA009ED1E7 /* HQLPhotoPickerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLPhotoPickerController.m; sourceTree = "<group>"; };
+		4A9CF0A41EE6811B009ED1E7 /* HQLPhotoPickerCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLPhotoPickerCell.h; sourceTree = "<group>"; };
+		4A9CF0A51EE6811B009ED1E7 /* HQLPhotoPickerCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLPhotoPickerCell.m; sourceTree = "<group>"; };
+		4A9CF0AC1EE69A29009ED1E7 /* defaultImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = defaultImage.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,8 +91,10 @@
 		4A9CF0601EE136E7009ED1E7 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				4A9CF0AC1EE69A29009ED1E7 /* defaultImage.png */,
 				4A9CF0771EE15C5A009ED1E7 /* Info.plist */,
 				4A9CF0611EE136E7009ED1E7 /* main.m */,
+				4A9CF0A01EE67DD8009ED1E7 /* PrefixHeader.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -88,6 +102,7 @@
 		4A9CF0791EE15C66009ED1E7 /* HQLPhotoPicker */ = {
 			isa = PBXGroup;
 			children = (
+				4A9CF0981EE67CE4009ED1E7 /* Lib */,
 				4A9CF07A1EE15C66009ED1E7 /* Controller */,
 				4A9CF07B1EE15C66009ED1E7 /* Helper */,
 				4A9CF07C1EE15C66009ED1E7 /* Model */,
@@ -101,6 +116,8 @@
 			children = (
 				4A9CF0951EE56C24009ED1E7 /* HQLMainController.h */,
 				4A9CF0961EE56C24009ED1E7 /* HQLMainController.m */,
+				4A9CF0A11EE680FA009ED1E7 /* HQLPhotoPickerController.h */,
+				4A9CF0A21EE680FA009ED1E7 /* HQLPhotoPickerController.m */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -130,6 +147,8 @@
 		4A9CF07D1EE15C66009ED1E7 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				4A9CF0A41EE6811B009ED1E7 /* HQLPhotoPickerCell.h */,
+				4A9CF0A51EE6811B009ED1E7 /* HQLPhotoPickerCell.m */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -143,6 +162,15 @@
 				4A9CF0801EE15C71009ED1E7 /* AppDelegate.m */,
 			);
 			path = Other;
+			sourceTree = "<group>";
+		};
+		4A9CF0981EE67CE4009ED1E7 /* Lib */ = {
+			isa = PBXGroup;
+			children = (
+				4A9CF0991EE67CEB009ED1E7 /* UIView+Frame.h */,
+				4A9CF09A1EE67CEB009ED1E7 /* UIView+Frame.m */,
+			);
+			path = Lib;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -208,6 +236,7 @@
 				4A9CF0781EE15C5A009ED1E7 /* Info.plist in Resources */,
 				4A9CF0701EE136E7009ED1E7 /* LaunchScreen.storyboard in Resources */,
 				4A9CF06D1EE136E7009ED1E7 /* Assets.xcassets in Resources */,
+				4A9CF0AD1EE69A29009ED1E7 /* defaultImage.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -218,11 +247,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4A9CF09B1EE67CEB009ED1E7 /* UIView+Frame.m in Sources */,
 				4A9CF08D1EE26E25009ED1E7 /* HQLPhotoModel.m in Sources */,
 				4A9CF0831EE15C71009ED1E7 /* AppDelegate.m in Sources */,
 				4A9CF08A1EE266D2009ED1E7 /* HQLPhotoAlbumModel.m in Sources */,
+				4A9CF0A61EE6811B009ED1E7 /* HQLPhotoPickerCell.m in Sources */,
 				4A9CF0971EE56C24009ED1E7 /* HQLMainController.m in Sources */,
 				4A9CF0931EE2B35B009ED1E7 /* HQLPhotoHelper.m in Sources */,
+				4A9CF0A31EE680FA009ED1E7 /* HQLPhotoPickerController.m in Sources */,
 				4A9CF0871EE15CBC009ED1E7 /* HQLPhotoManager.m in Sources */,
 				4A9CF0621EE136E7009ED1E7 /* main.m in Sources */,
 			);
@@ -271,8 +303,11 @@
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = HQLPhotoPicker/PrefixHeader.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -318,7 +353,10 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = HQLPhotoPicker/PrefixHeader.pch;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;

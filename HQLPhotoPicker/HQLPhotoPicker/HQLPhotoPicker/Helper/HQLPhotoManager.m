@@ -85,7 +85,7 @@
         PHFetchResult *result = [PHAsset fetchAssetsInAssetCollection:collection options:option];
         NSString *albumName = [HQLPhotoHelper transFormPhotoTitle:collection.localizedTitle];
         // 将 最近删除 过滤
-        if (![albumName isEqualToString:@"最近删除"]) {
+        if (![albumName isEqualToString:@"最近删除"] && result.count > 0) {
             HQLPhotoAlbumModel *model = [[HQLPhotoAlbumModel alloc] init];
             model.albumName = albumName;
             model.albumResult = result;
@@ -120,10 +120,14 @@
             }
             case PHAssetMediaTypeVideo: {
                 model.mediaType = HQLPhotoModelMediaTypeVideo;
+                NSString *timeLength = [NSString stringWithFormat:@"%0.0f",asset.duration];
+                model.durationTime = [HQLPhotoHelper getNewTimeFromDurationSecond:timeLength.integerValue];
                 break;
             }
             case PHAssetMediaTypeAudio: {
                 model.mediaType = HQLPhotoModelMediaTypeAudio;
+                NSString *timeLength = [NSString stringWithFormat:@"%0.0f",asset.duration];
+                model.durationTime = [HQLPhotoHelper getNewTimeFromDurationSecond:timeLength.integerValue];
                 break;
             }
             case PHAssetMediaTypeUnknown: {
@@ -159,8 +163,9 @@
         }
     }
     option.progressHandler = progressHandler;
+    option.resizeMode = PHImageRequestOptionsResizeModeExact;
     
-    return [self.imageManager requestImageForAsset:asset targetSize:targetSize contentMode:PHImageContentModeDefault options:option resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
+    return [self.imageManager requestImageForAsset:asset targetSize:targetSize contentMode:PHImageContentModeAspectFill options:option resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
         dispatch_async(dispatch_get_main_queue(), ^{
             resultHandler ? resultHandler(result, info) : nil;
         });
@@ -203,7 +208,7 @@
     }
     option.progressHandler = progressHandler;
     
-    return [self.imageManager requestLivePhotoForAsset:asset targetSize:targetSize contentMode:PHImageContentModeDefault options:option resultHandler:^(PHLivePhoto * _Nullable livePhoto, NSDictionary * _Nullable info) {
+    return [self.imageManager requestLivePhotoForAsset:asset targetSize:targetSize contentMode:PHImageContentModeAspectFill options:option resultHandler:^(PHLivePhoto * _Nullable livePhoto, NSDictionary * _Nullable info) {
         dispatch_async(dispatch_get_main_queue(), ^{
             resultHandler ? resultHandler(livePhoto, info) : nil;
         });
