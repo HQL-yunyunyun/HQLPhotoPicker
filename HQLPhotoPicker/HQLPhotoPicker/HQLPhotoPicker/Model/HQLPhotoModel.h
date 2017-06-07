@@ -13,7 +13,6 @@ typedef enum : NSUInteger {
     HQLPhotoModelMediaTypePhoto = 0, // 照片
     HQLPhotoModelMediaTypeLivePhoto, // LivePhoto
     HQLPhotoModelMediaTypePhotoGif,  // gif图
-//    HQLPhotoModelMediaTypePhotoiCloud, // 在iCloud上的照片
     HQLPhotoModelMediaTypeVideo,     // 视频
     HQLPhotoModelMediaTypeAudio,     // 音频
     HQLPhotoModelMediaTypeCameraPhoto,   // 通过相机拍的照片
@@ -37,11 +36,11 @@ typedef enum : NSUInteger {
 
 @property (assign, nonatomic) BOOL isSelected; // 是否选中
 
-- (void)requestThumbnailImage:(void(^)(UIImage *thumbnail))resultHandler; // 缩略图
-- (void)requestHighDefinitionImageWithProgressHandler:(PHAssetImageProgressHandler)progressHandler resultHandler:(void(^)(UIImage *highDefinitionImage))resultHandler; // 高清图片
-- (void)requestOriginalImageWithProgressHandler:(PHAssetImageProgressHandler)progressHandler resultHandler:(void(^)(UIImage *originalImage))resultHandler; // 原图
-- (void)requestOriginalImageDataWithProgressHandler:(PHAssetImageProgressHandler)progressHandler resultHandler:(void(^)(NSData *imageData, NSString *byteString))resultHandler; // 图片的NSData
+- (void)requestThumbnailImage:(void(^)(UIImage *thumbnail, NSString *error))resultHandler; // 缩略图
+- (void)requestHighDefinitionImageWithProgressHandler:(PHAssetImageProgressHandler)progressHandler resultHandler:(void(^)(UIImage *highDefinitionImage, NSString *error))resultHandler; // 高清图片
+- (void)requestOriginalImageWithProgressHandler:(PHAssetImageProgressHandler)progressHandler resultHandler:(void(^)(UIImage *originalImage, NSString *error))resultHandler; // 原图
+- (void)requestOriginalImageDataWithProgressHandler:(PHAssetImageProgressHandler)progressHandler resultHandler:(void(^)(NSData *imageData, NSString *byteString, NSString *error))resultHandler; // 图片的NSData
 //- (void)requestGifImageDataWithProgressHandler:(PHAssetImageProgressHandler)progressHandler resultHandler:(void(^)(NSData *gifImageData, NSString *byteString))resultHandler; // 获取gifData
-- (void)requestLivePhotoWithProgressHandler:(PHAssetImageProgressHandler)progressHandler resultHandler:(void(^)(PHLivePhoto *livePhoto))resultHandler; // 获取livePhoto
+- (void)requestLivePhotoWithProgressHandler:(PHAssetImageProgressHandler)progressHandler resultHandler:(void(^)(PHLivePhoto *livePhoto, NSString *error))resultHandler; // 获取livePhoto
 
 @end

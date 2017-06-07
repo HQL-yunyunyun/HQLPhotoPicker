@@ -55,18 +55,18 @@ typedef enum {
  */
 - (void)fetchPhotoForAlbumWithResult:(PHFetchResult *)photoResult completeBlock:(void(^)(NSMutableArray <HQLPhotoModel *>*photoArray))completeBlock;
 
-
 /**
  获取图片
 
  @param asset 资源
- @param photoQuality 图片质量 高清 - 中等 - 缩略图
+ @param photoQuality 图片质量
  @param photoSize 图片大小
+ @param isCaching 是否缓存
  @param progressHandler 过程的回调
  @param resultHandler 完成的回调
  @return 对应的id
  */
-- (PHImageRequestID)fetchImageWithPHAsset:(PHAsset *)asset photoQuality:(HQLPhotoQuality)photoQuality photoSize:(CGSize)photoSize progressHandler:(PHAssetImageProgressHandler)progressHandler resultHandler:(void(^)(UIImage *image, NSDictionary *info))resultHandler;
+- (PHImageRequestID)fetchImageWithPHAsset:(PHAsset *)asset photoQuality:(HQLPhotoQuality)photoQuality photoSize:(CGSize)photoSize isCaching:(BOOL)isCaching progressHandler:(PHAssetImageProgressHandler)progressHandler resultHandler:(void(^)(UIImage *image, NSDictionary *info))resultHandler;
 
 /**
  获取图片的NSData

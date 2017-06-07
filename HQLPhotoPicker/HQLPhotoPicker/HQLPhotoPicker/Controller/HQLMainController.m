@@ -15,6 +15,8 @@
 #import "HQLPhotoAlbumModel.h"
 #import "HQLPhotoModel.h"
 
+#import "HQLPhotoAlbumCell.h"
+
 #define HQLPhotoAlbumCellReuseId @"HQLPhotoAlbumCellReuseId"
 #define kTableViewCellHeight 60
 
@@ -94,20 +96,8 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:HQLPhotoAlbumCellReuseId];
-    if (!cell) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:HQLPhotoAlbumCellReuseId];
-    }
-    HQLPhotoAlbumModel *album = self.photoManager.albumArray[indexPath.row];
-    HQLPhotoModel *photo = album.albumCover;
-    // 设置封面
-    [photo requestThumbnailImage:^(UIImage *thumbnail) {
-        cell.imageView.image = thumbnail;
-    }];
-    
-    cell.textLabel.text = [NSString stringWithFormat:@"%@(%ld)", album.albumName, album.count];
-    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    
+    HQLPhotoAlbumCell *cell = [tableView dequeueReusableCellWithIdentifier:HQLPhotoAlbumCellReuseId];
+    cell.albumModel = self.photoManager.albumArray[indexPath.row];
     return cell;
 }
 
@@ -123,6 +113,10 @@
         [_tableView setShowsVerticalScrollIndicator:NO];
         [_tableView setShowsHorizontalScrollIndicator:NO];
         
+        _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+        
+        [_tableView registerNib:[UINib nibWithNibName:@"HQLPhotoAlbumCell" bundle:nil] forCellReuseIdentifier:HQLPhotoAlbumCellReuseId];
+        
         [self.view addSubview:_tableView];
     }
     return _tableView;
@@ -131,6 +125,7 @@
 - (HQLPhotoManager *)photoManager {
     if (!_photoManager) {
         _photoManager = [HQLPhotoManager shareManager];
+        _photoManager.selectedType = HQLPhotoManagerSelectedTypePhotoAndVideo;
     }
     return _photoManager;
 }

@@ -32,7 +32,7 @@
 - (void)setPhotoModel:(HQLPhotoModel *)photoModel {
     _photoModel = photoModel;
     HQLWeakSelf;
-    [photoModel requestThumbnailImage:^(UIImage *thumbnail) {
+    [photoModel requestThumbnailImage:^(UIImage *thumbnail, NSString *errorString) {
         weakSelf.imageView.image = thumbnail;
     }];
 }

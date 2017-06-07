@@ -47,7 +47,9 @@
 
 - (void)requestPhotoAuthorizationWithCompleteHandler:(void (^)(PHAuthorizationStatus))completeHandler {
     [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {
-        completeHandler ? completeHandler(status) : nil;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            completeHandler ? completeHandler(status) : nil;
+        });
     }];
 }
 
@@ -143,7 +145,7 @@
 #pragma mark - fetch photo method
 
 // 获取图片
-- (PHImageRequestID)fetchImageWithPHAsset:(PHAsset *)asset photoQuality:(HQLPhotoQuality)photoQuality photoSize:(CGSize)photoSize progressHandler:(PHAssetImageProgressHandler)progressHandler resultHandler:(void (^)(UIImage *, NSDictionary *))resultHandler {
+- (PHImageRequestID)fetchImageWithPHAsset:(PHAsset *)asset photoQuality:(HQLPhotoQuality)photoQuality photoSize:(CGSize)photoSize isCaching:(BOOL)isCaching progressHandler:(PHAssetImageProgressHandler)progressHandler resultHandler:(void (^)(UIImage *, NSDictionary *))resultHandler {
     
     CGSize targetSize = CGSizeMake(photoSize.width * HQLScreenScale, photoSize.height * HQLScreenScale);
     PHImageRequestOptions *option = [[PHImageRequestOptions alloc] init];
@@ -159,17 +161,17 @@
         }
         case HQLPhotoQualityThumbnails: {
             option.deliveryMode = PHImageRequestOptionsDeliveryModeFastFormat;
-            option.resizeMode = PHImageRequestOptionsResizeModeExact;
             break;
         }
     }
+    option.resizeMode = PHImageRequestOptionsResizeModeExact;
     option.progressHandler = progressHandler;
     
-    if (photoQuality == HQLPhotoQualityLarger || photoQuality == HQLPhotoQualityMedium) {
+    if (isCaching) {
         // 开启缓存
         [self.imageManager startCachingImagesForAssets:@[asset] targetSize:targetSize contentMode:PHImageContentModeAspectFill options:option];
     }
-    
+
     return [self.imageManager requestImageForAsset:asset targetSize:targetSize contentMode:PHImageContentModeAspectFill options:option resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
         dispatch_async(dispatch_get_main_queue(), ^{
             resultHandler ? resultHandler(result, info) : nil;

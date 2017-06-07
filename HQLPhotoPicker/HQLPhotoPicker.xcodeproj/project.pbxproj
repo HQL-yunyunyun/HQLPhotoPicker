@@ -21,6 +21,10 @@
 		4A9CF0A31EE680FA009ED1E7 /* HQLPhotoPickerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A9CF0A21EE680FA009ED1E7 /* HQLPhotoPickerController.m */; };
 		4A9CF0A61EE6811B009ED1E7 /* HQLPhotoPickerCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A9CF0A51EE6811B009ED1E7 /* HQLPhotoPickerCell.m */; };
 		4A9CF0AD1EE69A29009ED1E7 /* defaultImage.png in Resources */ = {isa = PBXBuildFile; fileRef = 4A9CF0AC1EE69A29009ED1E7 /* defaultImage.png */; };
+		4A9CF0B31EE79D12009ED1E7 /* HQLPhotoAlbumCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A9CF0B21EE79D12009ED1E7 /* HQLPhotoAlbumCell.m */; };
+		4A9CF0B51EE79D9A009ED1E7 /* HQLPhotoAlbumCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4A9CF0B41EE79D9A009ED1E7 /* HQLPhotoAlbumCell.xib */; };
+		4A9CF0BB1EE79FE0009ED1E7 /* common_arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 4A9CF0B81EE79FE0009ED1E7 /* common_arrow.png */; };
+		4A9CF0BF1EE7B723009ED1E7 /* HQLPhotoPreViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A9CF0BE1EE7B723009ED1E7 /* HQLPhotoPreViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,6 +53,12 @@
 		4A9CF0A41EE6811B009ED1E7 /* HQLPhotoPickerCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLPhotoPickerCell.h; sourceTree = "<group>"; };
 		4A9CF0A51EE6811B009ED1E7 /* HQLPhotoPickerCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLPhotoPickerCell.m; sourceTree = "<group>"; };
 		4A9CF0AC1EE69A29009ED1E7 /* defaultImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = defaultImage.png; sourceTree = "<group>"; };
+		4A9CF0B11EE79D12009ED1E7 /* HQLPhotoAlbumCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLPhotoAlbumCell.h; sourceTree = "<group>"; };
+		4A9CF0B21EE79D12009ED1E7 /* HQLPhotoAlbumCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLPhotoAlbumCell.m; sourceTree = "<group>"; };
+		4A9CF0B41EE79D9A009ED1E7 /* HQLPhotoAlbumCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = HQLPhotoAlbumCell.xib; sourceTree = "<group>"; };
+		4A9CF0B81EE79FE0009ED1E7 /* common_arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = common_arrow.png; sourceTree = "<group>"; };
+		4A9CF0BD1EE7B723009ED1E7 /* HQLPhotoPreViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLPhotoPreViewController.h; sourceTree = "<group>"; };
+		4A9CF0BE1EE7B723009ED1E7 /* HQLPhotoPreViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLPhotoPreViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,7 +101,7 @@
 		4A9CF0601EE136E7009ED1E7 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				4A9CF0AC1EE69A29009ED1E7 /* defaultImage.png */,
+				4A9CF0BC1EE79FE9009ED1E7 /* Images */,
 				4A9CF0771EE15C5A009ED1E7 /* Info.plist */,
 				4A9CF0611EE136E7009ED1E7 /* main.m */,
 				4A9CF0A01EE67DD8009ED1E7 /* PrefixHeader.pch */,
@@ -118,6 +128,8 @@
 				4A9CF0961EE56C24009ED1E7 /* HQLMainController.m */,
 				4A9CF0A11EE680FA009ED1E7 /* HQLPhotoPickerController.h */,
 				4A9CF0A21EE680FA009ED1E7 /* HQLPhotoPickerController.m */,
+				4A9CF0BD1EE7B723009ED1E7 /* HQLPhotoPreViewController.h */,
+				4A9CF0BE1EE7B723009ED1E7 /* HQLPhotoPreViewController.m */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -149,6 +161,9 @@
 			children = (
 				4A9CF0A41EE6811B009ED1E7 /* HQLPhotoPickerCell.h */,
 				4A9CF0A51EE6811B009ED1E7 /* HQLPhotoPickerCell.m */,
+				4A9CF0B11EE79D12009ED1E7 /* HQLPhotoAlbumCell.h */,
+				4A9CF0B21EE79D12009ED1E7 /* HQLPhotoAlbumCell.m */,
+				4A9CF0B41EE79D9A009ED1E7 /* HQLPhotoAlbumCell.xib */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -171,6 +186,15 @@
 				4A9CF09A1EE67CEB009ED1E7 /* UIView+Frame.m */,
 			);
 			path = Lib;
+			sourceTree = "<group>";
+		};
+		4A9CF0BC1EE79FE9009ED1E7 /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				4A9CF0B81EE79FE0009ED1E7 /* common_arrow.png */,
+				4A9CF0AC1EE69A29009ED1E7 /* defaultImage.png */,
+			);
+			name = Images;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -205,7 +229,7 @@
 				TargetAttributes = {
 					4A9CF05C1EE136E7009ED1E7 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = 98B5P59X79;
+						DevelopmentTeam = X8GXYMZ6FW;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -233,9 +257,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4A9CF0B51EE79D9A009ED1E7 /* HQLPhotoAlbumCell.xib in Resources */,
 				4A9CF0781EE15C5A009ED1E7 /* Info.plist in Resources */,
 				4A9CF0701EE136E7009ED1E7 /* LaunchScreen.storyboard in Resources */,
 				4A9CF06D1EE136E7009ED1E7 /* Assets.xcassets in Resources */,
+				4A9CF0BB1EE79FE0009ED1E7 /* common_arrow.png in Resources */,
 				4A9CF0AD1EE69A29009ED1E7 /* defaultImage.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -251,8 +277,10 @@
 				4A9CF08D1EE26E25009ED1E7 /* HQLPhotoModel.m in Sources */,
 				4A9CF0831EE15C71009ED1E7 /* AppDelegate.m in Sources */,
 				4A9CF08A1EE266D2009ED1E7 /* HQLPhotoAlbumModel.m in Sources */,
+				4A9CF0B31EE79D12009ED1E7 /* HQLPhotoAlbumCell.m in Sources */,
 				4A9CF0A61EE6811B009ED1E7 /* HQLPhotoPickerCell.m in Sources */,
 				4A9CF0971EE56C24009ED1E7 /* HQLMainController.m in Sources */,
+				4A9CF0BF1EE7B723009ED1E7 /* HQLPhotoPreViewController.m in Sources */,
 				4A9CF0931EE2B35B009ED1E7 /* HQLPhotoHelper.m in Sources */,
 				4A9CF0A31EE680FA009ED1E7 /* HQLPhotoPickerController.m in Sources */,
 				4A9CF0871EE15CBC009ED1E7 /* HQLPhotoManager.m in Sources */,
@@ -375,10 +403,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = 98B5P59X79;
+				DEVELOPMENT_TEAM = X8GXYMZ6FW;
 				INFOPLIST_FILE = HQLPhotoPicker/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = cn.weplus.HQLPhotoPicker1;
+				PRODUCT_BUNDLE_IDENTIFIER = cn.weplus.HQLPhotoPicker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -387,10 +415,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = 98B5P59X79;
+				DEVELOPMENT_TEAM = X8GXYMZ6FW;
 				INFOPLIST_FILE = HQLPhotoPicker/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = cn.weplus.HQLPhotoPicker1;
+				PRODUCT_BUNDLE_IDENTIFIER = cn.weplus.HQLPhotoPicker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

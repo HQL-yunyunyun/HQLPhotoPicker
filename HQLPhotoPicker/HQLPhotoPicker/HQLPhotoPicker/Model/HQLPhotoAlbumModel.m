@@ -32,13 +32,7 @@
 }
 
 -(HQLPhotoModel *)albumCover {
-    for (int i = 0; i < self.photoArray.count; i++) {
-        HQLPhotoModel *model = self.photoArray[i];
-        if (model.mediaType == HQLPhotoModelMediaTypePhoto) {
-            return model;
-        }
-    }
-    return nil;
+    return self.photoArray.firstObject;
 }
 
 @end

@@ -8,6 +8,8 @@
 
 #import "HQLPhotoPickerController.h"
 
+#import "HQLPhotoPreViewController.h"
+
 #import "HQLPhotoAlbumModel.h"
 #import "HQLPhotoModel.h"
 
@@ -48,6 +50,14 @@
     [self.collectionView reloadData];
 }
 
+#pragma mark - collection delegate
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    HQLPhotoPreViewController *controller = [[HQLPhotoPreViewController alloc] init];
+    controller.model = self.albumModel.photoArray[indexPath.item];
+    [self.navigationController pushViewController:controller animated:YES];
+}
+
 #pragma mark - collection data source 
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
@@ -82,7 +92,6 @@
         _collectionView.showsVerticalScrollIndicator = NO;
         _collectionView.showsHorizontalScrollIndicator = NO;
         [_collectionView setBackgroundColor:[UIColor whiteColor]];
-        [_collectionView setContentInset:UIEdgeInsetsMake(1, 1, 1, 1)];
         
         [_collectionView registerClass:[HQLPhotoPickerCell class] forCellWithReuseIdentifier:HQLPhotoPickerCellReuseId];
         
@@ -94,10 +103,16 @@
 - (UICollectionViewFlowLayout *)flowLayout {
     if (!_flowLayout) {
         _flowLayout = [[UICollectionViewFlowLayout alloc] init];
-        _flowLayout.minimumLineSpacing = 0;
-        _flowLayout.minimumInteritemSpacing = 0;
-        CGFloat itemWidth = self.view.width / kColumnCount;
-        _flowLayout.itemSize = CGSizeMake(itemWidth, itemWidth);
+        
+        CGFloat itemWidth = (self.view.width - (kColumnCount - 1)) / kColumnCount;
+        NSInteger width = (NSInteger)itemWidth;
+        CGFloat temp = itemWidth - width;
+        CGFloat spacing = 1 + (temp * kColumnCount) / (kColumnCount - 1);
+        
+        _flowLayout.minimumLineSpacing = spacing;
+        _flowLayout.minimumInteritemSpacing = spacing;
+        
+        _flowLayout.itemSize = CGSizeMake(width, width);
         
     }
     return _flowLayout;
