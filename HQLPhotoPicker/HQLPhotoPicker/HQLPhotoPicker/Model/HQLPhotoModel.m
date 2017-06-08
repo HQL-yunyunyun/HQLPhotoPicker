@@ -58,7 +58,11 @@
                 NSLog(@"fetch image data progress %g", progress);
                 progressHandler ? progressHandler(progress, error, stop, info) : nil;
             } resultHandler:^(NSData *imageData, NSString *dataUTI, UIImageOrientation orientation, NSDictionary *info) {
-//                resultHandler ? resultHandler(imageData, [HQLPhotoHelper fetchPhotosBytes:@[imageData]]) : nil;
+                NSError *error = info[PHImageErrorKey];
+                if (error) {
+                    
+                }
+                resultHandler ? resultHandler(imageData, [HQLPhotoHelper fetchPhotosBytes:@[imageData]], [self getErrorStringWithError:error]) : nil;
             }];
             break;
         }
@@ -83,7 +87,11 @@
             NSLog(@"fetch live photo progress %g", progress);
             progressHandler ? progressHandler(progress, error, stop, info) : nil;
         } resultHandler:^(PHLivePhoto *livePhoto, NSDictionary *info) {
-//            resultHandler ? resultHandler(livePhoto) : nil;
+            NSError *error = info[PHImageErrorKey];
+            if (error) {
+                
+            }
+            resultHandler ? resultHandler(livePhoto, [self getErrorStringWithError:error]) : nil;
         }];
     }
 }
@@ -96,6 +104,8 @@
            progressHandler:(PHAssetImageProgressHandler)progressHandler
            resultHandler:(void(^)(UIImage *image, NSString *error))resultHandler
 {
+    
+    HQLWeakSelf;
     
     UIImage *defaultImage = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"defaultImage" ofType:@"png"]];
     switch (self.mediaType) {
@@ -112,7 +122,11 @@
                 NSLog(@"fetch image progress %g", progress);
                 progressHandler ? progressHandler(progress, error, stop, info) : nil;
             } resultHandler:^(UIImage *image, NSDictionary *info) {
-                    resultHandler ? resultHandler(image, @"") : nil;
+                NSError *error = info[PHImageErrorKey];
+                if (error) {
+                    image = weakSelf.thumbnailImage ? weakSelf.thumbnailImage : defaultImage;
+                }
+                resultHandler ? resultHandler(image, [self getErrorStringWithError:error]) : nil;
             }];
             break;
         }
@@ -135,6 +149,24 @@
     }
 }
 
-//- (NSString *)
+// 获取错误信息
+- (NSString *)getErrorStringWithError:(NSError *)error {
+    
+    NSString *errorString = @"";
+    
+    if (error) {
+        errorString = error.domain;
+        if ([errorString containsString:@"cloud"]) { // iCloud 的问题
+            errorString = @"iCloud 同步出错";
+        }
+        
+        NSError *underLyingError = error.userInfo[NSUnderlyingErrorKey];
+        if (underLyingError) {
+            errorString = [errorString stringByAppendingString:underLyingError.localizedDescription];
+        }
+    }
+    
+    return errorString;
+}
 
 @end

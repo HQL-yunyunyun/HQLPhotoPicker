@@ -25,6 +25,8 @@
 		4A9CF0B51EE79D9A009ED1E7 /* HQLPhotoAlbumCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4A9CF0B41EE79D9A009ED1E7 /* HQLPhotoAlbumCell.xib */; };
 		4A9CF0BB1EE79FE0009ED1E7 /* common_arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 4A9CF0B81EE79FE0009ED1E7 /* common_arrow.png */; };
 		4A9CF0BF1EE7B723009ED1E7 /* HQLPhotoPreViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A9CF0BE1EE7B723009ED1E7 /* HQLPhotoPreViewController.m */; };
+		4A9CF0C21EE93986009ED1E7 /* HQLPhotoPreviewView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A9CF0C11EE93986009ED1E7 /* HQLPhotoPreviewView.m */; };
+		4A9CF0C51EE95ED7009ED1E7 /* HQLVideoPreViewView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A9CF0C41EE95ED7009ED1E7 /* HQLVideoPreViewView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -59,6 +61,10 @@
 		4A9CF0B81EE79FE0009ED1E7 /* common_arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = common_arrow.png; sourceTree = "<group>"; };
 		4A9CF0BD1EE7B723009ED1E7 /* HQLPhotoPreViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLPhotoPreViewController.h; sourceTree = "<group>"; };
 		4A9CF0BE1EE7B723009ED1E7 /* HQLPhotoPreViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLPhotoPreViewController.m; sourceTree = "<group>"; };
+		4A9CF0C01EE93986009ED1E7 /* HQLPhotoPreviewView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLPhotoPreviewView.h; sourceTree = "<group>"; };
+		4A9CF0C11EE93986009ED1E7 /* HQLPhotoPreviewView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLPhotoPreviewView.m; sourceTree = "<group>"; };
+		4A9CF0C31EE95ED7009ED1E7 /* HQLVideoPreViewView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLVideoPreViewView.h; sourceTree = "<group>"; };
+		4A9CF0C41EE95ED7009ED1E7 /* HQLVideoPreViewView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLVideoPreViewView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -164,6 +170,10 @@
 				4A9CF0B11EE79D12009ED1E7 /* HQLPhotoAlbumCell.h */,
 				4A9CF0B21EE79D12009ED1E7 /* HQLPhotoAlbumCell.m */,
 				4A9CF0B41EE79D9A009ED1E7 /* HQLPhotoAlbumCell.xib */,
+				4A9CF0C01EE93986009ED1E7 /* HQLPhotoPreviewView.h */,
+				4A9CF0C11EE93986009ED1E7 /* HQLPhotoPreviewView.m */,
+				4A9CF0C31EE95ED7009ED1E7 /* HQLVideoPreViewView.h */,
+				4A9CF0C41EE95ED7009ED1E7 /* HQLVideoPreViewView.m */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -278,6 +288,8 @@
 				4A9CF0831EE15C71009ED1E7 /* AppDelegate.m in Sources */,
 				4A9CF08A1EE266D2009ED1E7 /* HQLPhotoAlbumModel.m in Sources */,
 				4A9CF0B31EE79D12009ED1E7 /* HQLPhotoAlbumCell.m in Sources */,
+				4A9CF0C51EE95ED7009ED1E7 /* HQLVideoPreViewView.m in Sources */,
+				4A9CF0C21EE93986009ED1E7 /* HQLPhotoPreviewView.m in Sources */,
 				4A9CF0A61EE6811B009ED1E7 /* HQLPhotoPickerCell.m in Sources */,
 				4A9CF0971EE56C24009ED1E7 /* HQLMainController.m in Sources */,
 				4A9CF0BF1EE7B723009ED1E7 /* HQLPhotoPreViewController.m in Sources */,

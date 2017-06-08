@@ -36,6 +36,7 @@ typedef enum : NSUInteger {
 
 @property (assign, nonatomic) BOOL isSelected; // 是否选中
 
+/* fetch method  */
 - (void)requestThumbnailImage:(void(^)(UIImage *thumbnail, NSString *error))resultHandler; // 缩略图
 - (void)requestHighDefinitionImageWithProgressHandler:(PHAssetImageProgressHandler)progressHandler resultHandler:(void(^)(UIImage *highDefinitionImage, NSString *error))resultHandler; // 高清图片
 - (void)requestOriginalImageWithProgressHandler:(PHAssetImageProgressHandler)progressHandler resultHandler:(void(^)(UIImage *originalImage, NSString *error))resultHandler; // 原图
