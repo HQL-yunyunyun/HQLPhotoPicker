@@ -43,5 +43,6 @@ typedef enum : NSUInteger {
 - (void)requestOriginalImageDataWithProgressHandler:(PHAssetImageProgressHandler)progressHandler resultHandler:(void(^)(NSData *imageData, NSString *byteString, NSString *error))resultHandler; // 图片的NSData
 //- (void)requestGifImageDataWithProgressHandler:(PHAssetImageProgressHandler)progressHandler resultHandler:(void(^)(NSData *gifImageData, NSString *byteString))resultHandler; // 获取gifData
 - (void)requestLivePhotoWithProgressHandler:(PHAssetImageProgressHandler)progressHandler resultHandler:(void(^)(PHLivePhoto *livePhoto, NSString *error))resultHandler; // 获取livePhoto
+- (void)requestPlayerItemWithProgressHandler:(PHAssetVideoProgressHandler)progressHandler resultHandler:(void(^)(AVPlayerItem *playerItem, NSString *error))resultHandler;
 
 @end

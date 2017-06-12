@@ -7,6 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4A38A1581EEE737300CF2143 /* center_playButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 4A38A1561EEE737300CF2143 /* center_playButton.png */; };
+		4A38A1591EEE737300CF2143 /* center_pauseButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 4A38A1571EEE737300CF2143 /* center_pauseButton.png */; };
+		4A38A15C1EEE742100CF2143 /* UIImage+Color.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A38A15B1EEE742100CF2143 /* UIImage+Color.m */; };
+		4A38A15F1EEE9E8800CF2143 /* gif_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 4A38A15E1EEE9E8800CF2143 /* gif_icon.png */; };
+		4A38A1631EEE9EC900CF2143 /* livePhoto_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 4A38A1621EEE9EC900CF2143 /* livePhoto_icon.png */; };
+		4A38A1651EEE9F1000CF2143 /* video_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 4A38A1641EEE9F1000CF2143 /* video_icon.png */; };
+		4A38A1681EEEAB8800CF2143 /* checkButton_normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 4A38A1661EEEAB8800CF2143 /* checkButton_normal.png */; };
+		4A38A1691EEEAB8800CF2143 /* checkButton_selected.png in Resources */ = {isa = PBXBuildFile; fileRef = 4A38A1671EEEAB8800CF2143 /* checkButton_selected.png */; };
 		4A9CF0621EE136E7009ED1E7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A9CF0611EE136E7009ED1E7 /* main.m */; };
 		4A9CF06D1EE136E7009ED1E7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4A9CF06C1EE136E7009ED1E7 /* Assets.xcassets */; };
 		4A9CF0701EE136E7009ED1E7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4A9CF06E1EE136E7009ED1E7 /* LaunchScreen.storyboard */; };
@@ -28,12 +36,19 @@
 		4A9CF0C21EE93986009ED1E7 /* HQLPhotoPreviewView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A9CF0C11EE93986009ED1E7 /* HQLPhotoPreviewView.m */; };
 		4A9CF0C51EE95ED7009ED1E7 /* HQLVideoPreViewView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A9CF0C41EE95ED7009ED1E7 /* HQLVideoPreViewView.m */; };
 		4A9CF0CA1EEA4084009ED1E7 /* playButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 4A9CF0C61EEA4084009ED1E7 /* playButton.png */; };
-		4A9CF0CB1EEA4084009ED1E7 /* center_playButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 4A9CF0C71EEA4084009ED1E7 /* center_playButton.png */; };
 		4A9CF0CC1EEA4084009ED1E7 /* pauseButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 4A9CF0C81EEA4084009ED1E7 /* pauseButton.png */; };
-		4A9CF0CD1EEA4084009ED1E7 /* center_pauseButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 4A9CF0C91EEA4084009ED1E7 /* center_pauseButton.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4A38A1561EEE737300CF2143 /* center_playButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = center_playButton.png; sourceTree = "<group>"; };
+		4A38A1571EEE737300CF2143 /* center_pauseButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = center_pauseButton.png; sourceTree = "<group>"; };
+		4A38A15A1EEE742100CF2143 /* UIImage+Color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Color.h"; sourceTree = "<group>"; };
+		4A38A15B1EEE742100CF2143 /* UIImage+Color.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Color.m"; sourceTree = "<group>"; };
+		4A38A15E1EEE9E8800CF2143 /* gif_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = gif_icon.png; sourceTree = "<group>"; };
+		4A38A1621EEE9EC900CF2143 /* livePhoto_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = livePhoto_icon.png; sourceTree = "<group>"; };
+		4A38A1641EEE9F1000CF2143 /* video_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = video_icon.png; sourceTree = "<group>"; };
+		4A38A1661EEEAB8800CF2143 /* checkButton_normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = checkButton_normal.png; sourceTree = "<group>"; };
+		4A38A1671EEEAB8800CF2143 /* checkButton_selected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = checkButton_selected.png; sourceTree = "<group>"; };
 		4A9CF05D1EE136E7009ED1E7 /* HQLPhotoPicker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HQLPhotoPicker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4A9CF0611EE136E7009ED1E7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		4A9CF06C1EE136E7009ED1E7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = ../Assets.xcassets; sourceTree = "<group>"; };
@@ -70,9 +85,7 @@
 		4A9CF0C31EE95ED7009ED1E7 /* HQLVideoPreViewView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLVideoPreViewView.h; sourceTree = "<group>"; };
 		4A9CF0C41EE95ED7009ED1E7 /* HQLVideoPreViewView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLVideoPreViewView.m; sourceTree = "<group>"; };
 		4A9CF0C61EEA4084009ED1E7 /* playButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = playButton.png; sourceTree = "<group>"; };
-		4A9CF0C71EEA4084009ED1E7 /* center_playButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = center_playButton.png; sourceTree = "<group>"; };
 		4A9CF0C81EEA4084009ED1E7 /* pauseButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pauseButton.png; sourceTree = "<group>"; };
-		4A9CF0C91EEA4084009ED1E7 /* center_pauseButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = center_pauseButton.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -200,6 +213,8 @@
 		4A9CF0981EE67CE4009ED1E7 /* Lib */ = {
 			isa = PBXGroup;
 			children = (
+				4A38A15A1EEE742100CF2143 /* UIImage+Color.h */,
+				4A38A15B1EEE742100CF2143 /* UIImage+Color.m */,
 				4A9CF0991EE67CEB009ED1E7 /* UIView+Frame.h */,
 				4A9CF09A1EE67CEB009ED1E7 /* UIView+Frame.m */,
 			);
@@ -209,10 +224,15 @@
 		4A9CF0BC1EE79FE9009ED1E7 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				4A38A1661EEEAB8800CF2143 /* checkButton_normal.png */,
+				4A38A1671EEEAB8800CF2143 /* checkButton_selected.png */,
+				4A38A1641EEE9F1000CF2143 /* video_icon.png */,
+				4A38A1621EEE9EC900CF2143 /* livePhoto_icon.png */,
+				4A38A15E1EEE9E8800CF2143 /* gif_icon.png */,
+				4A38A1561EEE737300CF2143 /* center_playButton.png */,
+				4A38A1571EEE737300CF2143 /* center_pauseButton.png */,
 				4A9CF0C61EEA4084009ED1E7 /* playButton.png */,
-				4A9CF0C71EEA4084009ED1E7 /* center_playButton.png */,
 				4A9CF0C81EEA4084009ED1E7 /* pauseButton.png */,
-				4A9CF0C91EEA4084009ED1E7 /* center_pauseButton.png */,
 				4A9CF0B81EE79FE0009ED1E7 /* common_arrow.png */,
 				4A9CF0AC1EE69A29009ED1E7 /* defaultImage.png */,
 			);
@@ -279,13 +299,18 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4A38A15F1EEE9E8800CF2143 /* gif_icon.png in Resources */,
 				4A9CF0B51EE79D9A009ED1E7 /* HQLPhotoAlbumCell.xib in Resources */,
+				4A38A1681EEEAB8800CF2143 /* checkButton_normal.png in Resources */,
 				4A9CF0781EE15C5A009ED1E7 /* Info.plist in Resources */,
-				4A9CF0CB1EEA4084009ED1E7 /* center_playButton.png in Resources */,
 				4A9CF0701EE136E7009ED1E7 /* LaunchScreen.storyboard in Resources */,
+				4A38A1691EEEAB8800CF2143 /* checkButton_selected.png in Resources */,
 				4A9CF06D1EE136E7009ED1E7 /* Assets.xcassets in Resources */,
-				4A9CF0CD1EEA4084009ED1E7 /* center_pauseButton.png in Resources */,
 				4A9CF0BB1EE79FE0009ED1E7 /* common_arrow.png in Resources */,
+				4A38A1591EEE737300CF2143 /* center_pauseButton.png in Resources */,
+				4A38A1581EEE737300CF2143 /* center_playButton.png in Resources */,
+				4A38A1631EEE9EC900CF2143 /* livePhoto_icon.png in Resources */,
+				4A38A1651EEE9F1000CF2143 /* video_icon.png in Resources */,
 				4A9CF0CA1EEA4084009ED1E7 /* playButton.png in Resources */,
 				4A9CF0AD1EE69A29009ED1E7 /* defaultImage.png in Resources */,
 				4A9CF0CC1EEA4084009ED1E7 /* pauseButton.png in Resources */,
@@ -311,6 +336,7 @@
 				4A9CF0BF1EE7B723009ED1E7 /* HQLPhotoPreViewController.m in Sources */,
 				4A9CF0931EE2B35B009ED1E7 /* HQLPhotoHelper.m in Sources */,
 				4A9CF0A31EE680FA009ED1E7 /* HQLPhotoPickerController.m in Sources */,
+				4A38A15C1EEE742100CF2143 /* UIImage+Color.m in Sources */,
 				4A9CF0871EE15CBC009ED1E7 /* HQLPhotoManager.m in Sources */,
 				4A9CF0621EE136E7009ED1E7 /* main.m in Sources */,
 			);

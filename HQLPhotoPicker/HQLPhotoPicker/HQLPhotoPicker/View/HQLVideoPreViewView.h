@@ -13,4 +13,7 @@
 
 @property (strong, nonatomic) AVPlayerItem *playerItem;
 
+- (void)controlViewShowAnimate;
+- (void)controlViewHideAnimate;
+
 @end

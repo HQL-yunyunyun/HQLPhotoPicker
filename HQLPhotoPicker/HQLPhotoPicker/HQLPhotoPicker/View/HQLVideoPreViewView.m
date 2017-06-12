@@ -10,6 +10,7 @@
 
 #import "HQLPhotoHelper.h"
 
+#import "UIImage+Color.h"
 #import "UIView+Frame.h"
 
 #define kControlViewHeight 50
@@ -19,6 +20,10 @@
 
 @property (strong, nonatomic) AVPlayerLayer *playerLayer; // 播放视频的layer
 @property (strong, nonatomic) AVPlayer *player; // 控制器
+@property (strong, nonatomic) id timeObserver;
+
+@property (assign, nonatomic) BOOL isSeeking; // 是否在设置视频播放时间
+@property (assign, nonatomic) BOOL playerIsPlayBeforeDrag; // 拖拽前的视频状态
 
 /* UI */
 
@@ -38,12 +43,33 @@
 
 #pragma mark - initialize method 
 
+- (instancetype)init {
+    if (self = [super init]) {
+        [self viewConfig];
+    }
+    return self;
+}
+
+- (instancetype)initWithFrame:(CGRect)frame {
+    if (self = [super initWithFrame:frame]) {
+        [self viewConfig];
+    }
+    return self;
+}
+
+- (void)awakeFromNib {
+    [super awakeFromNib];
+    [self viewConfig];
+}
+
 - (void)layoutSubviews {
     [super layoutSubviews];
     [self updateFrame];
 }
 
 - (void)dealloc {
+    [self.player removeTimeObserver:self.timeObserver];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     NSLog(@"dealloc ---> %@", NSStringFromClass([self class]));
 }
 
@@ -52,53 +78,103 @@
 - (void)viewConfig {
     [self centerPlayButton];
     [self controlView];
+    
+    [self setBackgroundColor:[UIColor blackColor]];
 }
 
 - (void)playButtonDidClick:(UIButton *)button {
-
+    self.playButton.selected = !button.isSelected;
+    self.centerPlayButton.selected = self.playButton.isSelected;
+    
+    [self.centerPlayButton setHidden:button.isSelected];
+    
+    if (button.isSelected) {
+        [self.player play];
+    } else {
+        [self.player pause];
+    }
 }
 
 - (void)sliderWillBeginDraging:(UISlider *)slider {
-
+    self.playerIsPlayBeforeDrag = self.playButton.isSelected; // 选中状态是播放
+    
+    self.playButton.selected = YES;
+    [self playButtonDidClick:self.playButton];
 }
 
 - (void)sliderDidDraging:(UISlider *)slider {
-
+    if (!self.isSeeking) {
+        self.isSeeking = YES;
+        [self updateTimeLabelWithIsUpdateSlider:NO];
+        
+        __weak typeof(self) weakSelf = self;
+        [self.player seekToTime:CMTimeMakeWithSeconds(slider.value, NSEC_PER_SEC) toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero completionHandler:^(BOOL finished) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                weakSelf.isSeeking = NO;
+            });
+        }];
+    }
 }
 
 - (void)sliderDidEndDraging:(UISlider *)slider {
+    self.playButton.selected = !self.playerIsPlayBeforeDrag;
+    [self playButtonDidClick:self.playButton];
+}
 
+- (void)updateTimeLabelWithIsUpdateSlider:(BOOL)yesOrNo {
+    NSInteger totalTime = CMTimeGetSeconds(self.playerItem.asset.duration);
+    [self.totalTimeLabel setText:[HQLPhotoHelper getNewTimeFromDurationSecond:totalTime]];
+    NSInteger currentTime = CMTimeGetSeconds(self.player.currentTime);
+    [self.currentTimeLabel setText:[HQLPhotoHelper getNewTimeFromDurationSecond:currentTime]];
+    if (yesOrNo) {
+        [self.slider setValue:currentTime animated:YES];
+    }
 }
 
 - (void)updateFrame {
     self.centerPlayButton.centerX = self.width * 0.5;
     self.centerPlayButton.centerY = self.height * 0.5;
     
-    self.controlView.y = self.height - kControlViewHeight;
-    self.controlView.width = self.width;
+    [self.controlView setFrame:CGRectMake(0, self.height - kControlViewHeight, self.width, kControlViewHeight)];
     
-    self.playButton.x = kMargin;
-    self.playButton.centerY = kControlViewHeight * 0.5;
-    
-    NSInteger totlaTime = CMTimeGetSeconds(self.playerItem.duration);
-    NSInteger currentTime = CMTimeGetSeconds(self.player.currentTime);
-    
-    [self.totalTimeLabel setWidth:1000];
-    self.totalTimeLabel.text = [HQLPhotoHelper getNewTimeFromDurationSecond:totlaTime];
-    [self.totalTimeLabel sizeToFit];
-    self.totalTimeLabel.centerY = kControlViewHeight * 0.5;
     self.totalTimeLabel.x = self.width - self.totalTimeLabel.width - kMargin;
     
-    self.currentTimeLabel.width = self.totalTimeLabel.width;
-    self.currentTimeLabel.height = self.totalTimeLabel.height;
     self.currentTimeLabel.x = CGRectGetMaxX(self.playButton.frame) + kMargin;
-    self.currentTimeLabel.centerY = kControlViewHeight * 0.5;
-    self.currentTimeLabel.text = [HQLPhotoHelper getNewTimeFromDurationSecond:currentTime];
     
-    self.slider.width = CGRectGetMaxX(self.currentTimeLabel.frame) - self.totalTimeLabel.x - 2 * kMargin;
-    self.slider.centerY = kControlViewHeight * 0.5;
+    self.slider.width = self.totalTimeLabel.x - CGRectGetMaxX(self.currentTimeLabel.frame) - 2 * kMargin;
     self.slider.x = CGRectGetMaxX(self.currentTimeLabel.frame) + kMargin;
-    [self.slider setValue:((CGFloat)currentTime / (CGFloat)totlaTime) animated:NO];
+    
+    // 更新时间
+    [self updateTimeLabelWithIsUpdateSlider:YES];
+}
+
+// 结束放映
+- (void)videoDidEndPlay {
+    [self.player seekToTime:kCMTimeZero];
+    self.playButton.selected = YES;
+    [self playButtonDidClick:self.playButton];
+}
+
+// 进入后台 --- 停止播放
+- (void)appliactionDidEnterBackground {
+    self.playButton.selected = YES;
+    [self playButtonDidClick:self.playButton];
+}
+
+- (void)controlViewShowAnimate {
+    [UIView animateWithDuration:0.3f animations:^{
+        self.controlView.y = self.height - kControlViewHeight;
+    } completion:^(BOOL finished) {
+        
+    }];
+}
+
+- (void)controlViewHideAnimate {
+    [UIView animateWithDuration:0.3f animations:^{
+        self.controlView.y = self.height;
+    } completion:^(BOOL finished) {
+        
+    }];
 }
 
 #pragma mark - setter
@@ -106,19 +182,39 @@
 - (void)setPlayerItem:(AVPlayerItem *)playerItem {
     _playerItem = playerItem;
     
-    if (!self.playerLayer) {
-        self.playerLayer = [[AVPlayerLayer alloc] init];
-        self.playerLayer.frame = self.bounds;
-        [self.layer addSublayer:self.playerLayer];
-        self.playerLayer.videoGravity = AVLayerVideoGravityResizeAspect;
+    if (self.player && self.timeObserver) {
+        [self.player removeTimeObserver:self.timeObserver];
+        self.player = nil;
+        self.timeObserver = nil;
     }
     
     if (playerItem) {
-        self.player = [AVPlayer playerWithPlayerItem:playerItem];
-        self.playerLayer.player = self.player;
         
-        self.slider.maximumValue = CMTimeGetSeconds(playerItem.duration);
-        self.slider.minimumValue = 0;
+        if (!self.playerLayer) {
+            self.playerLayer = [[AVPlayerLayer alloc] init];
+            self.playerLayer.frame = self.bounds;
+            [self.layer insertSublayer:self.playerLayer atIndex:0];
+            self.playerLayer.videoGravity = AVLayerVideoGravityResizeAspect;
+        }
+        
+        __weak typeof(self) weakSelf = self;
+        self.player = [AVPlayer playerWithPlayerItem:playerItem];
+        self.timeObserver = [self.player addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(.1f, NSEC_PER_SEC) queue:nil usingBlock:^(CMTime time) {
+            [weakSelf updateTimeLabelWithIsUpdateSlider:!weakSelf.isSeeking];
+        }];
+        
+        // 添加通知
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(videoDidEndPlay) name:AVPlayerItemDidPlayToEndTimeNotification object:playerItem];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
+        
+        self.playerLayer.player = self.player;
+        self.slider.maximumValue = (NSInteger)CMTimeGetSeconds(playerItem.asset.duration);
+    } else {
+        
+        [[NSNotificationCenter defaultCenter] removeObserver:self];
+        self.player = nil;
+        [self.playerLayer removeFromSuperlayer];
+        self.playerLayer = nil;
     }
 }
 
@@ -136,6 +232,12 @@
 - (UISlider *)slider {
     if (!_slider) {
         _slider = [[UISlider alloc] init];
+        [_slider setMinimumValue:0];
+        
+        [_slider setThumbImage:[UIImage drawCircularWithSize:15 insideColor:[UIColor whiteColor] oursideColor:[UIColor whiteColor]] forState:UIControlStateNormal];
+        [_slider setMinimumTrackTintColor:[UIColor whiteColor]];
+        
+        _slider.centerY = kControlViewHeight * 0.5;
         
         [_slider addTarget:self action:@selector(sliderWillBeginDraging:) forControlEvents:UIControlEventTouchDown];
         [_slider addTarget:self action:@selector(sliderDidDraging:) forControlEvents:UIControlEventValueChanged];
@@ -151,6 +253,11 @@
         _totalTimeLabel.font = [UIFont systemFontOfSize:12];
         _totalTimeLabel.textColor = [UIColor whiteColor];
         _totalTimeLabel.textAlignment = NSTextAlignmentCenter;
+        
+        [_totalTimeLabel setText:@"00:00"];
+        _totalTimeLabel.width = 1000;
+        [_totalTimeLabel sizeToFit];
+        _totalTimeLabel.centerY = kControlViewHeight * 0.5;
     }
     return _totalTimeLabel;
 }
@@ -161,6 +268,11 @@
         _currentTimeLabel.font = [UIFont systemFontOfSize:12];
         _currentTimeLabel.textColor = [UIColor whiteColor];
         _currentTimeLabel.textAlignment = NSTextAlignmentCenter;
+        
+        [_currentTimeLabel setText:@"00:00"];
+        _currentTimeLabel.width = 1000;
+        [_currentTimeLabel sizeToFit];
+        _currentTimeLabel.centerY = kControlViewHeight * 0.5;
     }
     return _currentTimeLabel;
 }
@@ -168,7 +280,8 @@
 - (UIButton *)playButton {
     if (!_playButton) {
         _playButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_playButton setFrame:CGRectMake(0, 0, 30, 30)];
+        [_playButton setFrame:CGRectMake(kMargin, 0, 30, 30)];
+        _playButton.centerY = kControlViewHeight * 0.5;
         
         [_playButton setImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"playButton" ofType:@"png"]] forState:UIControlStateNormal];
         [_playButton setImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"pauseButton" ofType:@"png"]] forState:UIControlStateSelected];
@@ -198,7 +311,7 @@
         _centerPlayButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_centerPlayButton setFrame:CGRectMake(0, 0, 50, 50)];
         
-        [_centerPlayButton setAlpha:0];
+        [_centerPlayButton setAlpha:0.6];
         
         [_centerPlayButton setImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"center_playButton" ofType:@"png"]] forState:UIControlStateNormal];
         [_centerPlayButton setImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"center_pauseButton" ofType:@"png"]] forState:UIControlStateSelected];
@@ -209,25 +322,5 @@
     }
     return _centerPlayButton;
 }
-
-/*
-- (AVPlayer *)player {
-    if (!_player) {
-        _player = [[AVPlayer alloc] init];
-    }
-    return _player;
-}
-
-- (AVPlayerLayer *)playerLayer {
-    if (!_playerLayer) {
-        _playerLayer = [AVPlayerLayer playerLayerWithPlayer:self.player];
-//        AVLayerVideoGravityResize
-//        AVLayerVideoGravityResizeAspect
-//        AVLayerVideoGravityResizeAspectFill
-        _playerLayer.frame = self.bounds;
-        [self.layer addSublayer:_playerLayer];
-    }
-    return _playerLayer;
-}*/
 
 @end

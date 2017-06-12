@@ -20,11 +20,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "HQLPhotoPicker/HQLPhotoPicker/Helper/HQLPhotoManager.m"
-            timestampString = "518518795.757957"
+            timestampString = "518957232.157928"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "150"
-            endingLineNumber = "150"
+            startingLineNumber = "153"
+            endingLineNumber = "153"
             landmarkName = "-fetchImageWithPHAsset:photoQuality:photoSize:isCaching:progressHandler:resultHandler:"
             landmarkType = "7">
          </BreakpointContent>
@@ -36,11 +36,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "HQLPhotoPicker/HQLPhotoPicker/Helper/HQLPhotoManager.m"
-            timestampString = "518518860.086167"
+            timestampString = "518957232.157928"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "177"
-            endingLineNumber = "177"
+            startingLineNumber = "180"
+            endingLineNumber = "180"
             landmarkName = "-fetchImageWithPHAsset:photoQuality:photoSize:isCaching:progressHandler:resultHandler:"
             landmarkType = "7">
          </BreakpointContent>

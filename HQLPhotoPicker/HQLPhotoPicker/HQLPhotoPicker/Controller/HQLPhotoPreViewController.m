@@ -8,6 +8,8 @@
 
 #import "HQLPhotoPreViewController.h"
 
+#import "HQLVideoPreViewView.h"
+
 #import "HQLPhotoModel.h"
 
 @interface HQLPhotoPreViewController ()
@@ -29,11 +31,23 @@
 - (void)setModel:(HQLPhotoModel *)model {
     _model = model;
     
-    [model requestOriginalImageWithProgressHandler:^(double progress, NSError * _Nullable error, BOOL * _Nonnull stop, NSDictionary * _Nullable info) {
+    if (model.mediaType == HQLPhotoModelMediaTypeVideo) {
         
-    } resultHandler:^(UIImage *originalImage, NSString *errorString) {
-        self.imageView.image = originalImage;
-    }];
+        HQLVideoPreViewView *view = [[HQLVideoPreViewView alloc] initWithFrame:self.view.bounds];
+        [self.view addSubview:view];
+        [model requestPlayerItemWithProgressHandler:^(double progress, NSError * _Nullable error, BOOL * _Nonnull stop, NSDictionary * _Nullable info) {
+            
+        } resultHandler:^(AVPlayerItem *playerItem, NSString *error) {
+            view.playerItem = playerItem;
+        }];
+        
+    } else {
+        [model requestOriginalImageWithProgressHandler:^(double progress, NSError * _Nullable error, BOOL * _Nonnull stop, NSDictionary * _Nullable info) {
+            
+        } resultHandler:^(UIImage *originalImage, NSString *errorString) {
+            self.imageView.image = originalImage;
+        }];
+    }
 }
 
 #pragma mark - getter

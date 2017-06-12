@@ -13,5 +13,6 @@
 @interface HQLPhotoPickerCell : UICollectionViewCell
 
 @property (strong, nonatomic) HQLPhotoModel *photoModel;
+@property (assign, nonatomic) BOOL isShowCheckButton;
 
 @end

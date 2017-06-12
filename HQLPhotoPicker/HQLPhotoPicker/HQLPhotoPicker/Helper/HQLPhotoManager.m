@@ -110,10 +110,13 @@
         switch (asset.mediaType) {
             case PHAssetMediaTypeImage: {
                 model.mediaType = HQLPhotoModelMediaTypePhoto;
-                if ([[asset valueForKey:@"filename"] hasSuffix:@"GIF"]) {
-                    model.mediaType = HQLPhotoModelMediaTypePhotoGif;
+                if (self.isGifOpen) {
+                    if ([[asset valueForKey:@"filename"] hasSuffix:@"GIF"]) {
+                        model.mediaType = HQLPhotoModelMediaTypePhotoGif;
+                    }
                 }
-                if (iOS9Later) {
+                
+                if (iOS9Later && self.isLivePhotoOpen) {
                     if (asset.mediaSubtypes == PHAssetMediaSubtypePhotoLive) {
                         model.mediaType = HQLPhotoModelMediaTypeLivePhoto;
                     }

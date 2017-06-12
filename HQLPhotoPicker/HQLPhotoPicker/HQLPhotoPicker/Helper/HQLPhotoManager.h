@@ -31,6 +31,8 @@ typedef enum {
 @property (strong, nonatomic) NSMutableArray <HQLPhotoAlbumModel *>*albumArray; // 保存相册 --- 第一个相册是所有图片
 @property (strong, nonatomic) NSMutableArray <NSString *>*selectedAssetIdentifierArray; // 选中的资源的标识符
 @property (assign, nonatomic) HQLPhotoManagerSelectedType selectedType; // 选择的样式
+@property (assign, nonatomic) BOOL isLivePhotoOpen; // 是否开启livePhoto
+@property (assign, nonatomic) BOOL isGifOpen; // 是否开启gif
 @property (strong, nonatomic) PHCachingImageManager *imageManager;
 
 + (instancetype)shareManager;

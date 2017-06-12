@@ -96,6 +96,28 @@
     }
 }
 
+- (void)requestPlayerItemWithProgressHandler:(PHAssetVideoProgressHandler)progressHandler resultHandler:(void (^)(AVPlayerItem *, NSString *))resultHandler {
+    if (self.mediaType == HQLPhotoModelMediaTypeVideo) {
+        [[HQLPhotoManager shareManager] fetchPlayerItemForVideo:self.asset progressHandler:^(double progress, NSError * _Nullable error, BOOL * _Nonnull stop, NSDictionary * _Nullable info) {
+            if (error) {
+                NSLog(@"fetch video error : %@", error);
+            }
+            NSLog(@"fetch viedo progress %g", progress);
+            progressHandler ? progressHandler(progress, error, stop, info) : nil;
+            
+        } resultHandler:^(AVPlayerItem *playerItem, NSDictionary *info) {
+            NSError *error = info[PHImageErrorKey];
+            if (error) {
+                
+            }
+            NSLog(@"info : %@", info);
+            resultHandler ? resultHandler(playerItem, [self getErrorStringWithError:error]) : nil;
+        }];
+    } else if (self.mediaType == HQLPhotoModelMediaTypeCameraVideo) {
+        resultHandler ? resultHandler([AVPlayerItem playerItemWithAsset:self.videoAsset], @"") : nil;
+    }
+}
+
 #pragma mark - tool
 
 - (void)fetchImageWithTragetSize:(CGSize)targetSize
