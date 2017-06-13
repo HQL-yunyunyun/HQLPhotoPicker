@@ -16,4 +16,8 @@
 - (void)controlViewShowAnimate;
 - (void)controlViewHideAnimate;
 
+- (void)playVideo; // 播放
+- (void)pauseVideo; // 暂停播放
+- (void)stopVideo; // 停止播放
+
 @end

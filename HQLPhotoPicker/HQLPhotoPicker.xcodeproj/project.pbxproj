@@ -37,6 +37,7 @@
 		4A9CF0C51EE95ED7009ED1E7 /* HQLVideoPreViewView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A9CF0C41EE95ED7009ED1E7 /* HQLVideoPreViewView.m */; };
 		4A9CF0CA1EEA4084009ED1E7 /* playButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 4A9CF0C61EEA4084009ED1E7 /* playButton.png */; };
 		4A9CF0CC1EEA4084009ED1E7 /* pauseButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 4A9CF0C81EEA4084009ED1E7 /* pauseButton.png */; };
+		4AC132D01EEFDC1200184999 /* UIImage+HQLExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AC132CF1EEFDC1200184999 /* UIImage+HQLExtension.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -86,6 +87,8 @@
 		4A9CF0C41EE95ED7009ED1E7 /* HQLVideoPreViewView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLVideoPreViewView.m; sourceTree = "<group>"; };
 		4A9CF0C61EEA4084009ED1E7 /* playButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = playButton.png; sourceTree = "<group>"; };
 		4A9CF0C81EEA4084009ED1E7 /* pauseButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pauseButton.png; sourceTree = "<group>"; };
+		4AC132CE1EEFDC1200184999 /* UIImage+HQLExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+HQLExtension.h"; sourceTree = "<group>"; };
+		4AC132CF1EEFDC1200184999 /* UIImage+HQLExtension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+HQLExtension.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -217,6 +220,8 @@
 				4A38A15B1EEE742100CF2143 /* UIImage+Color.m */,
 				4A9CF0991EE67CEB009ED1E7 /* UIView+Frame.h */,
 				4A9CF09A1EE67CEB009ED1E7 /* UIView+Frame.m */,
+				4AC132CE1EEFDC1200184999 /* UIImage+HQLExtension.h */,
+				4AC132CF1EEFDC1200184999 /* UIImage+HQLExtension.m */,
 			);
 			path = Lib;
 			sourceTree = "<group>";
@@ -324,6 +329,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4AC132D01EEFDC1200184999 /* UIImage+HQLExtension.m in Sources */,
 				4A9CF09B1EE67CEB009ED1E7 /* UIView+Frame.m in Sources */,
 				4A9CF08D1EE26E25009ED1E7 /* HQLPhotoModel.m in Sources */,
 				4A9CF0831EE15C71009ED1E7 /* AppDelegate.m in Sources */,

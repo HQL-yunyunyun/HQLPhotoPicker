@@ -13,7 +13,7 @@
 #import "UIView+Frame.h"
 
 #define kIconSize 30
-#define kCheckButtonSize 15
+#define kCheckButtonSize 20
 
 @interface HQLPhotoPickerCell ()
 
@@ -51,7 +51,9 @@
 }
 
 - (void)checkButtonDidClick:(UIButton *)button {
-
+    if ([self.delegate respondsToSelector:@selector(photoPickerCell:didClickCheckButton:)]) {
+        [self.delegate photoPickerCell:self didClickCheckButton:button];
+    }
 }
 
 #pragma mark - setter
@@ -67,10 +69,12 @@
     [photoModel requestThumbnailImage:^(UIImage *thumbnail, NSString *errorString) {
         weakSelf.imageView.image = thumbnail;
     }];
+    
+    [self.checkButton setSelected:photoModel.isSelected];
     // 都设置成隐藏
     [self.subviews makeObjectsPerformSelector:@selector(setHidden:) withObject:[NSNumber numberWithBool:YES]];
     [self.imageView setHidden:NO];
-//    [self.checkButton setHidden:!self.isShowCheckButton];
+    [self.checkButton setHidden:!self.isShowCheckButton];
     
     // 根据媒体类型 创建UI
     UIImage *icon = nil;

@@ -98,8 +98,7 @@
 - (void)sliderWillBeginDraging:(UISlider *)slider {
     self.playerIsPlayBeforeDrag = self.playButton.isSelected; // 选中状态是播放
     
-    self.playButton.selected = YES;
-    [self playButtonDidClick:self.playButton];
+    [self pauseVideo];
 }
 
 - (void)sliderDidDraging:(UISlider *)slider {
@@ -117,8 +116,11 @@
 }
 
 - (void)sliderDidEndDraging:(UISlider *)slider {
-    self.playButton.selected = !self.playerIsPlayBeforeDrag;
-    [self playButtonDidClick:self.playButton];
+    if (self.playerIsPlayBeforeDrag) {
+        [self playVideo];
+    } else {
+        [self pauseVideo];
+    }
 }
 
 - (void)updateTimeLabelWithIsUpdateSlider:(BOOL)yesOrNo {
@@ -150,15 +152,12 @@
 
 // 结束放映
 - (void)videoDidEndPlay {
-    [self.player seekToTime:kCMTimeZero];
-    self.playButton.selected = YES;
-    [self playButtonDidClick:self.playButton];
+    [self stopVideo];
 }
 
 // 进入后台 --- 停止播放
 - (void)appliactionDidEnterBackground {
-    self.playButton.selected = YES;
-    [self playButtonDidClick:self.playButton];
+    [self pauseVideo];
 }
 
 - (void)controlViewShowAnimate {
@@ -175,6 +174,22 @@
     } completion:^(BOOL finished) {
         
     }];
+}
+
+- (void)playVideo {
+    self.playButton.selected = NO;
+    [self playButtonDidClick:self.playButton];
+}
+
+- (void)pauseVideo {
+    self.playButton.selected = YES;
+    [self playButtonDidClick:self.playButton];
+}
+
+- (void)stopVideo {
+    [self.player seekToTime:kCMTimeZero];
+    self.playButton.selected = YES;
+    [self playButtonDidClick:self.playButton];
 }
 
 #pragma mark - setter

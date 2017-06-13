@@ -8,11 +8,19 @@
 
 #import <UIKit/UIKit.h>
 
-@class HQLPhotoModel;
+@class HQLPhotoModel, HQLPhotoPickerCell;
+
+@protocol HQLPhotoPickerCellDelegate <NSObject>
+
+@optional
+- (void)photoPickerCell:(HQLPhotoPickerCell *)cell didClickCheckButton:(UIButton *)checkButton;
+
+@end
 
 @interface HQLPhotoPickerCell : UICollectionViewCell
 
 @property (strong, nonatomic) HQLPhotoModel *photoModel;
 @property (assign, nonatomic) BOOL isShowCheckButton;
+@property (assign, nonatomic) id <HQLPhotoPickerCellDelegate>delegate;
 
 @end

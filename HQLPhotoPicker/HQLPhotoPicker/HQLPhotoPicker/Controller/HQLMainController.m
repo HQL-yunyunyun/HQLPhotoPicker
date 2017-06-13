@@ -126,6 +126,8 @@
     if (!_photoManager) {
         _photoManager = [HQLPhotoManager shareManager];
         _photoManager.selectedType = HQLPhotoManagerSelectedTypePhotoAndVideo;
+        _photoManager.isLivePhotoOpen = YES;
+        _photoManager.isGifOpen = YES;
     }
     return _photoManager;
 }
