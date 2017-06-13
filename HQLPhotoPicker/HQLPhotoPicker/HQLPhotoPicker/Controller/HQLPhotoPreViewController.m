@@ -8,7 +8,7 @@
 
 #import "HQLPhotoPreViewController.h"
 
-#import "HQLVideoPreViewView.h"
+#import "HQLPhotoPreviewView.h"
 
 #import "HQLPhotoModel.h"
 
@@ -24,6 +24,7 @@
     [super viewDidLoad];
     
     [self.view setBackgroundColor:[UIColor whiteColor]];
+    self.automaticallyAdjustsScrollViewInsets = NO;
 }
 
 #pragma mark - setter
@@ -31,22 +32,51 @@
 - (void)setModel:(HQLPhotoModel *)model {
     _model = model;
     
-    if (model.mediaType == HQLPhotoModelMediaTypeVideo) {
-        
-        HQLVideoPreViewView *view = [[HQLVideoPreViewView alloc] initWithFrame:self.view.bounds];
-        [self.view addSubview:view];
-        [model requestPlayerItemWithProgressHandler:^(double progress, NSError * _Nullable error, BOOL * _Nonnull stop, NSDictionary * _Nullable info) {
-            
-        } resultHandler:^(AVPlayerItem *playerItem, NSString *error) {
-            view.playerItem = playerItem;
-        }];
-        
-    } else {
-        [model requestOriginalImageWithProgressHandler:^(double progress, NSError * _Nullable error, BOOL * _Nonnull stop, NSDictionary * _Nullable info) {
-            
-        } resultHandler:^(UIImage *originalImage, NSString *errorString) {
-            self.imageView.image = originalImage;
-        }];
+    HQLPhotoPreviewView *previewView = [[HQLPhotoPreviewView alloc] initWithFrame:self.view.bounds];
+    [self.view addSubview:previewView];
+    
+    switch (model.mediaType) {
+        case HQLPhotoModelMediaTypePhoto:
+        case HQLPhotoModelMediaTypeCameraPhoto: {
+//            [model requestHighDefinitionImageWithProgressHandler:^(double progress, NSError * _Nullable error, BOOL * _Nonnull stop, NSDictionary * _Nullable info) {
+//                
+//            } resultHandler:^(UIImage *highDefinitionImage, NSString *error) {
+//                previewView.photo = highDefinitionImage;
+//            }];
+            [model requestOriginalImageWithProgressHandler:^(double progress, NSError * _Nullable error, BOOL * _Nonnull stop, NSDictionary * _Nullable info) {
+                
+            } resultHandler:^(UIImage *originalImage, NSString *error) {
+                previewView.photo = originalImage;
+            }];
+            break;
+        }
+        case HQLPhotoModelMediaTypePhotoGif: {
+            [model requestOriginalImageDataWithProgressHandler:^(double progress, NSError * _Nullable error, BOOL * _Nonnull stop, NSDictionary * _Nullable info) {
+                
+            } resultHandler:^(NSData *imageData, NSString *byteString, NSString *error) {
+                previewView.gifData = imageData;
+            }];
+            break;
+        }
+        case HQLPhotoModelMediaTypeLivePhoto: {
+            [model requestLivePhotoWithProgressHandler:^(double progress, NSError * _Nullable error, BOOL * _Nonnull stop, NSDictionary * _Nullable info) {
+                
+            } resultHandler:^(PHLivePhoto *livePhoto, NSString *error) {
+                previewView.livePhoto = livePhoto;
+            }];
+            break;
+        }
+        case HQLPhotoModelMediaTypeVideo:
+        case HQLPhotoModelMediaTypeCameraVideo: {
+            [model requestPlayerItemWithProgressHandler:^(double progress, NSError * _Nullable error, BOOL * _Nonnull stop, NSDictionary * _Nullable info) {
+                
+            } resultHandler:^(AVPlayerItem *playerItem, NSString *error) {
+                previewView.playItem = playerItem;
+            }];
+            break;
+        }
+        case HQLPhotoModelMediaTypeAudio: { break; }
+        case HQLPhotoModelMediaTypeUnKnow: { break; }
     }
 }
 

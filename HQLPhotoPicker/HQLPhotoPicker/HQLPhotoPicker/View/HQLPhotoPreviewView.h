@@ -30,5 +30,6 @@
 - (void)resetViewStatus; // 重置状态
 - (void)videoViewShowControlView; // 显示
 - (void)videoViewHideControlView; // 隐藏
+- (void)activityIndicatorViewAnimate:(BOOL)yesOrNo;
 
 @end

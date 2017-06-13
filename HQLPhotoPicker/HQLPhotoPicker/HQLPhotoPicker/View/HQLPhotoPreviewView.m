@@ -22,8 +22,9 @@
 @property (strong, nonatomic) PHLivePhotoView *livePhotoView; // 显示livePhoto
 @property (strong, nonatomic) HQLVideoPreViewView *videoView; // 显示video
 @property (strong, nonatomic) UIImageView *gifView; // 显示GIFView
+@property (strong, nonatomic) UIActivityIndicatorView *activityIndicatorView; // 显示器
 
-@property (assign, nonatomic) BOOL livePhotoViewIsAnimating;
+//@property (assign, nonatomic) BOOL livePhotoViewIsAnimating;
 
 @end
 
@@ -50,6 +51,11 @@
     [self viewConfig];
 }
 
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    [self updateFrame];
+}
+
 - (void)dealloc {
     NSLog(@"dealloc ---> %@", NSStringFromClass([self class]));
 }
@@ -59,6 +65,12 @@
 - (void)viewConfig {
     [self setBackgroundColor:[UIColor blackColor]];
     [self scrollView];
+    
+    [self photoView];
+    [self gifView];
+    [self videoView];
+    [self livePhotoView];
+    [self activityIndicatorView];
 }
 
 - (void)updateFrame {
@@ -98,7 +110,11 @@
         contentSize = self.livePhotoView.size;
     }
     
+    self.scrollView.frame = self.bounds;
     self.scrollView.contentSize = contentSize;
+    
+    self.activityIndicatorView.centerX = self.width * 0.5;
+    self.activityIndicatorView.centerY = self.height * 0.5;
 }
 
 // 根据目标size来获取相应的size
@@ -113,24 +129,54 @@
     return CGSizeMake(width, height);
 }
 
-// 重置属性 --- index : 0 - 全部重置 / 1 - 不重置photo / 2 - 不重置GIF / 3 - 不重置playItem / 4 - 不重置livePhoto
-- (void)resetPropertyWithOut:(NSInteger)index { // 重置所有参数
-    [self.scrollView.subviews makeObjectsPerformSelector:@selector(setHidden:) withObject:[NSNumber numberWithBool:YES]];
-    if (index != 1) {
-        self.photo = nil;
-        self.photoView.image = nil;
+// 重置属性
+- (void)resetProperty { // 重置所有参数
+    [self.scrollView.subviews enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [obj setHidden:YES];
+    }];
+    self.photo = nil;
+    self.photoView.image = nil;
+    
+    self.gifData = nil;
+    self.gifView.image = nil;
+
+    self.playItem = nil;
+    self.videoView.playerItem = nil;
+    
+    self.livePhoto = nil;
+    self.livePhotoView.livePhoto = nil;
+}
+
+- (void)resetViewStatus { // 重置状态
+    if (self.photo) { // 取消放大缩小状态
+        self.scrollView.zoomScale = 1.0;
     }
-    if (index != 2) {
-        self.gifData = nil;
-        self.gifView.image = nil;
+    if (self.playItem) {
+        [self.videoView stopVideo];
     }
-    if (index != 3) {
-        self.playItem = nil;
-        self.videoView.playerItem = nil;
+    if (self.livePhoto) {
+        [self.livePhotoView stopPlayback];
     }
-    if (index != 4) {
-        self.livePhoto = nil;
-        self.livePhotoView.livePhoto = nil;
+}
+
+- (void)videoViewHideControlView {
+    if (self.playItem) {
+        [self.videoView controlViewHideAnimate];
+    }
+}
+
+- (void)videoViewShowControlView {
+    if (self.playItem) {
+        [self.videoView controlViewShowAnimate];
+    }
+}
+
+- (void)activityIndicatorViewAnimate:(BOOL)yesOrNo {
+    if (yesOrNo) {
+        [self resetProperty];
+        [self.activityIndicatorView startAnimating];
+    } else {
+        [self.activityIndicatorView stopAnimating];
     }
 }
 
@@ -146,10 +192,8 @@
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGestureMethod:)];
     tap.numberOfTapsRequired = 1;
     [self.scrollView addGestureRecognizer:tap];
-    // 长按
-    UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressGestureMethod:)];
-    longPress.minimumPressDuration = 3.0;
-    [self.scrollView addGestureRecognizer:longPress];
+    
+    [tap requireGestureRecognizerToFail:doubleTap]; // 当doubleTap不起效的时候才会调用tap
 }
 
 // 单击
@@ -170,57 +214,90 @@
     }
 }
 
-// 长按
-- (void)longPressGestureMethod:(UILongPressGestureRecognizer *)gesture {
-    if (self.livePhoto) { // 播放
-        if (!self.livePhotoViewIsAnimating) {
-            self.livePhotoViewIsAnimating = YES;
-            [self.livePhotoView startPlaybackWithStyle:PHLivePhotoViewPlaybackStyleFull];
-        }
+#pragma mark - scroll view delegate
+
+- (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView {
+    if (self.photo) {
+        return self.photoView;
     }
+    return nil;
 }
 
 #pragma mark - live photo delegate
 
 - (void)livePhotoView:(PHLivePhotoView *)livePhotoView didEndPlaybackWithStyle:(PHLivePhotoViewPlaybackStyle)playbackStyle {
-    self.livePhotoViewIsAnimating = NO;
+    NSLog(@"live photo end play back");
 }
 
 #pragma mark - setter
 
 - (void)setPhoto:(UIImage *)photo {
-    [self resetPropertyWithOut:1];
+    if (!photo) {
+        _photo = nil;
+        return;
+    }
+    [self resetProperty];
+    [self activityIndicatorViewAnimate:NO];
     _photo = photo;
     self.photoView.image = photo;
+    [self.photoView setHidden:NO];
     
     [self updateFrame];
 }
 
 - (void)setGifData:(NSData *)gifData {
-    [self resetPropertyWithOut:2];
+    if (!gifData) {
+        _gifData = nil;
+        return;
+    }
+    [self resetProperty];
+    [self activityIndicatorViewAnimate:NO];
     _gifData = gifData;
     self.gifView.image = [UIImage imageWithData:gifData];
+    [self.gifView setHidden:NO];
     
     [self updateFrame];
 }
 
 - (void)setPlayItem:(AVPlayerItem *)playItem {
-    [self resetPropertyWithOut:3];
+    if (!playItem) {
+        _playItem = nil;
+        return;
+    }
+    [self resetProperty];
+    [self activityIndicatorViewAnimate:NO];
     _playItem = playItem;
     self.videoView.playerItem = playItem;
+    [self.videoView setHidden:NO];
     
     [self updateFrame];
 }
 
 - (void)setLivePhoto:(PHLivePhoto *)livePhoto {
-    [self resetPropertyWithOut:4];
+    if (!livePhoto) {
+        _livePhoto = nil;
+        return;
+    }
+    [self resetProperty];
+    [self activityIndicatorViewAnimate:NO];
     _livePhoto = livePhoto;
     self.livePhotoView.livePhoto = livePhoto;
+    [self.livePhotoView setHidden:NO];
     
     [self updateFrame];
 }
 
 #pragma mark - getter
+
+- (UIActivityIndicatorView *)activityIndicatorView {
+    if (!_activityIndicatorView) {
+        _activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+        _activityIndicatorView.hidesWhenStopped = YES;
+        
+        [self.scrollView addSubview:_activityIndicatorView];
+    }
+    return _activityIndicatorView;
+}
 
 - (UIScrollView *)scrollView {
     if (!_scrollView) {
@@ -239,6 +316,7 @@
     if (!_photoView) {
         _photoView = [[UIImageView alloc] initWithFrame:self.bounds];
         [_photoView setHidden:YES];
+        _photoView.userInteractionEnabled = YES;
         
         [self.scrollView addSubview:_photoView];
     }
@@ -270,6 +348,7 @@
     if (!_gifView) {
         _gifView = [[UIImageView alloc] initWithFrame:self.bounds];
         [_gifView setHidden:YES];
+        _gifView.userInteractionEnabled = YES;
         
         [self.scrollView addSubview:_gifView];
     }
