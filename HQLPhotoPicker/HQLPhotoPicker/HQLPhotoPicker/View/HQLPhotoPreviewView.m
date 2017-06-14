@@ -99,7 +99,7 @@
         self.gifView.centerY = self.height * 0.5;
         contentSize = self.gifView.size;
     }
-    if (self.playItem) {
+    if (self.playerItem) {
         self.videoView.frame = self.bounds;
         contentSize = self.videoView.size;
     }
@@ -140,7 +140,7 @@
     self.gifData = nil;
     self.gifView.image = nil;
 
-    self.playItem = nil;
+    self.playerItem = nil;
     self.videoView.playerItem = nil;
     
     self.livePhoto = nil;
@@ -151,7 +151,7 @@
     if (self.photo) { // 取消放大缩小状态
         self.scrollView.zoomScale = 1.0;
     }
-    if (self.playItem) {
+    if (self.playerItem) {
         [self.videoView stopVideo];
     }
     if (self.livePhoto) {
@@ -160,13 +160,13 @@
 }
 
 - (void)videoViewHideControlView {
-    if (self.playItem) {
+    if (self.playerItem) {
         [self.videoView controlViewHideAnimate];
     }
 }
 
 - (void)videoViewShowControlView {
-    if (self.playItem) {
+    if (self.playerItem) {
         [self.videoView controlViewShowAnimate];
     }
 }
@@ -259,15 +259,15 @@
     [self updateFrame];
 }
 
-- (void)setPlayItem:(AVPlayerItem *)playItem {
-    if (!playItem) {
-        _playItem = nil;
+- (void)setPlayerItem:(AVPlayerItem *)playerItem {
+    if (!playerItem) {
+        _playerItem = nil;
         return;
     }
     [self resetProperty];
     [self activityIndicatorViewAnimate:NO];
-    _playItem = playItem;
-    self.videoView.playerItem = playItem;
+    _playerItem = playerItem;
+    self.videoView.playerItem = playerItem;
     [self.videoView setHidden:NO];
     
     [self updateFrame];

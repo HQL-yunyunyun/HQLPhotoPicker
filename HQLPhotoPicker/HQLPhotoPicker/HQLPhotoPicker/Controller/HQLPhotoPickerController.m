@@ -54,7 +54,8 @@
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     HQLPhotoPreViewController *controller = [[HQLPhotoPreViewController alloc] init];
-    controller.model = self.albumModel.photoArray[indexPath.item];
+    controller.model = self.albumModel;
+    [controller setCurrentIndex:indexPath.item animated:NO];
     [self.navigationController pushViewController:controller animated:YES];
 }
 

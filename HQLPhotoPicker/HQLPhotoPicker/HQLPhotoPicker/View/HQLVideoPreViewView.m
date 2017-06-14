@@ -134,6 +134,8 @@
 }
 
 - (void)updateFrame {
+    self.playerLayer.frame = self.bounds;
+    
     self.centerPlayButton.centerX = self.width * 0.5;
     self.centerPlayButton.centerY = self.height * 0.5;
     

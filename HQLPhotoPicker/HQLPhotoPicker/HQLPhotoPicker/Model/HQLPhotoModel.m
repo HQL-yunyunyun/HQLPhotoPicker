@@ -118,6 +118,10 @@
     }
 }
 
+- (void)cancelRequest {
+    [[HQLPhotoManager shareManager].imageManager cancelImageRequest:self.requestID];
+}
+
 #pragma mark - tool
 
 - (void)fetchImageWithTragetSize:(CGSize)targetSize

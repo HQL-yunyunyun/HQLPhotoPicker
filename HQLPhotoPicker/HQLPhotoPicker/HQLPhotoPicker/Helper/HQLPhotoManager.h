@@ -40,6 +40,11 @@ typedef enum {
 - (void)requestPhotoAuthorizationWithCompleteHandler:(void(^)(PHAuthorizationStatus status))completeHandler;
 - (PHAuthorizationStatus)currentPhotoAuthorizationStatus;
 
+/* 跟选择图片的一些操作(因为照片会重复(每一个相册都有可能存在一样的照片),所以就需要保存一个全局的已选择照片的数组) */
+- (void)addSelectedAssetWithIdentifier:(NSString *)identifier;
+- (void)removeSelectedAssetWithIdentifier:(NSString *)identifier;
+- (BOOL)getAssetIsSelectedWithIdentifier:(NSString *)identifier;
+
 /* fetch method */
 
 /**

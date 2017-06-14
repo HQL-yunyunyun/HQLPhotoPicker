@@ -24,6 +24,8 @@
 
 @property (strong, nonatomic) UIButton *checkButton;
 
+@property (strong, nonatomic) UIView *animateView; // 动画的View
+
 @end
 
 @implementation HQLPhotoPickerCell
@@ -38,8 +40,17 @@
 
 #pragma mark - event
 
+- (void)viewConfig {
+    [self imageView];
+    [self animateView];
+}
+
 - (void)updateFrame {
     [self.imageView setFrame:self.bounds];
+    
+    [self.animateView setFrame:self.bounds];
+    
+    self.animateView.layer.borderWidth = self.width * 0.05;
     
     self.typeIcon.y = self.height - kIconSize;
     
@@ -54,6 +65,17 @@
     if ([self.delegate respondsToSelector:@selector(photoPickerCell:didClickCheckButton:)]) {
         [self.delegate photoPickerCell:self didClickCheckButton:button];
     }
+}
+
+- (void)setSelectedAnimation:(BOOL)isSelected animated:(BOOL)animated {
+    if (!self.isShowSelectedBorder) {
+        return;
+    }
+    NSTimeInterval time = animated ? .3 : 0;
+    CGFloat alpha = isSelected ? 1 : 0;
+    [UIView animateWithDuration:time animations:^{
+        [self.animateView setAlpha:alpha];
+    }];
 }
 
 #pragma mark - setter
@@ -71,9 +93,13 @@
     }];
     
     [self.checkButton setSelected:photoModel.isSelected];
+    [self setSelectedAnimation:photoModel.isSelected animated:NO];
     // 都设置成隐藏
-    [self.subviews makeObjectsPerformSelector:@selector(setHidden:) withObject:[NSNumber numberWithBool:YES]];
+    [self.subviews enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [obj setHidden:YES];
+    }];
     [self.imageView setHidden:NO];
+    [self.animateView setHidden:NO];
     [self.checkButton setHidden:!self.isShowCheckButton];
     
     // 根据媒体类型 创建UI
@@ -109,10 +135,22 @@
 
 #pragma mark - getter
 
+- (UIView *)animateView {
+    if (!_animateView) {
+        _animateView = [[UIView alloc] initWithFrame:self.bounds];
+        [_animateView setBackgroundColor:[UIColor clearColor]];
+        _animateView.layer.borderColor = [UIColor colorWithRed:0 green:(211 / 255.0) blue:(221 / 255.0) alpha:1].CGColor;
+        _animateView.alpha = 0;
+        
+        [self addSubview:_animateView];
+    }
+    return _animateView;
+}
+
 - (UIImageView *)imageView {
     if (!_imageView) {
         _imageView = [[UIImageView alloc] initWithFrame:self.bounds];
-        [self addSubview:_imageView];
+        [self insertSubview:_imageView atIndex:0];
     }
     return _imageView;
 }

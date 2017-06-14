@@ -23,7 +23,7 @@
 
 @property (strong, nonatomic) UIImage *photo;
 @property (strong, nonatomic) NSData *gifData;
-@property (strong, nonatomic) AVPlayerItem *playItem;
+@property (strong, nonatomic) AVPlayerItem *playerItem;
 @property (strong, nonatomic) PHLivePhoto *livePhoto;
 @property (assign, nonatomic) id <HQLPhotoPreviewViewDelegate>delegate;
 

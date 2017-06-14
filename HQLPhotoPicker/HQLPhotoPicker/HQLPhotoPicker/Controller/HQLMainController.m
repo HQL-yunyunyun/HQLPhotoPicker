@@ -10,6 +10,7 @@
 #import "UIView+Frame.h"
 
 #import "HQLPhotoPickerController.h"
+#import "HQLPhotoPickerModalController.h"
 
 #import "HQLPhotoManager.h"
 #import "HQLPhotoAlbumModel.h"
@@ -76,9 +77,14 @@
 #pragma mark - table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    HQLPhotoPickerController *controller = [[HQLPhotoPickerController alloc] init];
+//    HQLPhotoPickerController *controller = [[HQLPhotoPickerController alloc] init];
+//    controller.albumModel = self.photoManager.albumArray[indexPath.row];
+//    [self.navigationController pushViewController:controller animated:YES];
+    HQLPhotoPickerModalController *controller = [[HQLPhotoPickerModalController alloc] init];
     controller.albumModel = self.photoManager.albumArray[indexPath.row];
-    [self.navigationController pushViewController:controller animated:YES];
+    [self presentViewController:controller animated:YES completion:^{
+        
+    }];
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {

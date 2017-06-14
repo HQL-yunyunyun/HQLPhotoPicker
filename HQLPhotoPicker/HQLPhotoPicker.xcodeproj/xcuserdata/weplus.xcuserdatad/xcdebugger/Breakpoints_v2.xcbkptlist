@@ -20,11 +20,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "HQLPhotoPicker/HQLPhotoPicker/Helper/HQLPhotoManager.m"
-            timestampString = "518957232.157928"
+            timestampString = "519130372.137318"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "153"
-            endingLineNumber = "153"
+            startingLineNumber = "175"
+            endingLineNumber = "175"
             landmarkName = "-fetchImageWithPHAsset:photoQuality:photoSize:isCaching:progressHandler:resultHandler:"
             landmarkType = "7">
          </BreakpointContent>
@@ -36,12 +36,28 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "HQLPhotoPicker/HQLPhotoPicker/Helper/HQLPhotoManager.m"
-            timestampString = "518957232.157928"
+            timestampString = "519130372.137318"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "180"
-            endingLineNumber = "180"
+            startingLineNumber = "202"
+            endingLineNumber = "202"
             landmarkName = "-fetchImageWithPHAsset:photoQuality:photoSize:isCaching:progressHandler:resultHandler:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "HQLPhotoPicker/HQLPhotoPicker/View/HQLVideoPreViewView.m"
+            timestampString = "519115071.782046"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "200"
+            endingLineNumber = "200"
+            landmarkName = "-setPlayerItem:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

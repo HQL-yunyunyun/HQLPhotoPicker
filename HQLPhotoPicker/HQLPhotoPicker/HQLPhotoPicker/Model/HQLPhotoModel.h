@@ -30,11 +30,11 @@ typedef enum : NSUInteger {
 
 /* 这是自己拍时的资源 */
 @property (strong, nonatomic) AVAsset *videoAsset; // 拍摄的视频 资源
-//@property (strong, nonatomic) AVPlayerItem *playerItem;
 @property (assign, nonatomic) NSString *durationTime;
 @property (strong, nonatomic) UIImage *cameraPhoto; // 拍照 的照片
 
 @property (assign, nonatomic) BOOL isSelected; // 是否选中
+@property (assign, nonatomic) PHImageRequestID requestID; //选择图片时的requestID
 
 /* fetch method  */
 - (void)requestThumbnailImage:(void(^)(UIImage *thumbnail, NSString *error))resultHandler; // 缩略图
@@ -44,5 +44,7 @@ typedef enum : NSUInteger {
 //- (void)requestGifImageDataWithProgressHandler:(PHAssetImageProgressHandler)progressHandler resultHandler:(void(^)(NSData *gifImageData, NSString *byteString))resultHandler; // 获取gifData
 - (void)requestLivePhotoWithProgressHandler:(PHAssetImageProgressHandler)progressHandler resultHandler:(void(^)(PHLivePhoto *livePhoto, NSString *error))resultHandler; // 获取livePhoto
 - (void)requestPlayerItemWithProgressHandler:(PHAssetVideoProgressHandler)progressHandler resultHandler:(void(^)(AVPlayerItem *playerItem, NSString *error))resultHandler;
+
+- (void)cancelRequest; // 取消选择
 
 @end

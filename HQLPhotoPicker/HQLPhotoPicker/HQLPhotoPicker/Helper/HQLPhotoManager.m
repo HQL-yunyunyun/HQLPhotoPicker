@@ -57,6 +57,27 @@
     return [PHPhotoLibrary authorizationStatus];
 }
 
+- (void)addSelectedAssetWithIdentifier:(NSString *)identifier {
+    if (![self getAssetIsSelectedWithIdentifier:identifier]) {
+        [self.selectedAssetIdentifierArray addObject:identifier];
+    }
+}
+
+- (void)removeSelectedAssetWithIdentifier:(NSString *)identifier {
+    if ([self getAssetIsSelectedWithIdentifier:identifier]) {
+        [self.selectedAssetIdentifierArray removeObject:identifier];
+    }
+}
+
+- (BOOL)getAssetIsSelectedWithIdentifier:(NSString *)identifier {
+    for (NSString *ID in self.selectedAssetIdentifierArray) {
+        if ([identifier isEqualToString:ID]) {
+            return YES;
+        }
+    }
+    return NO;
+}
+
 #pragma mark - fetch method
 
 - (void)fetchAllAlbumWithCompleteBlock:(void(^)(NSMutableArray <HQLPhotoAlbumModel *>*albumArray))completeBlock {
@@ -106,6 +127,7 @@
         PHAsset *asset = photoResult[i];
         model.asset = asset;
         model.assetLocalizationIdentifer = asset.localIdentifier;
+        model.isSelected = [self getAssetIsSelectedWithIdentifier:model.assetLocalizationIdentifer];
         
         switch (asset.mediaType) {
             case PHAssetMediaTypeImage: {

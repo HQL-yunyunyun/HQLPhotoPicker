@@ -9,16 +9,21 @@
 #import "HQLPhotoPreViewController.h"
 
 #import "HQLPhotoPreviewView.h"
-
+#import "HQLPreviewView.h"
 #import "HQLPhotoModel.h"
+#import "HQLPhotoAlbumModel.h"
 
-@interface HQLPhotoPreViewController ()
+@interface HQLPhotoPreViewController () <HQLPreviewViewDelegate, HQLPhotoPreviewViewDelegate>
 
-@property (strong, nonatomic) UIImageView *imageView;
+@property (strong, nonatomic) HQLPreviewView *previewView;
+
+//@property (assign, nonatomic) BOOL 
 
 @end
 
 @implementation HQLPhotoPreViewController
+
+#pragma mark - life cycle
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -27,26 +32,45 @@
     self.automaticallyAdjustsScrollViewInsets = NO;
 }
 
-#pragma mark - setter
+- (void)dealloc {
+    NSLog(@"dealloc ---> %@", NSStringFromClass([self class]));
+}
 
-- (void)setModel:(HQLPhotoModel *)model {
-    _model = model;
-    
-    HQLPhotoPreviewView *previewView = [[HQLPhotoPreviewView alloc] initWithFrame:self.view.bounds];
-    [self.view addSubview:previewView];
+#pragma mark - event
+
+- (void)setCurrentIndex:(NSUInteger)currentIndex animated:(BOOL)animated {
+    [self.previewView setCurrentIndex:currentIndex animated:animated];
+}
+
+#pragma mark - photo preview view delegate
+
+- (void)photoPreviewViewDidClick:(HQLPhotoPreviewView *)previewView {
+    [self.navigationController.navigationBar setHidden:!self.navigationController.navigationBar.isHidden];
+    if (self.navigationController.navigationBar.isHidden) {
+        [previewView videoViewHideControlView];
+    } else {
+        [previewView videoViewShowControlView];
+    }
+}
+
+#pragma mark - preview View delegate
+
+- (NSUInteger)numberOfPhotos:(HQLPreviewView *)previewView {
+    return self.model.count;
+}
+
+- (void)previewView:(HQLPreviewView *)previewView renderPhotoPreviewView:(HQLPhotoPreviewView *)photoPreviewView atIndex:(NSUInteger)index {
+    HQLPhotoModel *model = self.model.photoArray[index];
+    [photoPreviewView activityIndicatorViewAnimate:YES];
+    photoPreviewView.delegate = self;
     
     switch (model.mediaType) {
         case HQLPhotoModelMediaTypePhoto:
         case HQLPhotoModelMediaTypeCameraPhoto: {
-//            [model requestHighDefinitionImageWithProgressHandler:^(double progress, NSError * _Nullable error, BOOL * _Nonnull stop, NSDictionary * _Nullable info) {
-//                
-//            } resultHandler:^(UIImage *highDefinitionImage, NSString *error) {
-//                previewView.photo = highDefinitionImage;
-//            }];
-            [model requestOriginalImageWithProgressHandler:^(double progress, NSError * _Nullable error, BOOL * _Nonnull stop, NSDictionary * _Nullable info) {
+            [model requestHighDefinitionImageWithProgressHandler:^(double progress, NSError * _Nullable error, BOOL * _Nonnull stop, NSDictionary * _Nullable info) {
                 
-            } resultHandler:^(UIImage *originalImage, NSString *error) {
-                previewView.photo = originalImage;
+            } resultHandler:^(UIImage *highDefinitionImage, NSString *error) {
+                photoPreviewView.photo = highDefinitionImage;
             }];
             break;
         }
@@ -54,7 +78,7 @@
             [model requestOriginalImageDataWithProgressHandler:^(double progress, NSError * _Nullable error, BOOL * _Nonnull stop, NSDictionary * _Nullable info) {
                 
             } resultHandler:^(NSData *imageData, NSString *byteString, NSString *error) {
-                previewView.gifData = imageData;
+                photoPreviewView.gifData = imageData;
             }];
             break;
         }
@@ -62,7 +86,7 @@
             [model requestLivePhotoWithProgressHandler:^(double progress, NSError * _Nullable error, BOOL * _Nonnull stop, NSDictionary * _Nullable info) {
                 
             } resultHandler:^(PHLivePhoto *livePhoto, NSString *error) {
-                previewView.livePhoto = livePhoto;
+                photoPreviewView.livePhoto = livePhoto;
             }];
             break;
         }
@@ -71,7 +95,8 @@
             [model requestPlayerItemWithProgressHandler:^(double progress, NSError * _Nullable error, BOOL * _Nonnull stop, NSDictionary * _Nullable info) {
                 
             } resultHandler:^(AVPlayerItem *playerItem, NSString *error) {
-                previewView.playItem = playerItem;
+                photoPreviewView.playerItem = playerItem;
+                NSLog(@"playerItem %@", playerItem);
             }];
             break;
         }
@@ -80,15 +105,28 @@
     }
 }
 
+- (HQLPhotoModelMediaType)previewView:(HQLPreviewView *)previewView assetTypeAtIndex:(NSUInteger)index {
+    HQLPhotoModel *photoModel = self.model.photoArray[index];
+    return photoModel.mediaType;
+}
+
+#pragma mark - setter
+
+- (void)setModel:(HQLPhotoAlbumModel *)model {
+    _model = model;
+    [self.previewView reloadData];
+}
+
 #pragma mark - getter
 
-- (UIImageView *)imageView {
-    if (!_imageView) {
-        _imageView = [[UIImageView alloc] initWithFrame:self.view.bounds];
+- (HQLPreviewView *)previewView {
+    if (!_previewView) {
+        _previewView = [[HQLPreviewView alloc] initWithFrame:self.view.bounds];
+        _previewView.delegate = self;
         
-        [self.view addSubview:_imageView];
+        [self.view addSubview:_previewView];
     }
-    return _imageView;
+    return _previewView;
 }
 
 @end

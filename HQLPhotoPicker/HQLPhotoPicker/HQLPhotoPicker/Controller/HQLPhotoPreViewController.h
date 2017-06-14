@@ -8,10 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
-@class HQLPhotoModel;
+@class HQLPhotoAlbumModel;
 
 @interface HQLPhotoPreViewController : UIViewController
 
-@property (strong, nonatomic) HQLPhotoModel *model;
+@property (strong, nonatomic) HQLPhotoAlbumModel *model;
+
+- (void)setCurrentIndex:(NSUInteger)currentIndex animated:(BOOL)animated;
 
 @end
