@@ -33,6 +33,8 @@ typedef enum : NSUInteger {
 @property (assign, nonatomic) NSString *durationTime;
 @property (strong, nonatomic) UIImage *cameraPhoto; // 拍照 的照片
 
+// 获取目标的资源是否成功(photo / gif / data / livePhoto / playerItem) --- 主要是针对在iCloud上的资源
+@property (assign, nonatomic) BOOL targetAssetIsRequestSuccess;
 @property (assign, nonatomic) BOOL isSelected; // 是否选中
 @property (assign, nonatomic) PHImageRequestID requestID; //选择图片时的requestID
 

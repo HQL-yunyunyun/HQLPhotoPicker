@@ -24,6 +24,8 @@
 @property (strong, nonatomic) UIImageView *gifView; // 显示GIFView
 @property (strong, nonatomic) UIActivityIndicatorView *activityIndicatorView; // 显示器
 
+@property (strong, nonatomic) UIImageView *thumbnailView;
+
 //@property (assign, nonatomic) BOOL livePhotoViewIsAnimating;
 
 @end
@@ -65,6 +67,7 @@
 - (void)viewConfig {
     [self setBackgroundColor:[UIColor blackColor]];
     [self scrollView];
+    [self thumbnailView];
     
     [self photoView];
     [self gifView];
@@ -75,6 +78,7 @@
 
 - (void)updateFrame {
     self.scrollView.maximumZoomScale = 0.0;
+    
     // 设置frame
     CGSize contentSize = CGSizeZero;
     if (self.photo) {
@@ -108,6 +112,12 @@
         self.livePhotoView.centerX = self.width * 0.5;
         self.livePhotoView.centerY = self.height * 0.5;
         contentSize = self.livePhotoView.size;
+    }
+    if (self.thumbnail) {
+        self.thumbnailView.size = [self getRightSizeWithSize:self.thumbnail.size];
+        self.thumbnailView.centerX = self.width * 0.5;
+        self.thumbnailView.centerY = self.height * 0.5;
+        contentSize = self.thumbnailView.size;
     }
     
     self.scrollView.frame = self.bounds;
@@ -145,6 +155,11 @@
     
     self.livePhoto = nil;
     self.livePhotoView.livePhoto = nil;
+    
+    self.thumbnail = nil;
+    self.thumbnailView.image = nil;
+    
+    [self activityIndicatorViewAnimate:NO];
 }
 
 - (void)resetViewStatus { // 重置状态
@@ -174,6 +189,7 @@
 - (void)activityIndicatorViewAnimate:(BOOL)yesOrNo {
     if (yesOrNo) {
         [self resetProperty];
+        [self.activityIndicatorView setHidden:NO];
         [self.activityIndicatorView startAnimating];
     } else {
         [self.activityIndicatorView stopAnimating];
@@ -206,11 +222,19 @@
 // 双击
 - (void)doubleTapGestureMethod:(UITapGestureRecognizer *)gesture {
     if (self.photo) { // 只适用于photo中
-        CGFloat scale = self.photo.size.width / self.photoView.width;
+        CGFloat scale = self.width / self.photoView.width;
         if (self.photoView.width > self.photoView.height) { // 优先满足小的一方 --- height
-            scale = self.photo.size.height / self.photoView.height;
+            scale = self.height / self.photoView.height;
         }
-        [self.scrollView setZoomScale:scale animated:YES];
+        [self.scrollView setZoomScale:scale animated:NO];
+        if (scale != 1) {
+            self.photoView.centerX = self.scrollView.contentSize.width * 0.5;
+            self.photoView.centerY = self.scrollView.contentSize.height * 0.5;
+        } else {
+            self.photoView.centerX = self.width * 0.5;
+            self.photoView.centerY = self.height * 0.5;
+        }
+        
     }
 }
 
@@ -237,7 +261,6 @@
         return;
     }
     [self resetProperty];
-    [self activityIndicatorViewAnimate:NO];
     _photo = photo;
     self.photoView.image = photo;
     [self.photoView setHidden:NO];
@@ -251,7 +274,6 @@
         return;
     }
     [self resetProperty];
-    [self activityIndicatorViewAnimate:NO];
     _gifData = gifData;
     self.gifView.image = [UIImage imageWithData:gifData];
     [self.gifView setHidden:NO];
@@ -265,7 +287,6 @@
         return;
     }
     [self resetProperty];
-    [self activityIndicatorViewAnimate:NO];
     _playerItem = playerItem;
     self.videoView.playerItem = playerItem;
     [self.videoView setHidden:NO];
@@ -279,7 +300,6 @@
         return;
     }
     [self resetProperty];
-    [self activityIndicatorViewAnimate:NO];
     _livePhoto = livePhoto;
     self.livePhotoView.livePhoto = livePhoto;
     [self.livePhotoView setHidden:NO];
@@ -287,11 +307,40 @@
     [self updateFrame];
 }
 
+- (void)setThumbnail:(UIImage *)thumbnail {
+    if (!thumbnail) {
+        _thumbnail = nil;
+        return;
+    }
+    [self resetProperty];
+    _thumbnail = thumbnail;
+    self.thumbnailView.image = thumbnail;
+    [self.thumbnailView setHidden:NO];
+    
+    [self updateFrame];
+}
+
+- (void)setVideoViewThumbnail:(UIImage *)thumbnail {
+    [self resetProperty];
+    [self.videoView setHidden:NO];
+    [self.videoView setThumbnail:thumbnail];
+}
+
 #pragma mark - getter
+
+- (UIImageView *)thumbnailView {
+    if (!_thumbnailView) {
+        _thumbnailView = [[UIImageView alloc] initWithFrame:self.bounds];
+        [_thumbnailView setHidden:YES];
+        
+        [self.scrollView insertSubview:_thumbnailView atIndex:0];
+    }
+    return _thumbnailView;
+}
 
 - (UIActivityIndicatorView *)activityIndicatorView {
     if (!_activityIndicatorView) {
-        _activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+        _activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
         _activityIndicatorView.hidesWhenStopped = YES;
         
         [self.scrollView addSubview:_activityIndicatorView];

@@ -13,6 +13,8 @@
 
 @property (strong, nonatomic) AVPlayerItem *playerItem;
 
+@property (strong, nonatomic) UIImage *thumbnail; // 显示缩略图
+
 - (void)controlViewShowAnimate;
 - (void)controlViewHideAnimate;
 

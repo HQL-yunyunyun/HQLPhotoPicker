@@ -41,6 +41,8 @@
     
     [self previewView];
     [self collectionView];
+    [self closeButton];
+    [self confirmButton];
 }
 
 - (void)dealloc {
@@ -48,6 +50,14 @@
 }
 
 #pragma mark - event
+
+- (void)closeButtonDidClick:(UIButton *)button {
+
+}
+
+- (void)confirmButtonDidClick:(UIButton *)button {
+
+}
 
 #pragma mark - collection delegate
 
@@ -99,22 +109,10 @@
 
 - (void)previewView:(HQLPreviewView *)previewView renderPhotoPreviewView:(HQLPhotoPreviewView *)photoPreviewView atIndex:(NSUInteger)index {
     [photoPreviewView activityIndicatorViewAnimate:YES];
-}
-
-- (void)previewView:(HQLPreviewView *)previewView willDisplayPhotoPreviewView:(HQLPhotoPreviewView *)photoPreviewView atIndex:(NSUInteger)index {
     
-}
-
-- (void)previewView:(HQLPreviewView *)previewView didEndDisplayPhotoPreviewView:(HQLPhotoPreviewView *)photoPreviewView atIndex:(NSUInteger)index {
-    HQLPhotoModel *model = self.albumModel.photoArray[index];
-    [model cancelRequest];
+//    NSLog(@"create cell : %ld", index);
     
-    NSLog(@"did end display : %ld", index);
-}
-
-- (void)previewView:(HQLPreviewView *)previewView didDisplayPhotoPreviewView:(HQLPhotoPreviewView *)photoPreviewView atIndex:(NSUInteger)index {
     HQLPhotoModel *model = self.albumModel.photoArray[index];
-    [photoPreviewView activityIndicatorViewAnimate:YES];
     photoPreviewView.delegate = self;
     
     switch (model.mediaType) {
@@ -149,7 +147,6 @@
                 
             } resultHandler:^(AVPlayerItem *playerItem, NSString *error) {
                 photoPreviewView.playerItem = playerItem;
-                NSLog(@"playerItem %@", playerItem);
             }];
             break;
         }
@@ -157,7 +154,25 @@
         case HQLPhotoModelMediaTypeUnKnow: { break; }
     }
     
-    NSLog(@"will display : %ld", index);
+}
+
+- (void)previewView:(HQLPreviewView *)previewView willDisplayPhotoPreviewView:(HQLPhotoPreviewView *)photoPreviewView atIndex:(NSUInteger)index {
+    
+//    HQLPhotoModel *model = self.albumModel.photoArray[index];
+//    if (model.mediaType == HQLPhotoModelMediaTypeVideo || model.mediaType == HQLPhotoModelMediaTypeCameraVideo) {
+//        [photoPreviewView setVideoViewThumbnail:model.thumbnailImage];
+//    } else {
+//        [photoPreviewView setThumbnail:model.thumbnailImage];
+//    }
+}
+
+- (void)previewView:(HQLPreviewView *)previewView didEndDisplayPhotoPreviewView:(HQLPhotoPreviewView *)photoPreviewView atIndex:(NSUInteger)index {
+    HQLPhotoModel *model = self.albumModel.photoArray[index];
+    [model cancelRequest];
+}
+
+- (void)previewView:(HQLPreviewView *)previewView didDisplayPhotoPreviewView:(HQLPhotoPreviewView *)photoPreviewView atIndex:(NSUInteger)index {
+    
 }
 
 - (HQLPhotoModelMediaType)previewView:(HQLPreviewView *)previewView assetTypeAtIndex:(NSUInteger)index {
@@ -180,6 +195,33 @@
 }
 
 #pragma mark - getter
+
+- (UIButton *)closeButton {
+    if (!_closeButton) {
+        _closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_closeButton setImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"closeButton" ofType:@"png"]] forState:UIControlStateNormal];
+        [_closeButton setFrame:CGRectMake(16, 36, 17, 17)];
+        
+        [_closeButton addTarget:self action:@selector(closeButtonDidClick:) forControlEvents:UIControlEventTouchUpInside];
+        
+        [self.view addSubview:_closeButton];
+    }
+    return _closeButton;
+}
+
+- (UIButton *)confirmButton {
+    if (!_confirmButton) {
+        _confirmButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_confirmButton setImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"confirmButton" ofType:@"png"]] forState:UIControlStateNormal];
+        [_confirmButton setFrame:CGRectMake(self.view.width - 16 - 24, 36, 24, 17)];
+        
+        [_confirmButton addTarget:self action:@selector(confirmButtonDidClick:) forControlEvents:UIControlEventTouchUpInside];
+        
+        [self.view addSubview:_confirmButton];
+        
+    }
+    return _confirmButton;
+}
 
 - (HQLPreviewView *)previewView {
     if (!_previewView) {

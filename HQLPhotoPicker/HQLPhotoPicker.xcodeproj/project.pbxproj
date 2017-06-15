@@ -40,6 +40,8 @@
 		4A9CF0CC1EEA4084009ED1E7 /* pauseButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 4A9CF0C81EEA4084009ED1E7 /* pauseButton.png */; };
 		4AC132D01EEFDC1200184999 /* UIImage+HQLExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AC132CF1EEFDC1200184999 /* UIImage+HQLExtension.m */; };
 		4AC132D31EF1184600184999 /* HQLPhotoPickerModalController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AC132D21EF1184600184999 /* HQLPhotoPickerModalController.m */; };
+		4AC132D61EF26DA800184999 /* closeButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 4AC132D41EF26DA800184999 /* closeButton.png */; };
+		4AC132D71EF26DA800184999 /* confirmButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 4AC132D51EF26DA800184999 /* confirmButton.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -95,6 +97,8 @@
 		4AC132CF1EEFDC1200184999 /* UIImage+HQLExtension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+HQLExtension.m"; sourceTree = "<group>"; };
 		4AC132D11EF1184600184999 /* HQLPhotoPickerModalController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLPhotoPickerModalController.h; sourceTree = "<group>"; };
 		4AC132D21EF1184600184999 /* HQLPhotoPickerModalController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLPhotoPickerModalController.m; sourceTree = "<group>"; };
+		4AC132D41EF26DA800184999 /* closeButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = closeButton.png; sourceTree = "<group>"; };
+		4AC132D51EF26DA800184999 /* confirmButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = confirmButton.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -239,6 +243,8 @@
 		4A9CF0BC1EE79FE9009ED1E7 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				4AC132D41EF26DA800184999 /* closeButton.png */,
+				4AC132D51EF26DA800184999 /* confirmButton.png */,
 				4A38A1661EEEAB8800CF2143 /* checkButton_normal.png */,
 				4A38A1671EEEAB8800CF2143 /* checkButton_selected.png */,
 				4A38A1641EEE9F1000CF2143 /* video_icon.png */,
@@ -318,6 +324,7 @@
 				4A9CF0B51EE79D9A009ED1E7 /* HQLPhotoAlbumCell.xib in Resources */,
 				4A38A1681EEEAB8800CF2143 /* checkButton_normal.png in Resources */,
 				4A9CF0781EE15C5A009ED1E7 /* Info.plist in Resources */,
+				4AC132D61EF26DA800184999 /* closeButton.png in Resources */,
 				4A9CF0701EE136E7009ED1E7 /* LaunchScreen.storyboard in Resources */,
 				4A38A1691EEEAB8800CF2143 /* checkButton_selected.png in Resources */,
 				4A9CF06D1EE136E7009ED1E7 /* Assets.xcassets in Resources */,
@@ -328,6 +335,7 @@
 				4A38A1651EEE9F1000CF2143 /* video_icon.png in Resources */,
 				4A9CF0CA1EEA4084009ED1E7 /* playButton.png in Resources */,
 				4A9CF0AD1EE69A29009ED1E7 /* defaultImage.png in Resources */,
+				4AC132D71EF26DA800184999 /* confirmButton.png in Resources */,
 				4A9CF0CC1EEA4084009ED1E7 /* pauseButton.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

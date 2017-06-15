@@ -27,6 +27,8 @@
 
 /* UI */
 
+@property (strong, nonatomic) UIImageView *thumbnailView;
+
 @property (strong, nonatomic) UIButton *centerPlayButton; // 中间的播放button
 
 @property (strong, nonatomic) UIView *controlView; // 下面的控件的View
@@ -35,7 +37,7 @@
 @property (strong, nonatomic) UILabel *currentTimeLabel; // 当前时间
 @property (strong, nonatomic) UILabel *totalTimeLabel; // 总时长
 
-@property (strong, nonatomic) UIActivityIndicatorView *activityIndicatorView; // loading指示器
+//@property (strong, nonatomic) UIActivityIndicatorView *activityIndicatorView; // loading指示器
 
 @end
 
@@ -76,6 +78,7 @@
 #pragma mark - event
 
 - (void)viewConfig {
+    [self thumbnailView];
     [self centerPlayButton];
     [self controlView];
     
@@ -136,6 +139,12 @@
 - (void)updateFrame {
     self.playerLayer.frame = self.bounds;
     
+    if (self.thumbnail) {
+        self.thumbnailView.size = [self getRightSizeWithSize:self.thumbnail.size];
+        self.thumbnailView.centerX = self.width * 0.5;
+        self.thumbnailView.centerY = self.height * 0.5;
+    }
+    
     self.centerPlayButton.centerX = self.width * 0.5;
     self.centerPlayButton.centerY = self.height * 0.5;
     
@@ -194,6 +203,18 @@
     [self playButtonDidClick:self.playButton];
 }
 
+// 根据目标size来获取相应的size
+- (CGSize)getRightSizeWithSize:(CGSize)targetSize {
+    // 先以self.height为标准 --- 计算出相同比例的宽度，若宽度超出self.width, 就以self.width 为标准
+    CGFloat height = self.height;
+    CGFloat width = (height * targetSize.width) / targetSize.height;
+    if (width > self.width) {
+        width = self.width;
+        height = (width * targetSize.height) / targetSize.width;
+    }
+    return CGSizeMake(width, height);
+}
+
 #pragma mark - setter
 
 - (void)setPlayerItem:(AVPlayerItem *)playerItem {
@@ -206,6 +227,10 @@
     }
     
     if (playerItem) {
+        
+        self.thumbnailView.image = nil;
+        self.thumbnail = nil;
+        [self.thumbnailView setHidden:YES];
         
         if (!self.playerLayer) {
             self.playerLayer = [[AVPlayerLayer alloc] init];
@@ -235,15 +260,31 @@
     }
 }
 
+- (void)setThumbnail:(UIImage *)thumbnail {
+    _thumbnail = thumbnail;
+    self.thumbnailView.image = thumbnail;
+    [self.thumbnailView setHidden:NO];
+}
+
 #pragma mark - getter
 
-- (UIActivityIndicatorView *)activityIndicatorView {
-    if (!_activityIndicatorView) {
-        _activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+//- (UIActivityIndicatorView *)activityIndicatorView {
+//    if (!_activityIndicatorView) {
+//        _activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+//        
+//        [self addSubview:_activityIndicatorView];
+//    }
+//    return _activityIndicatorView;
+//}
+
+- (UIImageView *)thumbnailView {
+    if (!_thumbnailView) {
+        _thumbnailView = [[UIImageView alloc] initWithFrame:self.bounds];
+        [_thumbnailView setHidden:YES];
         
-        [self addSubview:_activityIndicatorView];
+        [self insertSubview:_thumbnailView atIndex:0];
     }
-    return _activityIndicatorView;
+    return _thumbnailView;
 }
 
 - (UISlider *)slider {

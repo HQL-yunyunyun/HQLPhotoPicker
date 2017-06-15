@@ -25,11 +25,16 @@
 @property (strong, nonatomic) NSData *gifData;
 @property (strong, nonatomic) AVPlayerItem *playerItem;
 @property (strong, nonatomic) PHLivePhoto *livePhoto;
+
+@property (strong, nonatomic) UIImage *thumbnail;
+
 @property (assign, nonatomic) id <HQLPhotoPreviewViewDelegate>delegate;
 
 - (void)resetViewStatus; // 重置状态
 - (void)videoViewShowControlView; // 显示
 - (void)videoViewHideControlView; // 隐藏
 - (void)activityIndicatorViewAnimate:(BOOL)yesOrNo;
+
+- (void)setVideoViewThumbnail:(UIImage *)thumbnail;
 
 @end
