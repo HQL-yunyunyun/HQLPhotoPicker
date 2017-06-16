@@ -26,8 +26,6 @@
 
 @property (strong, nonatomic) UIImageView *thumbnailView;
 
-//@property (assign, nonatomic) BOOL livePhotoViewIsAnimating;
-
 @end
 
 @implementation HQLPhotoPreviewView
@@ -77,31 +75,23 @@
 }
 
 - (void)updateFrame {
-    self.scrollView.maximumZoomScale = 0.0;
     
     // 设置frame
     CGSize contentSize = CGSizeZero;
+    CGSize originSize = CGSizeZero;
     if (self.photo) {
         self.photoView.size = [self getRightSizeWithSize:self.photo.size];
         self.photoView.centerX = self.width * 0.5;
         self.photoView.centerY = self.height * 0.5;
         contentSize = self.photoView.size;
-        
-        self.scrollView.maximumZoomScale = kDefaultZoomScale;
-        CGFloat scale = self.photo.size.width / self.photoView.width;
-        if (self.photoView.width > self.photoView.height) { // 优先满足小的一方 --- height
-            scale = self.photo.size.height / self.photoView.height;
-        }
-        if (scale > kDefaultZoomScale) {
-            NSInteger intScale = scale + 1;
-            self.scrollView.maximumZoomScale = intScale;
-        }
+        originSize = self.photo.size;
     }
     if (self.gifData) {
         self.gifView.size = [self getRightSizeWithSize:[UIImage animatedGIFWithData:self.gifData].size];
         self.gifView.centerX = self.width * 0.5;
         self.gifView.centerY = self.height * 0.5;
         contentSize = self.gifView.size;
+        originSize = self.gifView.image.size;
     }
     if (self.playerItem) {
         self.videoView.frame = self.bounds;
@@ -112,19 +102,59 @@
         self.livePhotoView.centerX = self.width * 0.5;
         self.livePhotoView.centerY = self.height * 0.5;
         contentSize = self.livePhotoView.size;
+        originSize = self.livePhoto.size;
     }
     if (self.thumbnail) {
         self.thumbnailView.size = [self getRightSizeWithSize:self.thumbnail.size];
         self.thumbnailView.centerX = self.width * 0.5;
         self.thumbnailView.centerY = self.height * 0.5;
         contentSize = self.thumbnailView.size;
+        originSize = self.thumbnail.size;
     }
+    
+    self.scrollView.maximumZoomScale = [self getRightScaleWithOriginSize:originSize];
     
     self.scrollView.frame = self.bounds;
     self.scrollView.contentSize = contentSize;
     
     self.activityIndicatorView.centerX = self.width * 0.5;
     self.activityIndicatorView.centerY = self.height * 0.5;
+}
+
+- (CGFloat)getRightScaleWithOriginSize:(CGSize)originSize {
+    
+    if (self.playerItem) {
+        return 1;
+    }
+    
+    CGSize viewSize = [self getRightSizeWithSize:originSize];
+    CGFloat scale = originSize.width / viewSize.width;
+    if (viewSize.width > viewSize.height) { // 优先满足小的一方 --- height
+        scale = self.photo.size.height / self.photoView.height;
+    }
+    if (scale > kDefaultZoomScale) {
+        NSInteger intScale = scale + 1;
+        scale = intScale;
+    } else {
+        scale = kDefaultZoomScale;
+    }
+    return scale;
+}
+
+- (UIView *)currentContentView {
+    if (self.photo) {
+        return self.photoView;
+    }
+    if (self.gifData) {
+        return self.gifView;
+    }
+    if (self.livePhoto) {
+        return self.livePhotoView;
+    }
+    if (self.thumbnail) {
+        return self.thumbnailView;
+    }
+    return nil;
 }
 
 // 根据目标size来获取相应的size
@@ -163,15 +193,17 @@
 }
 
 - (void)resetViewStatus { // 重置状态
-    if (self.photo) { // 取消放大缩小状态
-        self.scrollView.zoomScale = 1.0;
-    }
+    // 取消放大缩小状态
+    self.scrollView.zoomScale = 1.0;
+    
     if (self.playerItem) {
         [self.videoView stopVideo];
     }
     if (self.livePhoto) {
         [self.livePhotoView stopPlayback];
     }
+    
+    [self updateFrame];
 }
 
 - (void)videoViewHideControlView {
@@ -221,36 +253,54 @@
 
 // 双击
 - (void)doubleTapGestureMethod:(UITapGestureRecognizer *)gesture {
-    if (self.photo) { // 只适用于photo中
-        CGFloat scale = self.width / self.photoView.width;
-        if (self.photoView.width > self.photoView.height) { // 优先满足小的一方 --- height
-            scale = self.height / self.photoView.height;
-        }
-        [self.scrollView setZoomScale:scale animated:NO];
-        if (scale != 1) {
-            self.photoView.centerX = self.scrollView.contentSize.width * 0.5;
-            self.photoView.centerY = self.scrollView.contentSize.height * 0.5;
-        } else {
-            self.photoView.centerX = self.width * 0.5;
-            self.photoView.centerY = self.height * 0.5;
+    
+    UIView *targetView = [self currentContentView];
+    if (targetView) {
+        CGFloat scale = self.width / targetView.width;
+        if (targetView.height <= targetView.width) {
+            scale = self.height / targetView.height;
         }
         
+        [self.scrollView setZoomScale:scale animated:YES];
     }
 }
 
 #pragma mark - scroll view delegate
 
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView {
-    if (self.photo) {
-        return self.photoView;
-    }
-    return nil;
+    return [self currentContentView];
+}
+
+- (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(CGFloat)scale {
+    // 根据scale来确定位置
+//    if (scale == scrollView.minimumZoomScale) {
+        [UIView animateWithDuration:0.3f animations:^{
+            view.centerX = scrollView.contentSize.width * 0.5;
+            view.centerY = scrollView.contentSize.height * 0.5;
+        } completion:^(BOOL finished) {
+            
+        }];
+//    } else {
+//        [UIView animateWithDuration:0.3f animations:^{
+//            view.x = 0;
+//            view.y = 0;
+//        } completion:^(BOOL finished) {
+//            
+//        }];
+//    }
+}
+
+- (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view {
+
+}
+
+- (void)scrollViewDidZoom:(UIScrollView *)scrollView {
 }
 
 #pragma mark - live photo delegate
 
 - (void)livePhotoView:(PHLivePhotoView *)livePhotoView didEndPlaybackWithStyle:(PHLivePhotoViewPlaybackStyle)playbackStyle {
-    NSLog(@"live photo end play back");
+    
 }
 
 #pragma mark - setter

@@ -86,6 +86,10 @@
 }
 
 - (void)playButtonDidClick:(UIButton *)button {
+    if (!self.playerItem) {
+        return;
+    }
+    
     self.playButton.selected = !button.isSelected;
     self.centerPlayButton.selected = self.playButton.isSelected;
     
@@ -99,12 +103,20 @@
 }
 
 - (void)sliderWillBeginDraging:(UISlider *)slider {
+    if (!self.playerItem) {
+        return;
+    }
+    
     self.playerIsPlayBeforeDrag = self.playButton.isSelected; // 选中状态是播放
     
     [self pauseVideo];
 }
 
 - (void)sliderDidDraging:(UISlider *)slider {
+    if (!self.playerItem) {
+        return;
+    }
+    
     if (!self.isSeeking) {
         self.isSeeking = YES;
         [self updateTimeLabelWithIsUpdateSlider:NO];
@@ -119,6 +131,10 @@
 }
 
 - (void)sliderDidEndDraging:(UISlider *)slider {
+    if (!self.playerItem) {
+        return;
+    }
+    
     if (self.playerIsPlayBeforeDrag) {
         [self playVideo];
     } else {

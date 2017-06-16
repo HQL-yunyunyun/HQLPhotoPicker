@@ -10,11 +10,22 @@
 
 #import "HQLPhotoManager.h"
 
-@class HQLPhotoAlbumModel;
+@class HQLPhotoAlbumModel, HQLPhotoPickerModalController;
+
+@protocol HQLPHotoPickerModalControllerDelegate <NSObject>
+
+@required
+
+// 关闭Controller
+- (void)photoPickerModalControllerDidClickCloseButton:(HQLPhotoPickerModalController *)controller;
+
+@end
 
 @interface HQLPhotoPickerModalController : UIViewController
 
 @property (strong, nonatomic) HQLPhotoAlbumModel *albumModel;
 @property (assign, nonatomic) NSUInteger maxSelectCount; // 最大选择数，暂时只能单张
+
+@property (assign, nonatomic) id <HQLPHotoPickerModalControllerDelegate>delegate;
 
 @end

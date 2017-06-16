@@ -486,7 +486,7 @@
 				DEVELOPMENT_TEAM = X8GXYMZ6FW;
 				INFOPLIST_FILE = HQLPhotoPicker/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = cn.weplus.HQLPhotoPicker;
+				PRODUCT_BUNDLE_IDENTIFIER = cn.weplus.HQLPhotoPicker2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -498,7 +498,7 @@
 				DEVELOPMENT_TEAM = X8GXYMZ6FW;
 				INFOPLIST_FILE = HQLPhotoPicker/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = cn.weplus.HQLPhotoPicker;
+				PRODUCT_BUNDLE_IDENTIFIER = cn.weplus.HQLPhotoPicker2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

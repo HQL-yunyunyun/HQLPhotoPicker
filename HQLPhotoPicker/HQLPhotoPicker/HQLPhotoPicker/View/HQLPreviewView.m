@@ -22,7 +22,9 @@
 
 @end
 
-@implementation HQLPreviewView
+@implementation HQLPreviewView {
+    NSUInteger _currentIndex;
+}
 
 #pragma mark - initialize method
 
@@ -142,6 +144,11 @@
 }
 
 #pragma mark - getter
+
+- (NSUInteger)currentIndex {
+    NSUInteger index = self.collectionView.contentOffset.x / self.flowLayout.itemSize.width;
+    return index;
+}
 
 - (UICollectionView *)collectionView {
     if (!_collectionView) {

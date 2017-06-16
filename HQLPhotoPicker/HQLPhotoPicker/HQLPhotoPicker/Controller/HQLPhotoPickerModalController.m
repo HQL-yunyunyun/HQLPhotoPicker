@@ -17,6 +17,8 @@
 #define HQLPhotoPickerCellReuseId @"HQLPhotoPickerCellReuseId"
 #define kColumnCount 4
 
+#define HQLShowAlertView(Title, Message) [[[UIAlertView alloc] initWithTitle:Title message:Message delegate:nil cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil] show]
+
 @interface HQLPhotoPickerModalController () <UICollectionViewDelegate, UICollectionViewDataSource, HQLPreviewViewDelegate, HQLPhotoPreviewViewDelegate>
 
 @property (strong, nonatomic) HQLPreviewView *previewView;
@@ -27,6 +29,8 @@
 @property (strong, nonatomic) UIButton *confirmButton;
 
 @property (strong, nonatomic) NSIndexPath *currentSelectedCellIndexPath;
+
+@property (assign, nonatomic) BOOL isShowAlertView;
 
 @end
 
@@ -52,11 +56,34 @@
 #pragma mark - event
 
 - (void)closeButtonDidClick:(UIButton *)button {
-
+    if ([self.delegate respondsToSelector:@selector(photoPickerModalControllerDidClickCloseButton:)]) {
+        [self.delegate photoPickerModalControllerDidClickCloseButton:self];
+    }
 }
 
 - (void)confirmButtonDidClick:(UIButton *)button {
 
+}
+
+- (void)showAlertViewWithTitle:(NSString *)title message:(NSString *)message { // 一次只能有一个View
+    if (self.isShowAlertView) {
+        return;
+    }
+    HQLWeakSelf;
+    self.isShowAlertView = YES;
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+        weakSelf.isShowAlertView = NO;
+    }];
+    UIAlertAction *confirm = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        weakSelf.isShowAlertView = NO;
+    }];
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
+    [alert addAction:cancel];
+    [alert addAction:confirm];
+    
+    [self presentViewController:alert animated:YES completion:^{
+        
+    }];
 }
 
 #pragma mark - collection delegate
@@ -110,7 +137,7 @@
 - (void)previewView:(HQLPreviewView *)previewView renderPhotoPreviewView:(HQLPhotoPreviewView *)photoPreviewView atIndex:(NSUInteger)index {
     [photoPreviewView activityIndicatorViewAnimate:YES];
     
-//    NSLog(@"create cell : %ld", index);
+    HQLWeakSelf;
     
     HQLPhotoModel *model = self.albumModel.photoArray[index];
     photoPreviewView.delegate = self;
@@ -121,7 +148,16 @@
             [model requestHighDefinitionImageWithProgressHandler:^(double progress, NSError * _Nullable error, BOOL * _Nonnull stop, NSDictionary * _Nullable info) {
                 
             } resultHandler:^(UIImage *highDefinitionImage, NSString *error) {
-                photoPreviewView.photo = highDefinitionImage;
+                if (![error isEqualToString:@""]) {
+                    // 发生错误
+                    if (previewView.currentIndex == index) {
+                        [weakSelf showAlertViewWithTitle:@"错误" message:error];
+                    }
+                } else {
+                    if (highDefinitionImage) {
+                        photoPreviewView.photo = highDefinitionImage;
+                    }
+                }
             }];
             break;
         }
@@ -129,7 +165,17 @@
             [model requestOriginalImageDataWithProgressHandler:^(double progress, NSError * _Nullable error, BOOL * _Nonnull stop, NSDictionary * _Nullable info) {
                 
             } resultHandler:^(NSData *imageData, NSString *byteString, NSString *error) {
-                photoPreviewView.gifData = imageData;
+                if (![error isEqualToString:@""]) {
+                    // 发生错误
+                    if (previewView.currentIndex == index) {
+                        [weakSelf showAlertViewWithTitle:@"错误" message:error];
+                    }
+                    photoPreviewView.thumbnail = model.thumbnailImage;
+                } else {
+                    if (imageData) {
+                        photoPreviewView.gifData = imageData;
+                    }
+                }
             }];
             break;
         }
@@ -137,7 +183,16 @@
             [model requestLivePhotoWithProgressHandler:^(double progress, NSError * _Nullable error, BOOL * _Nonnull stop, NSDictionary * _Nullable info) {
                 
             } resultHandler:^(PHLivePhoto *livePhoto, NSString *error) {
-                photoPreviewView.livePhoto = livePhoto;
+                if (![error isEqualToString:@""]) {
+                    if (previewView.currentIndex == index) {
+                        [weakSelf showAlertViewWithTitle:@"错误" message:error];
+                    }
+                    photoPreviewView.thumbnail = model.thumbnailImage;
+                } else {
+                    if (livePhoto) {
+                        photoPreviewView.livePhoto = livePhoto;
+                    }
+                }
             }];
             break;
         }
@@ -146,7 +201,16 @@
             [model requestPlayerItemWithProgressHandler:^(double progress, NSError * _Nullable error, BOOL * _Nonnull stop, NSDictionary * _Nullable info) {
                 
             } resultHandler:^(AVPlayerItem *playerItem, NSString *error) {
-                photoPreviewView.playerItem = playerItem;
+                if (![error isEqualToString:@""]) {
+                    if (previewView.currentIndex == index) {
+                        [weakSelf showAlertViewWithTitle:@"错误" message:error];
+                    }
+                    photoPreviewView.thumbnail = model.thumbnailImage;
+                } else {
+                    if (playerItem) {
+                        photoPreviewView.playerItem = playerItem;
+                    }
+                }
             }];
             break;
         }
@@ -158,12 +222,6 @@
 
 - (void)previewView:(HQLPreviewView *)previewView willDisplayPhotoPreviewView:(HQLPhotoPreviewView *)photoPreviewView atIndex:(NSUInteger)index {
     
-//    HQLPhotoModel *model = self.albumModel.photoArray[index];
-//    if (model.mediaType == HQLPhotoModelMediaTypeVideo || model.mediaType == HQLPhotoModelMediaTypeCameraVideo) {
-//        [photoPreviewView setVideoViewThumbnail:model.thumbnailImage];
-//    } else {
-//        [photoPreviewView setThumbnail:model.thumbnailImage];
-//    }
 }
 
 - (void)previewView:(HQLPreviewView *)previewView didEndDisplayPhotoPreviewView:(HQLPhotoPreviewView *)photoPreviewView atIndex:(NSUInteger)index {
