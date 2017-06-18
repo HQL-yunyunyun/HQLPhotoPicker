@@ -150,9 +150,7 @@
             } resultHandler:^(UIImage *highDefinitionImage, NSString *error) {
                 if (![error isEqualToString:@""]) {
                     // 发生错误
-                    if (previewView.currentIndex == index) {
-                        [weakSelf showAlertViewWithTitle:@"错误" message:error];
-                    }
+                    [weakSelf showAlertViewWithTitle:@"错误" message:error];
                 } else {
                     if (highDefinitionImage) {
                         photoPreviewView.photo = highDefinitionImage;
@@ -167,9 +165,7 @@
             } resultHandler:^(NSData *imageData, NSString *byteString, NSString *error) {
                 if (![error isEqualToString:@""]) {
                     // 发生错误
-                    if (previewView.currentIndex == index) {
-                        [weakSelf showAlertViewWithTitle:@"错误" message:error];
-                    }
+                    [weakSelf showAlertViewWithTitle:@"错误" message:error];
                     photoPreviewView.thumbnail = model.thumbnailImage;
                 } else {
                     if (imageData) {
@@ -184,9 +180,7 @@
                 
             } resultHandler:^(PHLivePhoto *livePhoto, NSString *error) {
                 if (![error isEqualToString:@""]) {
-                    if (previewView.currentIndex == index) {
-                        [weakSelf showAlertViewWithTitle:@"错误" message:error];
-                    }
+                    [weakSelf showAlertViewWithTitle:@"错误" message:error];
                     photoPreviewView.thumbnail = model.thumbnailImage;
                 } else {
                     if (livePhoto) {
@@ -202,9 +196,7 @@
                 
             } resultHandler:^(AVPlayerItem *playerItem, NSString *error) {
                 if (![error isEqualToString:@""]) {
-                    if (previewView.currentIndex == index) {
-                        [weakSelf showAlertViewWithTitle:@"错误" message:error];
-                    }
+                    [weakSelf showAlertViewWithTitle:@"错误" message:error];
                     photoPreviewView.thumbnail = model.thumbnailImage;
                 } else {
                     if (playerItem) {
@@ -230,7 +222,7 @@
 }
 
 - (void)previewView:(HQLPreviewView *)previewView didDisplayPhotoPreviewView:(HQLPhotoPreviewView *)photoPreviewView atIndex:(NSUInteger)index {
-    
+    [self collectionView:self.collectionView didSelectItemAtIndexPath:[NSIndexPath indexPathForItem:index inSection:0]];
 }
 
 - (HQLPhotoModelMediaType)previewView:(HQLPreviewView *)previewView assetTypeAtIndex:(NSUInteger)index {
@@ -249,6 +241,8 @@
     if (![self.collectionView cellForItemAtIndexPath:self.currentSelectedCellIndexPath]) {
         self.currentSelectedCellIndexPath = [NSIndexPath indexPathForItem:0 inSection:0];
     }
+    
+    [self.collectionView layoutIfNeeded]; // 强制刷新
     [self collectionView:self.collectionView didSelectItemAtIndexPath:self.currentSelectedCellIndexPath];
 }
 

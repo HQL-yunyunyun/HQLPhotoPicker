@@ -273,21 +273,16 @@
 
 - (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(CGFloat)scale {
     // 根据scale来确定位置
-//    if (scale == scrollView.minimumZoomScale) {
-        [UIView animateWithDuration:0.3f animations:^{
-            view.centerX = scrollView.contentSize.width * 0.5;
-            view.centerY = scrollView.contentSize.height * 0.5;
-        } completion:^(BOOL finished) {
-            
-        }];
-//    } else {
-//        [UIView animateWithDuration:0.3f animations:^{
-//            view.x = 0;
-//            view.y = 0;
-//        } completion:^(BOOL finished) {
-//            
-//        }];
-//    }
+    [UIView animateWithDuration:0.3f animations:^{
+        CGFloat width = scrollView.contentSize.width >= self.width ? scrollView.contentSize.width : self.width;
+        CGFloat height = scrollView.contentSize.height >= self.height ? scrollView.contentSize.height : self.height;
+
+        view.centerX = width * 0.5;
+        view.centerY = height * 0.5;
+        
+    } completion:^(BOOL finished) {
+        
+    }];
 }
 
 - (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view {

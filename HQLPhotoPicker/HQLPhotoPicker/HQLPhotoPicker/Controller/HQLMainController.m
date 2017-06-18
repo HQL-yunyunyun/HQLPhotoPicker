@@ -21,7 +21,7 @@
 #define HQLPhotoAlbumCellReuseId @"HQLPhotoAlbumCellReuseId"
 #define kTableViewCellHeight 60
 
-@interface HQLMainController () <UITableViewDelegate, UITableViewDataSource>
+@interface HQLMainController () <UITableViewDelegate, UITableViewDataSource, HQLPHotoPickerModalControllerDelegate>
 
 @property (strong, nonatomic) UITableView *tableView;
 @property (strong, nonatomic) HQLPhotoManager *photoManager;
@@ -74,6 +74,14 @@
     }
 }
 
+#pragma mark - photo picker modal controller delegate
+
+- (void)photoPickerModalControllerDidClickCloseButton:(HQLPhotoPickerModalController *)controller {
+    [self dismissViewControllerAnimated:YES completion:^{
+        
+    }];
+}
+
 #pragma mark - table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -82,6 +90,7 @@
 //    [self.navigationController pushViewController:controller animated:YES];
     HQLPhotoPickerModalController *controller = [[HQLPhotoPickerModalController alloc] init];
     controller.albumModel = self.photoManager.albumArray[indexPath.row];
+    controller.delegate = self;
     [self presentViewController:controller animated:YES completion:^{
         
     }];

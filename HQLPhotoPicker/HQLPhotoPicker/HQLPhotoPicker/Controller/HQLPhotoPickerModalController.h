@@ -19,6 +19,9 @@
 // 关闭Controller
 - (void)photoPickerModalControllerDidClickCloseButton:(HQLPhotoPickerModalController *)controller;
 
+// 结束选择时的回调
+- (void)photoPickerModalController:(HQLPhotoPickerModalController *)controller didFinishPickingPhotoWithPhotoAssetArray:(NSMutableArray <HQLPhotoModel *>*)photoAssetArray;
+
 @end
 
 @interface HQLPhotoPickerModalController : UIViewController
