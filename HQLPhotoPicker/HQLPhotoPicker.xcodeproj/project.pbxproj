@@ -42,6 +42,8 @@
 		4AC132D31EF1184600184999 /* HQLPhotoPickerModalController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AC132D21EF1184600184999 /* HQLPhotoPickerModalController.m */; };
 		4AC132D61EF26DA800184999 /* closeButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 4AC132D41EF26DA800184999 /* closeButton.png */; };
 		4AC132D71EF26DA800184999 /* confirmButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 4AC132D51EF26DA800184999 /* confirmButton.png */; };
+		4AC132D91EF7D28E00184999 /* takePhotoButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 4AC132D81EF7D28E00184999 /* takePhotoButton.png */; };
+		4AC132DC1EF7D2D200184999 /* HQLTakePhotoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AC132DB1EF7D2D200184999 /* HQLTakePhotoCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -99,6 +101,9 @@
 		4AC132D21EF1184600184999 /* HQLPhotoPickerModalController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLPhotoPickerModalController.m; sourceTree = "<group>"; };
 		4AC132D41EF26DA800184999 /* closeButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = closeButton.png; sourceTree = "<group>"; };
 		4AC132D51EF26DA800184999 /* confirmButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = confirmButton.png; sourceTree = "<group>"; };
+		4AC132D81EF7D28E00184999 /* takePhotoButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = takePhotoButton.png; sourceTree = "<group>"; };
+		4AC132DA1EF7D2D200184999 /* HQLTakePhotoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLTakePhotoCell.h; sourceTree = "<group>"; };
+		4AC132DB1EF7D2D200184999 /* HQLTakePhotoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLTakePhotoCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -201,6 +206,8 @@
 		4A9CF07D1EE15C66009ED1E7 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				4AC132DA1EF7D2D200184999 /* HQLTakePhotoCell.h */,
+				4AC132DB1EF7D2D200184999 /* HQLTakePhotoCell.m */,
 				4A9CF0A41EE6811B009ED1E7 /* HQLPhotoPickerCell.h */,
 				4A9CF0A51EE6811B009ED1E7 /* HQLPhotoPickerCell.m */,
 				4A9CF0B11EE79D12009ED1E7 /* HQLPhotoAlbumCell.h */,
@@ -243,6 +250,7 @@
 		4A9CF0BC1EE79FE9009ED1E7 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				4AC132D81EF7D28E00184999 /* takePhotoButton.png */,
 				4AC132D41EF26DA800184999 /* closeButton.png */,
 				4AC132D51EF26DA800184999 /* confirmButton.png */,
 				4A38A1661EEEAB8800CF2143 /* checkButton_normal.png */,
@@ -327,6 +335,7 @@
 				4AC132D61EF26DA800184999 /* closeButton.png in Resources */,
 				4A9CF0701EE136E7009ED1E7 /* LaunchScreen.storyboard in Resources */,
 				4A38A1691EEEAB8800CF2143 /* checkButton_selected.png in Resources */,
+				4AC132D91EF7D28E00184999 /* takePhotoButton.png in Resources */,
 				4A9CF06D1EE136E7009ED1E7 /* Assets.xcassets in Resources */,
 				4A9CF0BB1EE79FE0009ED1E7 /* common_arrow.png in Resources */,
 				4A38A1591EEE737300CF2143 /* center_pauseButton.png in Resources */,
@@ -354,6 +363,7 @@
 				4A9CF08A1EE266D2009ED1E7 /* HQLPhotoAlbumModel.m in Sources */,
 				4A9CF0B31EE79D12009ED1E7 /* HQLPhotoAlbumCell.m in Sources */,
 				4AC132D31EF1184600184999 /* HQLPhotoPickerModalController.m in Sources */,
+				4AC132DC1EF7D2D200184999 /* HQLTakePhotoCell.m in Sources */,
 				4A9CF0C51EE95ED7009ED1E7 /* HQLVideoPreViewView.m in Sources */,
 				4A9CF0C21EE93986009ED1E7 /* HQLPhotoPreviewView.m in Sources */,
 				4A9CF0A61EE6811B009ED1E7 /* HQLPhotoPickerCell.m in Sources */,

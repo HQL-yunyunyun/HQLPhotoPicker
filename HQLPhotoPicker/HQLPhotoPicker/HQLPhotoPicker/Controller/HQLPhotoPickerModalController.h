@@ -10,6 +10,12 @@
 
 #import "HQLPhotoManager.h"
 
+typedef enum {
+    HQLPhotoPickerTakePhotoTypeVideoAndPicture, // videoAndPicture
+    HQlPhotoPickerTakePhotoTypeOnlyVideo, // video
+    HQLPhotoPickerTakePhotoTypeOnlyPicture, // picture
+} HQLPhotoPickerTakePhotoType;
+
 @class HQLPhotoAlbumModel, HQLPhotoPickerModalController;
 
 @protocol HQLPHotoPickerModalControllerDelegate <NSObject>
@@ -27,7 +33,9 @@
 @interface HQLPhotoPickerModalController : UIViewController
 
 @property (strong, nonatomic) HQLPhotoAlbumModel *albumModel;
-@property (assign, nonatomic) NSUInteger maxSelectCount; // 最大选择数，暂时只能单张 --- 0 到 9
+@property (assign, nonatomic) NSUInteger maxSelectCount; // 最大选择数  0 到 9
+@property (assign, nonatomic) BOOL isShowTakePhotoCell; // 是否显示拍照的选项 defaut : yes
+@property (assign, nonatomic) HQLPhotoPickerTakePhotoType takePhotoType; 
 
 @property (assign, nonatomic) id <HQLPHotoPickerModalControllerDelegate>delegate;
 

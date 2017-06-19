@@ -11,15 +11,20 @@
 #import "HQLPreviewView.h"
 #import "HQLPhotoPreviewView.h"
 #import "HQLPhotoAlbumModel.h"
+#import "HQLTakePhotoCell.h"
+
+#import <MobileCoreServices/MobileCoreServices.h>
 
 #import "UIView+Frame.h"
 
 #define HQLPhotoPickerCellReuseId @"HQLPhotoPickerCellReuseId"
+#define HQLTakePhotoCellReuseId @"HQLTakePhotoCellReuseId"
 #define kColumnCount 4
+#define kVideoMaxDuration 9.0f
 
 #define HQLShowAlertView(Title, Message) [[[UIAlertView alloc] initWithTitle:Title message:Message delegate:nil cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil] show]
 
-@interface HQLPhotoPickerModalController () <UICollectionViewDelegate, UICollectionViewDataSource, HQLPreviewViewDelegate, HQLPhotoPreviewViewDelegate>
+@interface HQLPhotoPickerModalController () <UINavigationControllerDelegate, UIImagePickerControllerDelegate, UICollectionViewDelegate, UICollectionViewDataSource, HQLPreviewViewDelegate, HQLPhotoPreviewViewDelegate>
 
 @property (strong, nonatomic) HQLPreviewView *previewView;
 @property (strong, nonatomic) UICollectionView *collectionView;
@@ -51,6 +56,7 @@
     [self confirmButton];
     
     self.maxSelectCount = 1;
+    self.isShowTakePhotoCell = YES;
 }
 
 - (void)dealloc {
@@ -90,19 +96,88 @@
     [alert addAction:cancel];
     [alert addAction:confirm];
     
-    [self presentViewController:alert animated:YES completion:^{
-        
-    }];
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
+- (void)takePhoto {
+    
+    if (![UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
+        [self showAlertViewWithTitle:@"温馨提示" message:@"当前设备不支持拍照"];
+        return;
+    }
+    
+    UIImagePickerController *pickerController = [[UIImagePickerController alloc] init];
+    pickerController.allowsEditing = NO;
+    pickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
+    pickerController.delegate = self;
+    
+    switch (self.takePhotoType) {
+        case HQlPhotoPickerTakePhotoTypeOnlyVideo: {
+            pickerController.mediaTypes = @[(NSString *)kUTTypeMovie];
+            pickerController.cameraCaptureMode = UIImagePickerControllerCameraCaptureModeVideo;
+            pickerController.videoMaximumDuration = kVideoMaxDuration;
+            [self presentViewController:pickerController animated:YES completion:nil];
+            break;
+        }
+        case HQLPhotoPickerTakePhotoTypeOnlyPicture: {
+            pickerController.cameraCaptureMode = UIImagePickerControllerCameraCaptureModePhoto;
+            pickerController.mediaTypes = @[(NSString *)kUTTypeImage];
+            [self presentViewController:pickerController animated:YES completion:nil];
+            break;
+        }
+        case HQLPhotoPickerTakePhotoTypeVideoAndPicture: {
+            HQLWeakSelf;
+            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"拍照" message:@"选择拍照方式" preferredStyle:UIAlertControllerStyleActionSheet];
+            UIAlertAction *picture = [UIAlertAction actionWithTitle:@"拍照" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                pickerController.cameraCaptureMode = UIImagePickerControllerCameraCaptureModePhoto;
+                pickerController.mediaTypes = @[(NSString *)kUTTypeImage];
+                [weakSelf presentViewController:pickerController animated:YES completion:nil];
+            }];
+            UIAlertAction *video = [UIAlertAction actionWithTitle:@"拍摄" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                pickerController.mediaTypes = @[(NSString *)kUTTypeMovie];
+                pickerController.cameraCaptureMode = UIImagePickerControllerCameraCaptureModeVideo;
+                pickerController.videoMaximumDuration = kVideoMaxDuration;
+                
+                [weakSelf presentViewController:pickerController animated:YES completion:nil];
+            }];
+            UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+                
+            }];
+            
+            [alertController addAction:picture];
+            [alertController addAction:video];
+            [alertController addAction:cancel];
+            [self presentViewController:alertController animated:YES completion:nil];
+            break;
+        }
+    }
+}
+
+#pragma mark - image picker controller delegate
+
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info {
+    NSLog(@"info : %@", info);
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 #pragma mark - collection delegate
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     
-    HQLWeakSelf;
+    if (self.isShowTakePhotoCell && indexPath.item == 0) {
+        [self takePhoto];
+        return;
+    }
     
+    NSInteger targetIndex = indexPath.item - (self.isShowTakePhotoCell ? 1 : 0);
+    
+    HQLWeakSelf;
     HQLPhotoManager *manager = [HQLPhotoManager shareManager];
-    HQLPhotoModel *currentModel = self.albumModel.photoArray[indexPath.item];
+    HQLPhotoModel *currentModel = self.albumModel.photoArray[targetIndex];
     
     if (self.maxSelectCount == 1) {
         
@@ -110,7 +185,7 @@
             return;
         }
         
-        [self.previewView setCurrentIndex:indexPath.item animated:YES];
+        [self.previewView setCurrentIndex:targetIndex animated:YES];
         // 取消前一个
         [manager removeAllSelectedAsset];
         if (self.selectedCellIndexPathArray.count == 1) {
@@ -135,7 +210,7 @@
             return;
         }
         
-        [self.previewView setCurrentIndex:indexPath.item animated:YES];
+        [self.previewView setCurrentIndex:targetIndex animated:YES];
         
         __weak typeof(manager) weakManager = manager;
         
@@ -174,12 +249,18 @@
 }
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    return self.albumModel.count;
+    return self.albumModel.count + (self.isShowTakePhotoCell ? 1 : 0);
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+    
+    if (self.isShowTakePhotoCell && indexPath.item == 0) { // 显示拍照的cell
+        return [collectionView dequeueReusableCellWithReuseIdentifier:HQLTakePhotoCellReuseId forIndexPath:indexPath];
+    }
+    
+    NSInteger sign = self.isShowTakePhotoCell ? 1 : 0;
     HQLPhotoPickerCell *cell = (HQLPhotoPickerCell *)[collectionView dequeueReusableCellWithReuseIdentifier:HQLPhotoPickerCellReuseId forIndexPath:indexPath];
-    cell.photoModel = self.albumModel.photoArray[indexPath.item];
+    cell.photoModel = self.albumModel.photoArray[indexPath.item - sign];
     cell.isShowCheckButton = NO;
     cell.isShowSelectedBorder = YES;
     return cell;
@@ -289,6 +370,12 @@
 
 #pragma mark - setter
 
+- (void)setIsShowTakePhotoCell:(BOOL)isShowTakePhotoCell {
+    _isShowTakePhotoCell = isShowTakePhotoCell;
+    [self.collectionView reloadData];
+    [self.previewView reloadData];
+}
+
 - (void)setAlbumModel:(HQLPhotoAlbumModel *)albumModel {
     _albumModel = albumModel;
     
@@ -379,6 +466,7 @@
         [_collectionView setBackgroundColor:[UIColor whiteColor]];
         
         [_collectionView registerClass:[HQLPhotoPickerCell class] forCellWithReuseIdentifier:HQLPhotoPickerCellReuseId];
+        [_collectionView registerClass:[HQLTakePhotoCell class] forCellWithReuseIdentifier:HQLTakePhotoCellReuseId];
         
         [self.view addSubview:_collectionView];
     }
