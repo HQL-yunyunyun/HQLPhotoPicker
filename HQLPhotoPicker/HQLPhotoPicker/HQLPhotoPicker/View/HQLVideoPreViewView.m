@@ -280,6 +280,8 @@
     _thumbnail = thumbnail;
     self.thumbnailView.image = thumbnail;
     [self.thumbnailView setHidden:NO];
+    
+    [self updateFrame];
 }
 
 #pragma mark - getter

@@ -57,15 +57,37 @@
     return [PHPhotoLibrary authorizationStatus];
 }
 
-- (void)addSelectedAssetWithIdentifier:(NSString *)identifier {
+- (void)addSelectedAssetWithIdentifier:(NSString *)identifier complete:(void(^)(BOOL isSuccess, NSString *message))complete{
+    if (!complete) {
+        return;
+    }
     if (![self getAssetIsSelectedWithIdentifier:identifier]) {
         [self.selectedAssetIdentifierArray addObject:identifier];
+        
+        for (HQLPhotoModel *model in [self getAssetWithIdentifier:identifier]) {
+            model.isSelected = YES;
+        }
+        
+        complete(YES, @"添加成功");
+    } else {
+        complete(NO, @"identifier 所对应的资源已被选中");
     }
 }
 
-- (void)removeSelectedAssetWithIdentifier:(NSString *)identifier {
+- (void)removeSelectedAssetWithIdentifier:(NSString *)identifier complete:(void(^)(BOOL isSuccess, NSString *message))complete{
+    if (!complete) {
+        return;
+    }
     if ([self getAssetIsSelectedWithIdentifier:identifier]) {
         [self.selectedAssetIdentifierArray removeObject:identifier];
+        
+        for (HQLPhotoModel *model in [self getAssetWithIdentifier:identifier]) {
+            model.isSelected = NO;
+        }
+        
+        complete(YES, @"删除成功");
+    } else {
+        complete(NO, @"identifier 所对应的资源没有被选中");
     }
 }
 
@@ -76,6 +98,53 @@
         }
     }
     return NO;
+}
+
+- (void)removeAllSelectedAsset {
+    for (NSString *identifier in self.selectedAssetIdentifierArray) {
+        for (HQLPhotoModel *model in [self getAssetWithIdentifier:identifier]) {
+            model.isSelected = NO;
+        }
+    }
+    [self.selectedAssetIdentifierArray removeAllObjects];
+}
+
+- (NSMutableArray<HQLPhotoModel *> *)getAssetWithIdentifier:(NSString *)identifier {
+    NSMutableArray *array = [NSMutableArray array];
+    for (HQLPhotoAlbumModel *album in self.albumArray) {
+        HQLPhotoModel *model = [self getAssetWithIdentifier:identifier inAlbum:album];
+        if (model) {
+            [array addObject:model];
+        }
+    }
+    return array;
+}
+
+- (HQLPhotoModel *)getAssetWithIdentifier:(NSString *)identifier inAlbum:(HQLPhotoAlbumModel *)album {
+    for (HQLPhotoModel *model in album.photoArray) {
+        if ([model.assetLocalizationIdentifier isEqualToString:identifier]) {
+            return model;
+        }
+    }
+    return nil;
+}
+
+- (NSMutableArray<NSNumber *> *)getSelectedAssetIndexWithAlbum:(HQLPhotoAlbumModel *)albumModel {
+    NSMutableArray *array = [NSMutableArray array];
+    for (HQLPhotoModel *model in albumModel.photoArray) {
+        if ([self getAssetIsSelectedWithIdentifier:model.assetLocalizationIdentifier]) {
+            [array addObject:[NSNumber numberWithUnsignedInteger:[albumModel.photoArray indexOfObject:model]]];
+        }
+    }
+    return array;
+}
+
+- (NSMutableArray<HQLPhotoModel *> *)getSelectedAsset {
+    NSMutableArray *array = [NSMutableArray array];
+    for (NSString *identifier in self.selectedAssetIdentifierArray) {
+        [array addObject:[self getAssetWithIdentifier:identifier].firstObject];
+    }
+    return array;
 }
 
 #pragma mark - fetch method
@@ -126,8 +195,8 @@
         
         PHAsset *asset = photoResult[i];
         model.asset = asset;
-        model.assetLocalizationIdentifer = asset.localIdentifier;
-        model.isSelected = [self getAssetIsSelectedWithIdentifier:model.assetLocalizationIdentifer];
+        model.assetLocalizationIdentifier = asset.localIdentifier;
+        model.isSelected = [self getAssetIsSelectedWithIdentifier:model.assetLocalizationIdentifier];
         
         switch (asset.mediaType) {
             case PHAssetMediaTypeImage: {

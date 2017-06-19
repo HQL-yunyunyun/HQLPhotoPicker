@@ -28,7 +28,9 @@
 @property (strong, nonatomic) UIButton *closeButton;
 @property (strong, nonatomic) UIButton *confirmButton;
 
-@property (strong, nonatomic) NSIndexPath *currentSelectedCellIndexPath;
+//@property (strong, nonatomic) NSIndexPath *currentSelectedCellIndexPath;
+
+@property (strong, nonatomic) NSMutableArray <NSIndexPath *>*selectedCellIndexPathArray;
 
 @property (assign, nonatomic) BOOL isShowAlertView;
 
@@ -47,6 +49,8 @@
     [self collectionView];
     [self closeButton];
     [self confirmButton];
+    
+    self.maxSelectCount = 1;
 }
 
 - (void)dealloc {
@@ -56,13 +60,18 @@
 #pragma mark - event
 
 - (void)closeButtonDidClick:(UIButton *)button {
+    [[HQLPhotoManager shareManager] removeAllSelectedAsset];
     if ([self.delegate respondsToSelector:@selector(photoPickerModalControllerDidClickCloseButton:)]) {
         [self.delegate photoPickerModalControllerDidClickCloseButton:self];
     }
 }
 
 - (void)confirmButtonDidClick:(UIButton *)button {
-
+    
+    if ([self.delegate respondsToSelector:@selector(photoPickerModalController:didFinishPickingPhotoWithPhotoAssetArray:)]) {
+        [self.delegate photoPickerModalController:self didFinishPickingPhotoWithPhotoAssetArray:[[HQLPhotoManager shareManager] getSelectedAsset]];
+        [[HQLPhotoManager shareManager] removeAllSelectedAsset];
+    }
 }
 
 - (void)showAlertViewWithTitle:(NSString *)title message:(NSString *)message { // 一次只能有一个View
@@ -90,23 +99,71 @@
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     
-    [self.previewView setCurrentIndex:indexPath.item animated:YES];
+    HQLWeakSelf;
     
-    HQLPhotoModel *model = self.albumModel.photoArray[indexPath.item];
-    model.isSelected = YES;
-    [[HQLPhotoManager shareManager] addSelectedAssetWithIdentifier:model.assetLocalizationIdentifer];
+    HQLPhotoManager *manager = [HQLPhotoManager shareManager];
+    HQLPhotoModel *currentModel = self.albumModel.photoArray[indexPath.item];
     
-    HQLPhotoPickerCell *cell = (HQLPhotoPickerCell *)[collectionView cellForItemAtIndexPath:indexPath];
-    [cell setSelectedAnimation:YES animated:YES];
-    
-    if ([indexPath compare:self.currentSelectedCellIndexPath] != NSOrderedSame) {
-        HQLPhotoModel *currentModel = self.albumModel.photoArray[self.currentSelectedCellIndexPath.item];
-        currentModel.isSelected = NO;
-        [[HQLPhotoManager shareManager] removeSelectedAssetWithIdentifier:currentModel.assetLocalizationIdentifer];
+    if (self.maxSelectCount == 1) {
         
-        HQLPhotoPickerCell *currentCell = (HQLPhotoPickerCell *)[collectionView cellForItemAtIndexPath:self.currentSelectedCellIndexPath];
-        [currentCell setSelectedAnimation:NO animated:YES];
-        self.currentSelectedCellIndexPath = indexPath;
+        if ([self.selectedCellIndexPathArray.lastObject compare:indexPath] == NSOrderedSame && self.selectedCellIndexPathArray.count != 0) {
+            return;
+        }
+        
+        [self.previewView setCurrentIndex:indexPath.item animated:YES];
+        // 取消前一个
+        [manager removeAllSelectedAsset];
+        if (self.selectedCellIndexPathArray.count == 1) {
+            HQLPhotoPickerCell *cell = (HQLPhotoPickerCell *)[collectionView cellForItemAtIndexPath:self.selectedCellIndexPathArray.lastObject];
+            [cell setSelectedAnimation:NO animated:YES];
+        }
+        
+        [self.selectedCellIndexPathArray removeAllObjects];
+        
+        [manager addSelectedAssetWithIdentifier:currentModel.assetLocalizationIdentifier complete:^(BOOL isSuccess, NSString *message) {
+            if (isSuccess) {
+                HQLPhotoPickerCell *cell = (HQLPhotoPickerCell *)[collectionView cellForItemAtIndexPath:indexPath];
+                [cell setSelectedAnimation:YES animated:YES];
+                [weakSelf.selectedCellIndexPathArray addObject:indexPath];
+            } else {
+                NSLog(@"%@", message);
+            }
+        }];
+        
+    } else {
+        if (self.selectedCellIndexPathArray.count >= self.maxSelectCount && ![manager getAssetIsSelectedWithIdentifier:currentModel.assetLocalizationIdentifier]) {
+            return;
+        }
+        
+        [self.previewView setCurrentIndex:indexPath.item animated:YES];
+        
+        __weak typeof(manager) weakManager = manager;
+        
+        [manager addSelectedAssetWithIdentifier:currentModel.assetLocalizationIdentifier complete:^(BOOL isSuccess, NSString *message) {
+            if (isSuccess) { // 添加成功表明添加前这个资源没有被选中
+                [weakSelf.selectedCellIndexPathArray addObject:indexPath];
+                HQLPhotoPickerCell *cell = (HQLPhotoPickerCell *)[collectionView cellForItemAtIndexPath:indexPath];
+                [cell setSelectedAnimation:YES animated:YES];
+            } else { // 表明之前已有这个资源
+                [weakManager removeSelectedAssetWithIdentifier:currentModel.assetLocalizationIdentifier complete:^(BOOL isSuccess, NSString *message) {
+                    if (isSuccess) { // 表明删除成功
+                        NSIndexPath *dele;
+                        for (NSIndexPath *path in weakSelf.selectedCellIndexPathArray) {
+                            if ([path compare:indexPath] == NSOrderedSame) {
+                                dele = path;
+                            }
+                        }
+                        if (dele) {
+                            [weakSelf.selectedCellIndexPathArray removeObject:dele];
+                            HQLPhotoPickerCell *cell = (HQLPhotoPickerCell *)[collectionView cellForItemAtIndexPath:indexPath];
+                            [cell setSelectedAnimation:NO animated:YES];
+                        }
+                    } else { // 删除失败
+                        NSLog(@"%@", message);
+                    }
+                }];
+            }
+        }];
     }
 }
 
@@ -197,7 +254,7 @@
             } resultHandler:^(AVPlayerItem *playerItem, NSString *error) {
                 if (![error isEqualToString:@""]) {
                     [weakSelf showAlertViewWithTitle:@"错误" message:error];
-                    photoPreviewView.thumbnail = model.thumbnailImage;
+                    [photoPreviewView setVideoViewThumbnail:model.thumbnailImage];
                 } else {
                     if (playerItem) {
                         photoPreviewView.playerItem = playerItem;
@@ -222,7 +279,7 @@
 }
 
 - (void)previewView:(HQLPreviewView *)previewView didDisplayPhotoPreviewView:(HQLPhotoPreviewView *)photoPreviewView atIndex:(NSUInteger)index {
-    [self collectionView:self.collectionView didSelectItemAtIndexPath:[NSIndexPath indexPathForItem:index inSection:0]];
+    
 }
 
 - (HQLPhotoModelMediaType)previewView:(HQLPreviewView *)previewView assetTypeAtIndex:(NSUInteger)index {
@@ -237,16 +294,37 @@
     
     [self.collectionView reloadData];
     [self.previewView reloadData];
+    [self.collectionView layoutIfNeeded]; // 强制刷新
     
+    // 将selectedCellIndexPath 清空
+    [self.selectedCellIndexPathArray removeAllObjects];
+    for (NSNumber *index in [[HQLPhotoManager shareManager] getSelectedAssetIndexWithAlbum:albumModel]) {
+        [self.selectedCellIndexPathArray addObject:[NSIndexPath indexPathForItem:[index integerValue] inSection:0]];
+    }
+    
+    /*
     if (![self.collectionView cellForItemAtIndexPath:self.currentSelectedCellIndexPath]) {
         self.currentSelectedCellIndexPath = [NSIndexPath indexPathForItem:0 inSection:0];
     }
-    
     [self.collectionView layoutIfNeeded]; // 强制刷新
     [self collectionView:self.collectionView didSelectItemAtIndexPath:self.currentSelectedCellIndexPath];
+     */
+}
+
+- (void)setMaxSelectCount:(NSUInteger)maxSelectCount {
+    _maxSelectCount = maxSelectCount <= 0 ? 1 : (maxSelectCount >= 9 ? 9 : maxSelectCount);
+    
+    [[HQLPhotoManager shareManager] removeAllSelectedAsset];
 }
 
 #pragma mark - getter
+
+- (NSMutableArray<NSIndexPath *> *)selectedCellIndexPathArray {
+    if (!_selectedCellIndexPathArray) {
+        _selectedCellIndexPathArray = [NSMutableArray array];
+    }
+    return _selectedCellIndexPathArray;
+}
 
 - (UIButton *)closeButton {
     if (!_closeButton) {

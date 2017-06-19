@@ -24,7 +24,7 @@ typedef enum : NSUInteger {
 
 @property (strong, nonatomic) PHAsset *asset; // 资源
 @property (assign, nonatomic) HQLPhotoModelMediaType mediaType; // 类型
-@property (copy, nonatomic) NSString *assetLocalizationIdentifer; // 资源的唯一标识
+@property (copy, nonatomic) NSString *assetLocalizationIdentifier; // 资源的唯一标识
 
 @property (strong, nonatomic) UIImage *thumbnailImage; // 缩略图
 

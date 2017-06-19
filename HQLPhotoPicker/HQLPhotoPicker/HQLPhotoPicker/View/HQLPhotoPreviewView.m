@@ -367,6 +367,7 @@
 
 - (void)setVideoViewThumbnail:(UIImage *)thumbnail {
     [self resetProperty];
+    self.videoView.frame = self.bounds;
     [self.videoView setHidden:NO];
     [self.videoView setThumbnail:thumbnail];
 }

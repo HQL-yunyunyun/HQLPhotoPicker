@@ -27,7 +27,7 @@
 @interface HQLPhotoPickerModalController : UIViewController
 
 @property (strong, nonatomic) HQLPhotoAlbumModel *albumModel;
-@property (assign, nonatomic) NSUInteger maxSelectCount; // 最大选择数，暂时只能单张
+@property (assign, nonatomic) NSUInteger maxSelectCount; // 最大选择数，暂时只能单张 --- 0 到 9
 
 @property (assign, nonatomic) id <HQLPHotoPickerModalControllerDelegate>delegate;
 

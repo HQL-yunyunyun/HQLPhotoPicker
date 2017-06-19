@@ -82,6 +82,13 @@
     }];
 }
 
+- (void)photoPickerModalController:(HQLPhotoPickerModalController *)controller didFinishPickingPhotoWithPhotoAssetArray:(NSMutableArray<HQLPhotoModel *> *)photoAssetArray {
+    [self dismissViewControllerAnimated:YES completion:^{
+        
+    }];
+    NSLog(@"array : %@", photoAssetArray);
+}
+
 #pragma mark - table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -91,6 +98,7 @@
     HQLPhotoPickerModalController *controller = [[HQLPhotoPickerModalController alloc] init];
     controller.albumModel = self.photoManager.albumArray[indexPath.row];
     controller.delegate = self;
+    controller.maxSelectCount = 9;
     [self presentViewController:controller animated:YES completion:^{
         
     }];
