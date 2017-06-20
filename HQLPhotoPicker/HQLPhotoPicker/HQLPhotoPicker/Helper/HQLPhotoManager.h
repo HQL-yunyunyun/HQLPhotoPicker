@@ -26,6 +26,13 @@ typedef enum {
     HQLPhotoQualityThumbnails , // 缩略图
 } HQLPhotoQuality;
 
+@protocol HQLPhotoManagerDelegate <NSObject>
+
+@optional
+//- (void)photoLibraryDidChange:(PHChange *)changeInstance change
+
+@end
+
 @interface HQLPhotoManager : NSObject
 
 @property (strong, nonatomic) NSMutableArray <HQLPhotoAlbumModel *>*albumArray; // 保存相册 --- 第一个相册是所有图片

@@ -96,8 +96,6 @@
     } else {
     
     }
-    
-    NSLog(@"info : %@", info);
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 

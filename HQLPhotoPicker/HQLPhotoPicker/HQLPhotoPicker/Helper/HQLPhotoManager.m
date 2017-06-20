@@ -426,7 +426,39 @@
 #pragma mark - photo library change observer
 
 - (void)photoLibraryDidChange:(PHChange *)changeInstance {
-    NSLog(@"change : %@", changeInstance);
+    
+    NSLog(@"library did change : %@", changeInstance);
+    
+    for (HQLPhotoAlbumModel *album in self.albumArray) {
+        
+        PHFetchResultChangeDetails *fetchResult = [changeInstance changeDetailsForFetchResult:album.albumResult];
+        if (fetchResult) {
+            NSLog(@"change album name : %@", album.albumName);
+            
+            if (fetchResult.hasIncrementalChanges) { // 表明有改变
+                if (fetchResult.removedIndexes) { // 表明有移除
+                    NSLog(@"remove indexes : %@", fetchResult.removedIndexes);
+                    NSLog(@"remove objects : %@", fetchResult.removedObjects);
+                }
+                if (fetchResult.insertedIndexes) {
+                    NSLog(@"insert indexes : %@", fetchResult.insertedIndexes);
+                    NSLog(@"insert objects : %@", fetchResult.insertedObjects);
+                }
+                if (fetchResult.changedIndexes) {
+                    NSLog(@"change indexes : %@", fetchResult.changedIndexes);
+                    NSLog(@"change objects : %@", fetchResult.changedObjects);
+                }
+                
+                
+                // 移动了item
+                if (fetchResult.hasMoves) {
+                    [fetchResult enumerateMovesWithBlock:^(NSUInteger fromIndex, NSUInteger toIndex) {
+                        NSLog(@"move item , from index : %ld  ---  to index : %ld", fromIndex, toIndex);
+                    }];
+                }
+            }
+        }
+    }
 }
 
 #pragma mark - setter

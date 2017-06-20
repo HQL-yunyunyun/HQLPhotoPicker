@@ -21,7 +21,7 @@
 #define HQLPhotoAlbumCellReuseId @"HQLPhotoAlbumCellReuseId"
 #define kTableViewCellHeight 60
 
-@interface HQLMainController () <UITableViewDelegate, UITableViewDataSource, HQLPHotoPickerModalControllerDelegate>
+@interface HQLMainController () <UITableViewDelegate, UITableViewDataSource, HQLPhotoPickerModalControllerDelegate>
 
 @property (strong, nonatomic) UITableView *tableView;
 @property (strong, nonatomic) HQLPhotoManager *photoManager;

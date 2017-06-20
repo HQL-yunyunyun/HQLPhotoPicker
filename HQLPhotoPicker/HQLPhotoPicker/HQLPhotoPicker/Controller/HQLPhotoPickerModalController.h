@@ -13,7 +13,7 @@
 
 @class HQLPhotoAlbumModel, HQLPhotoPickerModalController;
 
-@protocol HQLPHotoPickerModalControllerDelegate <NSObject>
+@protocol HQLPhotoPickerModalControllerDelegate <NSObject>
 
 @required
 
@@ -32,6 +32,6 @@
 @property (assign, nonatomic) BOOL isShowTakePhotoCell; // 是否显示拍照的选项 defaut : yes
 @property (assign, nonatomic) HQLPhotoPickerTakePhotoType takePhotoType; 
 
-@property (assign, nonatomic) id <HQLPHotoPickerModalControllerDelegate>delegate;
+@property (assign, nonatomic) id <HQLPhotoPickerModalControllerDelegate>delegate;
 
 @end
