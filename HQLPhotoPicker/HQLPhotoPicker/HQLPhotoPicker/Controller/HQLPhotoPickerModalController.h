@@ -9,12 +9,7 @@
 #import <UIKit/UIKit.h>
 
 #import "HQLPhotoManager.h"
-
-typedef enum {
-    HQLPhotoPickerTakePhotoTypeVideoAndPicture, // videoAndPicture
-    HQlPhotoPickerTakePhotoTypeOnlyVideo, // video
-    HQLPhotoPickerTakePhotoTypeOnlyPicture, // picture
-} HQLPhotoPickerTakePhotoType;
+#import "HQLPhotoHelper.h"
 
 @class HQLPhotoAlbumModel, HQLPhotoPickerModalController;
 

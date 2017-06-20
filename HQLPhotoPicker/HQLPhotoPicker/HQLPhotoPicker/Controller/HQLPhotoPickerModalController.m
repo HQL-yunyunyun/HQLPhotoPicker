@@ -20,9 +20,6 @@
 #define HQLPhotoPickerCellReuseId @"HQLPhotoPickerCellReuseId"
 #define HQLTakePhotoCellReuseId @"HQLTakePhotoCellReuseId"
 #define kColumnCount 4
-#define kVideoMaxDuration 9.0f
-
-#define HQLShowAlertView(Title, Message) [[[UIAlertView alloc] initWithTitle:Title message:Message delegate:nil cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil] show]
 
 @interface HQLPhotoPickerModalController () <UINavigationControllerDelegate, UIImagePickerControllerDelegate, UICollectionViewDelegate, UICollectionViewDataSource, HQLPreviewViewDelegate, HQLPhotoPreviewViewDelegate>
 
@@ -32,8 +29,6 @@
 
 @property (strong, nonatomic) UIButton *closeButton;
 @property (strong, nonatomic) UIButton *confirmButton;
-
-//@property (strong, nonatomic) NSIndexPath *currentSelectedCellIndexPath;
 
 @property (strong, nonatomic) NSMutableArray <NSIndexPath *>*selectedCellIndexPathArray;
 
@@ -80,79 +75,6 @@
     }
 }
 
-- (void)showAlertViewWithTitle:(NSString *)title message:(NSString *)message { // 一次只能有一个View
-    if (self.isShowAlertView) {
-        return;
-    }
-    HQLWeakSelf;
-    self.isShowAlertView = YES;
-    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-        weakSelf.isShowAlertView = NO;
-    }];
-    UIAlertAction *confirm = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        weakSelf.isShowAlertView = NO;
-    }];
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
-    [alert addAction:cancel];
-    [alert addAction:confirm];
-    
-    [self presentViewController:alert animated:YES completion:nil];
-}
-
-- (void)takePhoto {
-    
-    if (![UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
-        [self showAlertViewWithTitle:@"温馨提示" message:@"当前设备不支持拍照"];
-        return;
-    }
-    
-    UIImagePickerController *pickerController = [[UIImagePickerController alloc] init];
-    pickerController.allowsEditing = NO;
-    pickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
-    pickerController.delegate = self;
-    
-    switch (self.takePhotoType) {
-        case HQlPhotoPickerTakePhotoTypeOnlyVideo: {
-            pickerController.mediaTypes = @[(NSString *)kUTTypeMovie];
-            pickerController.cameraCaptureMode = UIImagePickerControllerCameraCaptureModeVideo;
-            pickerController.videoMaximumDuration = kVideoMaxDuration;
-            [self presentViewController:pickerController animated:YES completion:nil];
-            break;
-        }
-        case HQLPhotoPickerTakePhotoTypeOnlyPicture: {
-            pickerController.cameraCaptureMode = UIImagePickerControllerCameraCaptureModePhoto;
-            pickerController.mediaTypes = @[(NSString *)kUTTypeImage];
-            [self presentViewController:pickerController animated:YES completion:nil];
-            break;
-        }
-        case HQLPhotoPickerTakePhotoTypeVideoAndPicture: {
-            HQLWeakSelf;
-            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"拍照" message:@"选择拍照方式" preferredStyle:UIAlertControllerStyleActionSheet];
-            UIAlertAction *picture = [UIAlertAction actionWithTitle:@"拍照" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                pickerController.cameraCaptureMode = UIImagePickerControllerCameraCaptureModePhoto;
-                pickerController.mediaTypes = @[(NSString *)kUTTypeImage];
-                [weakSelf presentViewController:pickerController animated:YES completion:nil];
-            }];
-            UIAlertAction *video = [UIAlertAction actionWithTitle:@"拍摄" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                pickerController.mediaTypes = @[(NSString *)kUTTypeMovie];
-                pickerController.cameraCaptureMode = UIImagePickerControllerCameraCaptureModeVideo;
-                pickerController.videoMaximumDuration = kVideoMaxDuration;
-                
-                [weakSelf presentViewController:pickerController animated:YES completion:nil];
-            }];
-            UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-                
-            }];
-            
-            [alertController addAction:picture];
-            [alertController addAction:video];
-            [alertController addAction:cancel];
-            [self presentViewController:alertController animated:YES completion:nil];
-            break;
-        }
-    }
-}
-
 #pragma mark - image picker controller delegate
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
@@ -160,6 +82,21 @@
 }
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info {
+    
+    NSString *mediaType = info[UIImagePickerControllerMediaType];
+    if ([mediaType isEqualToString:@"public.image"]) { // 图片
+        // 保存图片
+        [[HQLPhotoManager shareManager] saveImage:info[UIImagePickerControllerOriginalImage] toAlbum:self.albumModel complete:^(BOOL isSuccess, NSString *error, NSString *identifier) {
+            NSLog(@"succes : %d , error : %@, identifier : %@", isSuccess, error, identifier);
+        }];
+    } else if ([mediaType isEqualToString:@"public.movie"]) { // 视频
+        [[HQLPhotoManager shareManager] saveVideoWithVideoUrl:[NSURL URLWithString:info[UIImagePickerControllerMediaURL]] toAlbum:self.albumModel complete:^(BOOL isSuccess, NSString *error, NSString *identifier) {
+            NSLog(@"succes : %d , error : %@, identifier : %@", isSuccess, error, identifier);
+        }];
+    } else {
+    
+    }
+    
     NSLog(@"info : %@", info);
     [self dismissViewControllerAnimated:YES completion:nil];
 }
@@ -169,7 +106,7 @@
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     
     if (self.isShowTakePhotoCell && indexPath.item == 0) {
-        [self takePhoto];
+        [HQLPhotoHelper takePhotoWithController:self delegate:self type:self.takePhotoType];
         return;
     }
     
@@ -288,7 +225,7 @@
             } resultHandler:^(UIImage *highDefinitionImage, NSString *error) {
                 if (![error isEqualToString:@""]) {
                     // 发生错误
-                    [weakSelf showAlertViewWithTitle:@"错误" message:error];
+                    [HQLPhotoHelper showAlertViewWithTitle:@"错误" message:error controller:weakSelf];
                 } else {
                     if (highDefinitionImage) {
                         photoPreviewView.photo = highDefinitionImage;
@@ -303,7 +240,7 @@
             } resultHandler:^(NSData *imageData, NSString *byteString, NSString *error) {
                 if (![error isEqualToString:@""]) {
                     // 发生错误
-                    [weakSelf showAlertViewWithTitle:@"错误" message:error];
+                    [HQLPhotoHelper showAlertViewWithTitle:@"错误" message:error controller:weakSelf];
                     photoPreviewView.thumbnail = model.thumbnailImage;
                 } else {
                     if (imageData) {
@@ -318,7 +255,7 @@
                 
             } resultHandler:^(PHLivePhoto *livePhoto, NSString *error) {
                 if (![error isEqualToString:@""]) {
-                    [weakSelf showAlertViewWithTitle:@"错误" message:error];
+                    [HQLPhotoHelper showAlertViewWithTitle:@"错误" message:error controller:weakSelf];
                     photoPreviewView.thumbnail = model.thumbnailImage;
                 } else {
                     if (livePhoto) {
@@ -334,7 +271,7 @@
                 
             } resultHandler:^(AVPlayerItem *playerItem, NSString *error) {
                 if (![error isEqualToString:@""]) {
-                    [weakSelf showAlertViewWithTitle:@"错误" message:error];
+                    [HQLPhotoHelper showAlertViewWithTitle:@"错误" message:error controller:weakSelf];
                     [photoPreviewView setVideoViewThumbnail:model.thumbnailImage];
                 } else {
                     if (playerItem) {
@@ -381,7 +318,6 @@
     
     [self.collectionView reloadData];
     [self.previewView reloadData];
-    [self.collectionView layoutIfNeeded]; // 强制刷新
     
     // 将selectedCellIndexPath 清空
     [self.selectedCellIndexPathArray removeAllObjects];

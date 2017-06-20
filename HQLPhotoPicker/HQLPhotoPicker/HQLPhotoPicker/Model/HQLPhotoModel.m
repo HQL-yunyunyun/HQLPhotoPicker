@@ -69,7 +69,7 @@
                 
                 weakSelf.targetAssetIsRequestSuccess = (![[info objectForKey:PHImageCancelledKey] boolValue] && ![info objectForKey:PHImageErrorKey]);
                 
-                resultHandler ? resultHandler(imageData, [HQLPhotoHelper fetchPhotosBytes:@[imageData]], [self getErrorStringWithError:error]) : nil;
+                resultHandler ? resultHandler(imageData, [HQLPhotoHelper fetchPhotosBytes:@[imageData]], [HQLPhotoHelper getErrorStringWithError:error]) : nil;
             }];
             break;
         }
@@ -109,7 +109,7 @@
             
             weakSelf.targetAssetIsRequestSuccess = (![[info objectForKey:PHImageCancelledKey] boolValue] && ![info objectForKey:PHImageErrorKey]);
             
-            resultHandler ? resultHandler(livePhoto, [self getErrorStringWithError:error]) : nil;
+            resultHandler ? resultHandler(livePhoto, [HQLPhotoHelper getErrorStringWithError:error]) : nil;
         }];
     }
     
@@ -135,7 +135,7 @@
                 
             }
             weakSelf.targetAssetIsRequestSuccess = (![[info objectForKey:PHImageCancelledKey] boolValue] && ![info objectForKey:PHImageErrorKey]);
-            resultHandler ? resultHandler(playerItem, [self getErrorStringWithError:error]) : nil;
+            resultHandler ? resultHandler(playerItem, [HQLPhotoHelper getErrorStringWithError:error]) : nil;
         }];
     } else if (self.mediaType == HQLPhotoModelMediaTypeCameraVideo) {
         self.targetAssetIsRequestSuccess = YES;
@@ -182,7 +182,7 @@
                 BOOL downloadFinined = (![[info objectForKey:PHImageCancelledKey] boolValue] && ![info objectForKey:PHImageErrorKey]);
                 weakSelf.targetAssetIsRequestSuccess = downloadFinined && CGSizeEqualToSize(targetSize, kOriginalImageSize);
                 
-                resultHandler ? resultHandler(image, [self getErrorStringWithError:error]) : nil;
+                resultHandler ? resultHandler(image, [HQLPhotoHelper getErrorStringWithError:error]) : nil;
             }];
             break;
         }
@@ -205,26 +205,6 @@
             break;
         }
     }
-}
-
-// 获取错误信息
-- (NSString *)getErrorStringWithError:(NSError *)error {
-    
-    NSString *errorString = @"";
-    
-    if (error) {
-        errorString = error.domain;
-        if ([errorString containsString:@"cloud"]) { // iCloud 的问题
-            errorString = @"iCloud 同步出错";
-        }
-        
-        NSError *underLyingError = error.userInfo[NSUnderlyingErrorKey];
-        if (underLyingError) {
-            errorString = [errorString stringByAppendingString:underLyingError.localizedDescription];
-        }
-    }
-    
-    return errorString;
 }
 
 @end

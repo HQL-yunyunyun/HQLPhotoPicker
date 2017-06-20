@@ -7,6 +7,9 @@
 //
 
 #import "HQLPhotoHelper.h"
+#import <MobileCoreServices/MobileCoreServices.h>
+
+#define kVideoMaxDuration 9.0f
 
 @implementation HQLPhotoHelper
 
@@ -66,6 +69,7 @@
     return photoName;
 }
 
+// 获取图片大小
 + (NSString *)fetchPhotosBytes:(NSArray<NSData *> *)photos {
     NSInteger length = 0;
     for (NSData *data in photos) {
@@ -74,6 +78,7 @@
     return [self getBytesFromDataLength:length];
 }
 
+// 获取图片大小
 + (void)fetchPhotosBytes:(NSArray<UIImage *> *)photos resultHandler:(void (^)(NSString *))resultHandler {
     __block NSInteger dataLength = 0;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -91,6 +96,7 @@
     });
 }
 
+// 获取NSData大小
 + (NSString *)getBytesFromDataLength:(NSInteger)dataLength {
     NSString *bytes;
     if (dataLength >= 0.1 * (1024 * 1024)) {
@@ -101,6 +107,100 @@
         bytes = [NSString stringWithFormat:@"%zdB",dataLength];
     }
     return bytes;
+}
+
+// 照相
++ (void)takePhotoWithController:(UIViewController *)controller delegate:(id<UIImagePickerControllerDelegate, UINavigationControllerDelegate>)delegate type:(HQLPhotoPickerTakePhotoType)type {
+    if (![UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
+        [self showAlertViewWithTitle:@"温馨提示" message:@"当前设备不支持拍照" controller:controller];
+        return;
+    }
+    
+    UIImagePickerController *pickerController = [[UIImagePickerController alloc] init];
+    pickerController.allowsEditing = NO;
+    pickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
+    pickerController.delegate = delegate;
+    
+    switch (type) {
+        case HQlPhotoPickerTakePhotoTypeOnlyVideo: {
+            pickerController.mediaTypes = @[(NSString *)kUTTypeMovie];
+            pickerController.cameraCaptureMode = UIImagePickerControllerCameraCaptureModeVideo;
+            pickerController.videoMaximumDuration = kVideoMaxDuration;
+            [controller presentViewController:pickerController animated:YES completion:nil];
+            break;
+        }
+        case HQLPhotoPickerTakePhotoTypeOnlyPicture: {
+            pickerController.cameraCaptureMode = UIImagePickerControllerCameraCaptureModePhoto;
+            pickerController.mediaTypes = @[(NSString *)kUTTypeImage];
+            [controller presentViewController:pickerController animated:YES completion:nil];
+            break;
+        }
+        case HQLPhotoPickerTakePhotoTypeVideoAndPicture: {
+            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"拍照" message:@"选择拍照方式" preferredStyle:UIAlertControllerStyleActionSheet];
+            UIAlertAction *picture = [UIAlertAction actionWithTitle:@"拍照" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                pickerController.cameraCaptureMode = UIImagePickerControllerCameraCaptureModePhoto;
+                pickerController.mediaTypes = @[(NSString *)kUTTypeImage];
+                [controller presentViewController:pickerController animated:YES completion:nil];
+            }];
+            UIAlertAction *video = [UIAlertAction actionWithTitle:@"拍摄" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                pickerController.mediaTypes = @[(NSString *)kUTTypeMovie];
+                pickerController.cameraCaptureMode = UIImagePickerControllerCameraCaptureModeVideo;
+                pickerController.videoMaximumDuration = kVideoMaxDuration;
+                
+                [controller presentViewController:pickerController animated:YES completion:nil];
+            }];
+            UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+                
+            }];
+            
+            [alertController addAction:picture];
+            [alertController addAction:video];
+            [alertController addAction:cancel];
+            [controller presentViewController:alertController animated:YES completion:nil];
+            break;
+        }
+    }
+}
+
+// 显示alert
++ (void)showAlertViewWithTitle:(NSString *)title message:(NSString *)message controller:(UIViewController *)controller {
+    static BOOL isShowAlertView = NO;
+    
+    if (isShowAlertView) {
+        return;
+    }
+    isShowAlertView = YES;
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+        isShowAlertView = NO;
+    }];
+    UIAlertAction *confirm = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        isShowAlertView = NO;
+    }];
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
+    [alert addAction:cancel];
+    [alert addAction:confirm];
+    
+    [controller presentViewController:alert animated:YES completion:nil];
+}
+
+// 获取错误信息
++ (NSString *)getErrorStringWithError:(NSError *)error {
+    
+    NSString *errorString = @"";
+    
+    if (error) {
+        errorString = error.domain;
+        if ([errorString containsString:@"cloud"]) { // iCloud 的问题
+            errorString = @"iCloud 同步出错";
+        }
+        
+        NSError *underLyingError = error.userInfo[NSUnderlyingErrorKey];
+        if (underLyingError) {
+            errorString = [errorString stringByAppendingString:underLyingError.localizedDescription];
+        }
+    }
+    
+    return errorString;
 }
 
 @end

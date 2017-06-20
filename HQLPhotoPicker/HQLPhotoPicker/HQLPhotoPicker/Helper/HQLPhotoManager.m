@@ -18,7 +18,6 @@
 @interface HQLPhotoManager () <PHPhotoLibraryChangeObserver>
 
 @property (strong, nonatomic) PHPhotoLibrary *photoLibrary;
-//@property (strong, nonatomic) PHImageManager *imageManager;
 
 @end
 
@@ -45,6 +44,7 @@
 
 #pragma mark - event
 
+// 获取权限
 - (void)requestPhotoAuthorizationWithCompleteHandler:(void (^)(PHAuthorizationStatus))completeHandler {
     [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -53,10 +53,14 @@
     }];
 }
 
+// 返回当前权限状态
 - (PHAuthorizationStatus)currentPhotoAuthorizationStatus {
     return [PHPhotoLibrary authorizationStatus];
 }
 
+#pragma mark - selected method
+
+// 选择 identifier 对应的资源
 - (void)addSelectedAssetWithIdentifier:(NSString *)identifier complete:(void(^)(BOOL isSuccess, NSString *message))complete{
     if (!complete) {
         return;
@@ -74,6 +78,7 @@
     }
 }
 
+// 移除 identifier 对应的资源的选择状态
 - (void)removeSelectedAssetWithIdentifier:(NSString *)identifier complete:(void(^)(BOOL isSuccess, NSString *message))complete{
     if (!complete) {
         return;
@@ -91,6 +96,7 @@
     }
 }
 
+// 资源是否已被选择
 - (BOOL)getAssetIsSelectedWithIdentifier:(NSString *)identifier {
     for (NSString *ID in self.selectedAssetIdentifierArray) {
         if ([identifier isEqualToString:ID]) {
@@ -100,6 +106,7 @@
     return NO;
 }
 
+// 移除所有已选择的资源
 - (void)removeAllSelectedAsset {
     for (NSString *identifier in self.selectedAssetIdentifierArray) {
         for (HQLPhotoModel *model in [self getAssetWithIdentifier:identifier]) {
@@ -109,6 +116,7 @@
     [self.selectedAssetIdentifierArray removeAllObjects];
 }
 
+// 获取 identifier 所对应的所有资源
 - (NSMutableArray<HQLPhotoModel *> *)getAssetWithIdentifier:(NSString *)identifier {
     NSMutableArray *array = [NSMutableArray array];
     for (HQLPhotoAlbumModel *album in self.albumArray) {
@@ -120,6 +128,7 @@
     return array;
 }
 
+// 获取某个相册中 identifier 对应的资源
 - (HQLPhotoModel *)getAssetWithIdentifier:(NSString *)identifier inAlbum:(HQLPhotoAlbumModel *)album {
     for (HQLPhotoModel *model in album.photoArray) {
         if ([model.assetLocalizationIdentifier isEqualToString:identifier]) {
@@ -129,6 +138,7 @@
     return nil;
 }
 
+// 获取所有已选择的 资源 对应的相册中的 index
 - (NSMutableArray<NSNumber *> *)getSelectedAssetIndexWithAlbum:(HQLPhotoAlbumModel *)albumModel {
     NSMutableArray *array = [NSMutableArray array];
     for (HQLPhotoModel *model in albumModel.photoArray) {
@@ -139,6 +149,7 @@
     return array;
 }
 
+// 获取已选择的资源
 - (NSMutableArray<HQLPhotoModel *> *)getSelectedAsset {
     NSMutableArray *array = [NSMutableArray array];
     for (NSString *identifier in self.selectedAssetIdentifierArray) {
@@ -147,8 +158,61 @@
     return array;
 }
 
+#pragma mark - save method
+
+// 保存图片到指定相册
+- (void)saveImage:(UIImage *)image toAlbum:(HQLPhotoAlbumModel *)album complete:(void (^)(BOOL, NSString *, NSString *))complete {
+    __block NSString *targetIdentifier = @"";
+    [self.photoLibrary performChanges:^{
+        
+        PHAssetChangeRequest *assetChangeRequest = [PHAssetChangeRequest creationRequestForAssetFromImage:image];
+        targetIdentifier = assetChangeRequest.placeholderForCreatedAsset.localIdentifier;
+        
+        // 只有用户相册才能指定
+        if (album.albumCollection.assetCollectionType == PHAssetCollectionTypeAlbum && album.albumCollection.assetCollectionSubtype == PHAssetCollectionSubtypeSmartAlbumUserLibrary && album.albumCollection) {
+            PHAssetCollectionChangeRequest *collectionChangeRequest = [PHAssetCollectionChangeRequest changeRequestForAssetCollection:album.albumCollection];
+            [collectionChangeRequest addAssets:@[assetChangeRequest.placeholderForCreatedAsset]];
+        }
+        
+    } completionHandler:^(BOOL success, NSError * _Nullable error) {
+        complete ? complete(success, [HQLPhotoHelper getErrorStringWithError:error], targetIdentifier) : nil;
+    }];
+}
+
+// 保存 Image --- 用imageUrl
+- (void)saveImageWithImageUrl:(NSURL *)imageUrl toAlbum:(HQLPhotoAlbumModel *)album complete:(void (^)(BOOL, NSString *, NSString *))complete {
+    __block NSString *targetIdentifier = @"";
+    
+    [self.photoLibrary performChanges:^{
+        PHAssetChangeRequest *assetChangeRequest = [PHAssetChangeRequest creationRequestForAssetFromImageAtFileURL:imageUrl];
+        targetIdentifier = assetChangeRequest.placeholderForCreatedAsset.localIdentifier;
+        if (album.albumCollection.assetCollectionType == PHAssetCollectionTypeAlbum && album.albumCollection.assetCollectionSubtype == PHAssetCollectionSubtypeSmartAlbumUserLibrary && album.albumCollection) {
+            PHAssetCollectionChangeRequest *collectionChangeRequest = [PHAssetCollectionChangeRequest changeRequestForAssetCollection:album.albumCollection];
+            [collectionChangeRequest addAssets:@[assetChangeRequest.placeholderForCreatedAsset]];
+        }
+    } completionHandler:^(BOOL success, NSError * _Nullable error) {
+        complete ? complete(success, [HQLPhotoHelper getErrorStringWithError:error], targetIdentifier) : nil;
+    }];
+}
+
+// 保存视频
+- (void)saveVideoWithVideoUrl:(NSURL *)videoUrl toAlbum:(HQLPhotoAlbumModel *)album complete:(void (^)(BOOL, NSString *, NSString *))complete {
+    __block NSString *targetIdentifier = @"";
+    [self.photoLibrary performChanges:^{
+        PHAssetChangeRequest *assetChangeRequest = [PHAssetChangeRequest creationRequestForAssetFromVideoAtFileURL:videoUrl];
+        targetIdentifier = assetChangeRequest.placeholderForCreatedAsset.localIdentifier;
+        if (album.albumCollection.assetCollectionType == PHAssetCollectionTypeAlbum && album.albumCollection.assetCollectionSubtype == PHAssetCollectionSubtypeSmartAlbumUserLibrary && album.albumCollection) {
+            PHAssetCollectionChangeRequest *collectionChangeRequest = [PHAssetCollectionChangeRequest changeRequestForAssetCollection:album.albumCollection];
+            [collectionChangeRequest addAssets:@[assetChangeRequest.placeholderForCreatedAsset]];
+        }
+    } completionHandler:^(BOOL success, NSError * _Nullable error) {
+       complete ? complete(success, [HQLPhotoHelper getErrorStringWithError:error], targetIdentifier) : nil;
+    }];
+}
+
 #pragma mark - fetch method
 
+// 获取所有相册
 - (void)fetchAllAlbumWithCompleteBlock:(void(^)(NSMutableArray <HQLPhotoAlbumModel *>*albumArray))completeBlock {
     [self.albumArray removeAllObjects];
     // 获取 系统相册 (包括所有图片) --- 不用按照时间排序
@@ -181,12 +245,14 @@
             HQLPhotoAlbumModel *model = [[HQLPhotoAlbumModel alloc] init];
             model.albumName = albumName;
             model.albumResult = result;
+            model.albumCollection = collection;
             
             [weakSelf.albumArray addObject:model];
         }
     }];
 }
 
+// 获取相册的照片
 - (void)fetchPhotoForAlbumWithResult:(PHFetchResult *)photoResult completeBlock:(void(^)(NSMutableArray <HQLPhotoModel *>*photoArray))completeBlock {
     NSMutableArray *array = [NSMutableArray array];
     for (NSInteger i = photoResult.count - 1; i >= 0; i--) {
@@ -343,6 +409,7 @@
     }];
 }
 
+// 获取 视频资源
 - (PHImageRequestID)fetchAVAssetForVideo:(PHAsset *)asset progressHandler:(PHAssetVideoProgressHandler)progressHandler resultHandler:(void (^)(AVAsset *, AVAudioMix *, NSDictionary *))resultHandler {
     
     PHVideoRequestOptions *option = [[PHVideoRequestOptions alloc] init];
@@ -359,7 +426,7 @@
 #pragma mark - photo library change observer
 
 - (void)photoLibraryDidChange:(PHChange *)changeInstance {
-    
+    NSLog(@"change : %@", changeInstance);
 }
 
 #pragma mark - setter

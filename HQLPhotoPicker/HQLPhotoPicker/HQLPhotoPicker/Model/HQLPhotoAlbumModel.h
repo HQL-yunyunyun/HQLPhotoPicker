@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class HQLPhotoModel, PHFetchResult;
+@class HQLPhotoModel, PHFetchResult, PHAssetCollection;
 
 @interface HQLPhotoAlbumModel : NSObject
 
@@ -17,5 +17,6 @@
 @property (assign, nonatomic, readonly) NSInteger count; // 照片数量
 @property (strong, nonatomic, readonly) NSMutableArray <HQLPhotoModel *>*photoArray; // 相册照片
 @property (strong, nonatomic, readonly) HQLPhotoModel *albumCover; // 相册封面
+@property (strong, nonatomic) PHAssetCollection *albumCollection; // collection
 
 @end

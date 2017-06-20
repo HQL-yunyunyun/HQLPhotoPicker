@@ -37,21 +37,38 @@ typedef enum {
 
 + (instancetype)shareManager;
 
+// 获取权限
 - (void)requestPhotoAuthorizationWithCompleteHandler:(void(^)(PHAuthorizationStatus status))completeHandler;
+// 当前权限
 - (PHAuthorizationStatus)currentPhotoAuthorizationStatus;
+
+/* selected method */
 
 /* 跟选择图片的一些操作(因为照片会重复(每一个相册都有可能存在一样的照片),所以就需要保存一个全局的已选择照片的数组) */
 - (void)addSelectedAssetWithIdentifier:(NSString *)identifier complete:(void(^)(BOOL isSuccess, NSString *message))complete;
+// 移除某个identifier对应的资源
 - (void)removeSelectedAssetWithIdentifier:(NSString *)identifier complete:(void(^)(BOOL isSuccess, NSString *message))complete;
+// identifier 对应的资源是否被选择
 - (BOOL)getAssetIsSelectedWithIdentifier:(NSString *)identifier;
+// 移除已选择资源
 - (void)removeAllSelectedAsset;
-
+// 获取某个相册中已选择的资源index
 - (NSMutableArray <NSNumber *>*)getSelectedAssetIndexWithAlbum:(HQLPhotoAlbumModel *)albumModel;
-
+// 获取identifier对应的资源（identifier是唯一但资源不是 --- 不同的相册会identifier相同的资源）
 - (NSMutableArray <HQLPhotoModel *>*)getAssetWithIdentifier:(NSString *)identifier;
+// 获取某个相册中identifier对应的资源（在相册中 identifier 对应的资源那是唯一的）
 - (HQLPhotoModel *)getAssetWithIdentifier:(NSString *)identifier inAlbum:(HQLPhotoAlbumModel *)album;
-
+// 获取被选中的资源
 - (NSMutableArray <HQLPhotoModel *>*)getSelectedAsset;
+
+/* save method */
+
+// 保存Image到相册中 --- 只能指定用户的相册 系统生成的相册不能指定
+- (void)saveImage:(UIImage *)image toAlbum:(HQLPhotoAlbumModel *)album complete:(void(^)(BOOL isSuccess, NSString *error, NSString *identifier))complete;
+
+- (void)saveImageWithImageUrl:(NSURL *)imageUrl toAlbum:(HQLPhotoAlbumModel *)album complete:(void(^)(BOOL isSuccess, NSString *error, NSString *identifier))complete;
+
+- (void)saveVideoWithVideoUrl:(NSURL *)videoUrl toAlbum:(HQLPhotoAlbumModel *)album complete:(void(^)(BOOL isSuccess, NSString *error, NSString *identifier))complete;
 
 /* fetch method */
 
