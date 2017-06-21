@@ -15,10 +15,14 @@ typedef enum : NSUInteger {
     HQLPhotoModelMediaTypePhotoGif,  // gif图
     HQLPhotoModelMediaTypeVideo,     // 视频
     HQLPhotoModelMediaTypeAudio,     // 音频
-    HQLPhotoModelMediaTypeCameraPhoto,   // 通过相机拍的照片
-    HQLPhotoModelMediaTypeCameraVideo,   // 通过相机录制的视频
     HQLPhotoModelMediaTypeUnKnow , // 未知类型
 } HQLPhotoModelMediaType;
+
+typedef enum {
+    HQLPhotoQualityLarger , // 原图
+    HQLPhotoQualityMedium , // 中等
+    HQLPhotoQualityThumbnails , // 缩略图
+} HQLPhotoQuality;
 
 @interface HQLPhotoModel : NSObject
 
@@ -29,12 +33,10 @@ typedef enum : NSUInteger {
 @property (strong, nonatomic) UIImage *thumbnailImage; // 缩略图
 
 /* 这是自己拍时的资源 */
-@property (strong, nonatomic) AVAsset *videoAsset; // 拍摄的视频 资源
 @property (assign, nonatomic) NSString *durationTime;
-@property (strong, nonatomic) UIImage *cameraPhoto; // 拍照 的照片
 
 // 获取目标的资源是否成功(photo / gif / data / livePhoto / playerItem) --- 主要是针对在iCloud上的资源
-@property (assign, nonatomic) BOOL targetAssetIsRequestSuccess;
+//@property (assign, nonatomic) BOOL targetAssetIsRequestSuccess;
 @property (assign, nonatomic) BOOL isSelected; // 是否选中
 @property (assign, nonatomic) PHImageRequestID requestID; //选择图片时的requestID
 

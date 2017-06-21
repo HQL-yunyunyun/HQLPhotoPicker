@@ -105,8 +105,7 @@
     // 根据媒体类型 创建UI
     UIImage *icon = nil;
     switch (photoModel.mediaType) {
-        case HQLPhotoModelMediaTypeVideo:
-        case HQLPhotoModelMediaTypeCameraVideo: {
+        case HQLPhotoModelMediaTypeVideo: {
             icon = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"video_icon" ofType:@"png"]];
             [self.videoDurationLabel setText:photoModel.durationTime];
             [self.videoDurationLabel sizeToFit];
@@ -123,7 +122,6 @@
         }
         case HQLPhotoModelMediaTypeAudio: { break; }
         case HQLPhotoModelMediaTypeUnKnow: { break; }
-        case HQLPhotoModelMediaTypeCameraPhoto: { break; }
         case HQLPhotoModelMediaTypePhoto: { break; }
     }
     if (icon) {

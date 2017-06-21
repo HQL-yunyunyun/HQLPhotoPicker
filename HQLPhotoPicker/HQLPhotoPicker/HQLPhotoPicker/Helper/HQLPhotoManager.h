@@ -9,27 +9,24 @@
 #import <UIKit/UIKit.h>
 #import <Photos/Photos.h>
 
-@class HQLPhotoModel, HQLPhotoAlbumModel;
+#import "HQLPhotoModel.h"
+#import "HQLPhotoAlbumModel.h"
 
 #define HQLWeakSelf __weak typeof(self) weakSelf = self
 #define iOS9Later ([UIDevice currentDevice].systemVersion.floatValue >= 9.0f)
 
-typedef enum : NSUInteger {
-    HQLPhotoManagerSelectedTypePhoto = 0, // 只选择图片
-    HQLPhotoManagerSelectedTypeVideo, // 只选择视频
-    HQLPhotoManagerSelectedTypePhotoAndVideo // 图片和视频一起
-} HQLPhotoManagerSelectedType;
-
 typedef enum {
-    HQLPhotoQualityLarger , // 原图
-    HQLPhotoQualityMedium , // 中等
-    HQLPhotoQualityThumbnails , // 缩略图
-} HQLPhotoQuality;
+    HQLPhotoLibraryDidInsert , // 插入操作
+    HQLPhotoLibraryDidRemove , // 移除
+    HQLPhotoLibraryDidChange , // 改变
+    HQLPhotoLibraryDidMove , // 移动
+    HQLPhotoLibraryDidNotChange , // 未知状态
+} HQLPhotoLibraryDidChangeType;
 
 @protocol HQLPhotoManagerDelegate <NSObject>
 
 @optional
-//- (void)photoLibraryDidChange:(PHChange *)changeInstance change
+- (void)photoLibraryDidChange:(PHChange *)changeInstance changedAlbum:(HQLPhotoAlbumModel *)album changeResult:(PHFetchResultChangeDetails *)changeResult changeIndex:(NSArray <NSNumber *>*)changeIndex changeType:(HQLPhotoLibraryDidChangeType)changeType;
 
 @end
 
@@ -37,10 +34,13 @@ typedef enum {
 
 @property (strong, nonatomic) NSMutableArray <HQLPhotoAlbumModel *>*albumArray; // 保存相册 --- 第一个相册是所有图片
 @property (strong, nonatomic) NSMutableArray <NSString *>*selectedAssetIdentifierArray; // 选中的资源的标识符
-@property (assign, nonatomic) HQLPhotoManagerSelectedType selectedType; // 选择的样式
+@property (assign, nonatomic) HQLPhotoSelectedType selectedType; // 选择的样式
+@property (assign, nonatomic) BOOL ascendingByCreationDate; // 是否按照日期排序
 @property (assign, nonatomic) BOOL isLivePhotoOpen; // 是否开启livePhoto
 @property (assign, nonatomic) BOOL isGifOpen; // 是否开启gif
 @property (strong, nonatomic) PHCachingImageManager *imageManager;
+
+@property (assign, nonatomic) id <HQLPhotoManagerDelegate>delegate;
 
 + (instancetype)shareManager;
 

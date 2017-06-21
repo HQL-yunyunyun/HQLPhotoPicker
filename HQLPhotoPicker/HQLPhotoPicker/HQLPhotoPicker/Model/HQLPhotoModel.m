@@ -25,8 +25,10 @@
     } else {
         HQLWeakSelf;
         [self fetchImageWithTragetSize:kThumbnailImageSize photoQuality:HQLPhotoQualityMedium isCaching:NO progressHandler:nil resultHandler:^(UIImage *image, NSString *errorString) {
-            weakSelf.thumbnailImage = image;
-            completeBlock ? completeBlock(image, errorString) : nil;
+            if (image) {
+                weakSelf.thumbnailImage = image;
+                completeBlock ? completeBlock(image, errorString) : nil;
+            }
         }];
     }
 }
@@ -50,8 +52,6 @@
     
     // 下载前取消当前的下载任务
     [self cancelRequest];
-    
-    HQLWeakSelf;
     switch (self.mediaType) {
         case HQLPhotoModelMediaTypePhoto:
         case HQLPhotoModelMediaTypeLivePhoto:
@@ -66,22 +66,10 @@
                 if (error) {
                     
                 }
-                
-                weakSelf.targetAssetIsRequestSuccess = (![[info objectForKey:PHImageCancelledKey] boolValue] && ![info objectForKey:PHImageErrorKey]);
-                
+//                weakSelf.targetAssetIsRequestSuccess = (![[info objectForKey:PHImageCancelledKey] boolValue] && ![info objectForKey:PHImageErrorKey]);
                 resultHandler ? resultHandler(imageData, [HQLPhotoHelper fetchPhotosBytes:@[imageData]], [HQLPhotoHelper getErrorStringWithError:error]) : nil;
             }];
             break;
-        }
-        case HQLPhotoModelMediaTypeCameraPhoto: {
-            NSData *imageData = UIImagePNGRepresentation(self.cameraPhoto);
-            if (!imageData) {
-                imageData = UIImageJPEGRepresentation(self.cameraPhoto, 1.0);
-            }
-            
-            self.targetAssetIsRequestSuccess = YES;
-            
-            resultHandler ? resultHandler(imageData, [HQLPhotoHelper fetchPhotosBytes:@[imageData]], @"") : nil;
         }
         default: { break; }
     }
@@ -94,8 +82,6 @@
         
         // 下载前取消当前的下载任务
         [self cancelRequest];
-        
-        HQLWeakSelf;
         self.requestID = [[HQLPhotoManager shareManager] fetchLivePhotoWithPHAsset:self.asset photoQuality:HQLPhotoQualityLarger photoSize:kOriginalImageSize progressHandler:^(double progress, NSError * _Nullable error, BOOL * _Nonnull stop, NSDictionary * _Nullable info) {
             if (error) {
                 NSLog(@"fetch live photo error %@", error);
@@ -106,9 +92,7 @@
             if (error) {
                 
             }
-            
-            weakSelf.targetAssetIsRequestSuccess = (![[info objectForKey:PHImageCancelledKey] boolValue] && ![info objectForKey:PHImageErrorKey]);
-            
+//            weakSelf.targetAssetIsRequestSuccess = (![[info objectForKey:PHImageCancelledKey] boolValue] && ![info objectForKey:PHImageErrorKey]);
             resultHandler ? resultHandler(livePhoto, [HQLPhotoHelper getErrorStringWithError:error]) : nil;
         }];
     }
@@ -121,8 +105,6 @@
         
         // 下载前取消当前的下载任务
         [self cancelRequest];
-        
-        HQLWeakSelf;
         self.requestID = [[HQLPhotoManager shareManager] fetchPlayerItemForVideo:self.asset progressHandler:^(double progress, NSError * _Nullable error, BOOL * _Nonnull stop, NSDictionary * _Nullable info) {
             if (error) {
                 NSLog(@"fetch video error : %@", error);
@@ -134,12 +116,9 @@
             if (error) {
                 
             }
-            weakSelf.targetAssetIsRequestSuccess = (![[info objectForKey:PHImageCancelledKey] boolValue] && ![info objectForKey:PHImageErrorKey]);
+//            weakSelf.targetAssetIsRequestSuccess = (![[info objectForKey:PHImageCancelledKey] boolValue] && ![info objectForKey:PHImageErrorKey]);
             resultHandler ? resultHandler(playerItem, [HQLPhotoHelper getErrorStringWithError:error]) : nil;
         }];
-    } else if (self.mediaType == HQLPhotoModelMediaTypeCameraVideo) {
-        self.targetAssetIsRequestSuccess = YES;
-        resultHandler ? resultHandler([AVPlayerItem playerItemWithAsset:self.videoAsset], @"") : nil;
     }
 }
 
@@ -158,8 +137,6 @@
     
     // 下载前取消当前的下载任务
     [self cancelRequest];
-    
-    HQLWeakSelf;
     UIImage *defaultImage = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"defaultImage" ofType:@"png"]];
     switch (self.mediaType) {
         case HQLPhotoModelMediaTypePhoto:
@@ -179,21 +156,10 @@
 
                 }
                 
-                BOOL downloadFinined = (![[info objectForKey:PHImageCancelledKey] boolValue] && ![info objectForKey:PHImageErrorKey]);
-                weakSelf.targetAssetIsRequestSuccess = downloadFinined && CGSizeEqualToSize(targetSize, kOriginalImageSize);
-                
+//                BOOL downloadFinined = (![[info objectForKey:PHImageCancelledKey] boolValue] && ![info objectForKey:PHImageErrorKey]);
+//                weakSelf.targetAssetIsRequestSuccess = downloadFinined && CGSizeEqualToSize(targetSize, kOriginalImageSize);
                 resultHandler ? resultHandler(image, [HQLPhotoHelper getErrorStringWithError:error]) : nil;
             }];
-            break;
-        }
-        case HQLPhotoModelMediaTypeCameraPhoto: { // 自己拍的照片
-            self.targetAssetIsRequestSuccess = YES;
-            resultHandler ? resultHandler(self.cameraPhoto, @"") : nil;
-            break;
-        }
-        case HQLPhotoModelMediaTypeCameraVideo: { // 自己拍的video
-            self.targetAssetIsRequestSuccess = YES;
-            resultHandler ? resultHandler(defaultImage, @"") : nil;
             break;
         }
         case HQLPhotoModelMediaTypeAudio: {

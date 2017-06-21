@@ -65,8 +65,7 @@
     photoPreviewView.delegate = self;
     
     switch (model.mediaType) {
-        case HQLPhotoModelMediaTypePhoto:
-        case HQLPhotoModelMediaTypeCameraPhoto: {
+        case HQLPhotoModelMediaTypePhoto: {
             [model requestHighDefinitionImageWithProgressHandler:^(double progress, NSError * _Nullable error, BOOL * _Nonnull stop, NSDictionary * _Nullable info) {
                 
             } resultHandler:^(UIImage *highDefinitionImage, NSString *error) {
@@ -90,8 +89,7 @@
             }];
             break;
         }
-        case HQLPhotoModelMediaTypeVideo:
-        case HQLPhotoModelMediaTypeCameraVideo: {
+        case HQLPhotoModelMediaTypeVideo: {
             [model requestPlayerItemWithProgressHandler:^(double progress, NSError * _Nullable error, BOOL * _Nonnull stop, NSDictionary * _Nullable info) {
                 
             } resultHandler:^(AVPlayerItem *playerItem, NSString *error) {

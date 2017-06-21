@@ -148,9 +148,10 @@
 - (HQLPhotoManager *)photoManager {
     if (!_photoManager) {
         _photoManager = [HQLPhotoManager shareManager];
-        _photoManager.selectedType = HQLPhotoManagerSelectedTypePhotoAndVideo;
+        _photoManager.selectedType = HQLPhotoSelectedTypePhotoAndVideo;
         _photoManager.isLivePhotoOpen = YES;
         _photoManager.isGifOpen = YES;
+        _photoManager.ascendingByCreationDate = YES;
     }
     return _photoManager;
 }

@@ -80,8 +80,7 @@
         type = [self.delegate previewView:self assetTypeAtIndex:indexPath.item];
     }
     switch (type) {
-        case HQLPhotoModelMediaTypePhoto:
-        case HQLPhotoModelMediaTypeCameraPhoto: {
+        case HQLPhotoModelMediaTypePhoto: {
             identifier = HQLCollectionViewCellPhotoReuseId;
             break;
         }
@@ -89,7 +88,6 @@
             identifier = HQLCollectionViewCellGifReuseId;
             break;
         }
-        case HQLPhotoModelMediaTypeCameraVideo:
         case HQLPhotoModelMediaTypeVideo: {
             identifier = HQLCollectionViewCellVideoReuseld;
             break;

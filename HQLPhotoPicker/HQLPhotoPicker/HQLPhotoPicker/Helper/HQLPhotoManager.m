@@ -8,8 +8,6 @@
 
 #import "HQLPhotoManager.h"
 #import "HQLPhotoHelper.h"
-#import "HQLPhotoAlbumModel.h"
-#import "HQLPhotoModel.h"
 
 #import <Photos/Photos.h>
 
@@ -30,6 +28,10 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         manager = [[HQLPhotoManager alloc] init];
+        
+        [manager imageManager];
+        [manager photoLibrary]; // 两个都先初始化
+        
         [manager requestPhotoAuthorizationWithCompleteHandler:^(PHAuthorizationStatus status) {
             NSLog(@"%ld", (long)status);
         }];
@@ -58,13 +60,57 @@
     return [PHPhotoLibrary authorizationStatus];
 }
 
+// 设置 photoModel 的属性
+- (void)setupPhotoModelWithPHAsset:(PHAsset *)asset model:(HQLPhotoModel *)model {
+    if (!model || !asset) {
+        return;
+    }
+    model.asset = asset;
+    model.assetLocalizationIdentifier = asset.localIdentifier;
+    model.isSelected = [self getAssetIsSelectedWithIdentifier:model.assetLocalizationIdentifier];
+    [model cancelRequest];
+    model.requestID = -1;
+    model.thumbnailImage = nil;
+    
+    switch (asset.mediaType) {
+        case PHAssetMediaTypeImage: {
+            model.mediaType = HQLPhotoModelMediaTypePhoto;
+            if (self.isGifOpen) {
+                if ([[asset valueForKey:@"filename"] hasSuffix:@"GIF"]) {
+                    model.mediaType = HQLPhotoModelMediaTypePhotoGif;
+                }
+            }
+            
+            if (iOS9Later && self.isLivePhotoOpen) {
+                if (asset.mediaSubtypes == PHAssetMediaSubtypePhotoLive) {
+                    model.mediaType = HQLPhotoModelMediaTypeLivePhoto;
+                }
+            }
+            break;
+        }
+        case PHAssetMediaTypeVideo: {
+            model.mediaType = HQLPhotoModelMediaTypeVideo;
+            NSString *timeLength = [NSString stringWithFormat:@"%0.0f",asset.duration];
+            model.durationTime = [HQLPhotoHelper getNewTimeFromDurationSecond:timeLength.integerValue];
+            break;
+        }
+        case PHAssetMediaTypeAudio: {
+            model.mediaType = HQLPhotoModelMediaTypeAudio;
+            NSString *timeLength = [NSString stringWithFormat:@"%0.0f",asset.duration];
+            model.durationTime = [HQLPhotoHelper getNewTimeFromDurationSecond:timeLength.integerValue];
+            break;
+        }
+        case PHAssetMediaTypeUnknown: {
+            model.mediaType = HQLPhotoModelMediaTypeUnKnow;
+            break;
+        }
+    }
+}
+
 #pragma mark - selected method
 
 // 选择 identifier 对应的资源
 - (void)addSelectedAssetWithIdentifier:(NSString *)identifier complete:(void(^)(BOOL isSuccess, NSString *message))complete{
-    if (!complete) {
-        return;
-    }
     if (![self getAssetIsSelectedWithIdentifier:identifier]) {
         [self.selectedAssetIdentifierArray addObject:identifier];
         
@@ -72,17 +118,14 @@
             model.isSelected = YES;
         }
         
-        complete(YES, @"添加成功");
+        complete ? complete(YES, @"添加成功") : nil;
     } else {
-        complete(NO, @"identifier 所对应的资源已被选中");
+        complete ? complete(NO, @"identifier 所对应的资源已被选中") : nil;
     }
 }
 
 // 移除 identifier 对应的资源的选择状态
 - (void)removeSelectedAssetWithIdentifier:(NSString *)identifier complete:(void(^)(BOOL isSuccess, NSString *message))complete{
-    if (!complete) {
-        return;
-    }
     if ([self getAssetIsSelectedWithIdentifier:identifier]) {
         [self.selectedAssetIdentifierArray removeObject:identifier];
         
@@ -90,9 +133,9 @@
             model.isSelected = NO;
         }
         
-        complete(YES, @"删除成功");
+        complete ? complete(YES, @"删除成功") : nil;
     } else {
-        complete(NO, @"identifier 所对应的资源没有被选中");
+        complete ? complete(NO, @"identifier 所对应的资源没有被选中") : nil;
     }
 }
 
@@ -153,7 +196,10 @@
 - (NSMutableArray<HQLPhotoModel *> *)getSelectedAsset {
     NSMutableArray *array = [NSMutableArray array];
     for (NSString *identifier in self.selectedAssetIdentifierArray) {
-        [array addObject:[self getAssetWithIdentifier:identifier].firstObject];
+        NSArray *objArray = [self getAssetWithIdentifier:identifier];
+        if (objArray.count != 0) {
+            [array addObject:objArray.firstObject];
+        }
     }
     return array;
 }
@@ -170,6 +216,7 @@
         
         // 只有用户相册才能指定
         if (album.albumCollection.assetCollectionType == PHAssetCollectionTypeAlbum && album.albumCollection.assetCollectionSubtype == PHAssetCollectionSubtypeSmartAlbumUserLibrary && album.albumCollection) {
+            
             PHAssetCollectionChangeRequest *collectionChangeRequest = [PHAssetCollectionChangeRequest changeRequestForAssetCollection:album.albumCollection];
             [collectionChangeRequest addAssets:@[assetChangeRequest.placeholderForCreatedAsset]];
         }
@@ -186,9 +233,12 @@
     [self.photoLibrary performChanges:^{
         PHAssetChangeRequest *assetChangeRequest = [PHAssetChangeRequest creationRequestForAssetFromImageAtFileURL:imageUrl];
         targetIdentifier = assetChangeRequest.placeholderForCreatedAsset.localIdentifier;
+        
         if (album.albumCollection.assetCollectionType == PHAssetCollectionTypeAlbum && album.albumCollection.assetCollectionSubtype == PHAssetCollectionSubtypeSmartAlbumUserLibrary && album.albumCollection) {
+            
             PHAssetCollectionChangeRequest *collectionChangeRequest = [PHAssetCollectionChangeRequest changeRequestForAssetCollection:album.albumCollection];
             [collectionChangeRequest addAssets:@[assetChangeRequest.placeholderForCreatedAsset]];
+            
         }
     } completionHandler:^(BOOL success, NSError * _Nullable error) {
         complete ? complete(success, [HQLPhotoHelper getErrorStringWithError:error], targetIdentifier) : nil;
@@ -201,7 +251,9 @@
     [self.photoLibrary performChanges:^{
         PHAssetChangeRequest *assetChangeRequest = [PHAssetChangeRequest creationRequestForAssetFromVideoAtFileURL:videoUrl];
         targetIdentifier = assetChangeRequest.placeholderForCreatedAsset.localIdentifier;
+        
         if (album.albumCollection.assetCollectionType == PHAssetCollectionTypeAlbum && album.albumCollection.assetCollectionSubtype == PHAssetCollectionSubtypeSmartAlbumUserLibrary && album.albumCollection) {
+            
             PHAssetCollectionChangeRequest *collectionChangeRequest = [PHAssetCollectionChangeRequest changeRequestForAssetCollection:album.albumCollection];
             [collectionChangeRequest addAssets:@[assetChangeRequest.placeholderForCreatedAsset]];
         }
@@ -229,25 +281,15 @@
 - (void)fetchAlbumWithResult:(PHFetchResult *)albumResult {
     HQLWeakSelf;
     [albumResult enumerateObjectsUsingBlock:^(PHAssetCollection *collection, NSUInteger idx, BOOL * _Nonnull stop) {
-        PHFetchOptions *option = [[PHFetchOptions alloc] init];
-        option.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"creationDate" ascending:YES]];
-        if (self.selectedType == HQLPhotoManagerSelectedTypePhoto) { // 只选择图片
-            option.predicate = [NSPredicate predicateWithFormat:@"mediaType == %ld", PHAssetMediaTypeImage];
-        } else if (self.selectedType == HQLPhotoManagerSelectedTypeVideo) { // 只选择视频
-            option.predicate = [NSPredicate predicateWithFormat:@"mediaType == %ld", PHAssetMediaTypeVideo];
-        }
         
-        // 照片合集
-        PHFetchResult *result = [PHAsset fetchAssetsInAssetCollection:collection options:option];
-        NSString *albumName = [HQLPhotoHelper transFormPhotoTitle:collection.localizedTitle];
+        HQLPhotoAlbumModel *album = [[HQLPhotoAlbumModel alloc] init];
+        album.selectedType = self.selectedType;
+        album.ascendingByCreationDate = self.ascendingByCreationDate;
+        album.albumCollection = collection;
+        
         // 将 最近删除 过滤
-        if (![albumName isEqualToString:@"最近删除"] && result.count > 0) {
-            HQLPhotoAlbumModel *model = [[HQLPhotoAlbumModel alloc] init];
-            model.albumName = albumName;
-            model.albumResult = result;
-            model.albumCollection = collection;
-            
-            [weakSelf.albumArray addObject:model];
+        if (![album.albumName isEqualToString:@"最近删除"] && album.albumResult.count > 0) {
+            [weakSelf.albumArray addObject:album];
         }
     }];
 }
@@ -258,45 +300,8 @@
     for (NSInteger i = photoResult.count - 1; i >= 0; i--) {
         HQLPhotoModel *model = [[HQLPhotoModel alloc] init];
         [array addObject:model];
-        
         PHAsset *asset = photoResult[i];
-        model.asset = asset;
-        model.assetLocalizationIdentifier = asset.localIdentifier;
-        model.isSelected = [self getAssetIsSelectedWithIdentifier:model.assetLocalizationIdentifier];
-        
-        switch (asset.mediaType) {
-            case PHAssetMediaTypeImage: {
-                model.mediaType = HQLPhotoModelMediaTypePhoto;
-                if (self.isGifOpen) {
-                    if ([[asset valueForKey:@"filename"] hasSuffix:@"GIF"]) {
-                        model.mediaType = HQLPhotoModelMediaTypePhotoGif;
-                    }
-                }
-                
-                if (iOS9Later && self.isLivePhotoOpen) {
-                    if (asset.mediaSubtypes == PHAssetMediaSubtypePhotoLive) {
-                        model.mediaType = HQLPhotoModelMediaTypeLivePhoto;
-                    }
-                }
-                break;
-            }
-            case PHAssetMediaTypeVideo: {
-                model.mediaType = HQLPhotoModelMediaTypeVideo;
-                NSString *timeLength = [NSString stringWithFormat:@"%0.0f",asset.duration];
-                model.durationTime = [HQLPhotoHelper getNewTimeFromDurationSecond:timeLength.integerValue];
-                break;
-            }
-            case PHAssetMediaTypeAudio: {
-                model.mediaType = HQLPhotoModelMediaTypeAudio;
-                NSString *timeLength = [NSString stringWithFormat:@"%0.0f",asset.duration];
-                model.durationTime = [HQLPhotoHelper getNewTimeFromDurationSecond:timeLength.integerValue];
-                break;
-            }
-            case PHAssetMediaTypeUnknown: {
-                model.mediaType = HQLPhotoModelMediaTypeUnKnow;
-                break;
-            }
-        }
+        [self setupPhotoModelWithPHAsset:asset model:model];
     }
     
     completeBlock ? completeBlock(array) : nil;
@@ -427,34 +432,82 @@
 
 - (void)photoLibraryDidChange:(PHChange *)changeInstance {
     
-    NSLog(@"library did change : %@", changeInstance);
-    
+    HQLWeakSelf;
     for (HQLPhotoAlbumModel *album in self.albumArray) {
-        
         PHFetchResultChangeDetails *fetchResult = [changeInstance changeDetailsForFetchResult:album.albumResult];
         if (fetchResult) {
             NSLog(@"change album name : %@", album.albumName);
-            
             if (fetchResult.hasIncrementalChanges) { // 表明有改变
+                [album updateAlbumResult];
+                
+                NSMutableArray *indexArray = [NSMutableArray array];
+                HQLPhotoLibraryDidChangeType type = HQLPhotoLibraryDidNotChange;
+                
                 if (fetchResult.removedIndexes) { // 表明有移除
-                    NSLog(@"remove indexes : %@", fetchResult.removedIndexes);
-                    NSLog(@"remove objects : %@", fetchResult.removedObjects);
+                    // 移除只需要将移除的对象移除就好
+                    NSMutableArray *deleteArray = [NSMutableArray array];
+                    for (PHAsset *asset in fetchResult.removedObjects) {
+                        HQLPhotoModel *model = [self getAssetWithIdentifier:asset.localIdentifier inAlbum:album];
+                        [deleteArray addObject:model];
+                        if ([self getAssetIsSelectedWithIdentifier:asset.localIdentifier]) {
+                            [self removeSelectedAssetWithIdentifier:asset.localIdentifier complete:nil];
+                        }
+                        
+                        [indexArray addObject:[NSNumber numberWithUnsignedInteger:[album.photoArray indexOfObject:model]]];
+                    }
+                    for (HQLPhotoModel *model in deleteArray) {
+                        [album.photoArray removeObject:model];
+                    }
+                    type = HQLPhotoLibraryDidRemove;
                 }
                 if (fetchResult.insertedIndexes) {
-                    NSLog(@"insert indexes : %@", fetchResult.insertedIndexes);
-                    NSLog(@"insert objects : %@", fetchResult.insertedObjects);
+                    NSInteger totalCount = fetchResult.fetchResultAfterChanges.count; // 这是改变后的总数
+                    __block NSInteger index = 0;
+                    [fetchResult.insertedIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL * _Nonnull stop) {
+                        // 因为在获取照片的时候，排序的方式是最新的照片在前面，而系统排序的方式是最新的在后面，所以导致这里的idx跟现在的情况不一样，需要转换一下index(最新的为0)
+                        HQLPhotoModel *model = [[HQLPhotoModel alloc] init];
+                        PHAsset *asset = fetchResult.insertedObjects[index];
+                        [self setupPhotoModelWithPHAsset:asset model:model];
+                        index++;
+                        
+                        NSUInteger targetIndex = idx;
+                        if (weakSelf.ascendingByCreationDate) { // 需要转换index
+                            targetIndex = totalCount - 1 - idx;
+                        }
+                        [album.photoArray insertObject:model atIndex:targetIndex];
+                        [indexArray addObject:[NSNumber numberWithUnsignedInteger:targetIndex]];
+                    }];
+                    
+                    type = HQLPhotoLibraryDidInsert;
                 }
                 if (fetchResult.changedIndexes) {
-                    NSLog(@"change indexes : %@", fetchResult.changedIndexes);
-                    NSLog(@"change objects : %@", fetchResult.changedObjects);
+                    // 根据removeObjects来更新当前model
+                    for (PHAsset *asset in fetchResult.changedObjects) {
+                        HQLPhotoModel *model = [self getAssetWithIdentifier:asset.localIdentifier inAlbum:album];
+                        [self setupPhotoModelWithPHAsset:asset model:model];
+                        
+                        [indexArray addObject:[NSNumber numberWithUnsignedInteger:[album.photoArray indexOfObject:model]]];
+                    }
+                    type = HQLPhotoLibraryDidChange;
                 }
-                
                 
                 // 移动了item
                 if (fetchResult.hasMoves) {
                     [fetchResult enumerateMovesWithBlock:^(NSUInteger fromIndex, NSUInteger toIndex) {
-                        NSLog(@"move item , from index : %ld  ---  to index : %ld", fromIndex, toIndex);
+                        HQLPhotoModel *fromModel = album.photoArray[fromIndex];
+                        [album.photoArray removeObject:fromModel];
+                        [album.photoArray insertObject:fromModel atIndex:toIndex];
                     }];
+                    
+                    type = HQLPhotoLibraryDidMove;
+                }
+            
+                // 代理
+                if ([self.delegate respondsToSelector:@selector(photoLibraryDidChange:changedAlbum:changeResult: changeIndex:changeType:)]) {
+                    // 在主线程中刷新UI
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [self.delegate photoLibraryDidChange:changeInstance changedAlbum:album changeResult:fetchResult changeIndex:indexArray changeType:type];
+                    });
                 }
             }
         }
@@ -463,8 +516,8 @@
 
 #pragma mark - setter
 
-- (void)setSelectedType:(HQLPhotoManagerSelectedType)selectedType {
-    HQLPhotoManagerSelectedType originType = self.selectedType;
+- (void)setSelectedType:(HQLPhotoSelectedType)selectedType {
+    HQLPhotoSelectedType originType = self.selectedType;
     _selectedType = selectedType;
     if (originType != selectedType) {
         [self fetchAllAlbumWithCompleteBlock:nil]; // 重新加载
@@ -476,7 +529,6 @@
 - (PHCachingImageManager *)imageManager {
     if (!_imageManager) {
         _imageManager = [[PHCachingImageManager alloc] init];
-        
     }
     return _imageManager;
 }
