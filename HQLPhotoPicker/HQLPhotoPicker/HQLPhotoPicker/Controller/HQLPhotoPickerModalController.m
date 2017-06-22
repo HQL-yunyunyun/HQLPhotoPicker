@@ -7,10 +7,10 @@
 //
 
 #import "HQLPhotoPickerModalController.h"
+
 #import "HQLPhotoPickerCell.h"
 #import "HQLPreviewView.h"
 #import "HQLPhotoPreviewView.h"
-#import "HQLPhotoAlbumModel.h"
 #import "HQLTakePhotoCell.h"
 
 #import "UIView+Frame.h"

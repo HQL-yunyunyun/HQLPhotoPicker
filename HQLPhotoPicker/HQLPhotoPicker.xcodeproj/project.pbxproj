@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0D7133E31EF0352D0057B502 /* HQLPreviewView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D7133E21EF0352D0057B502 /* HQLPreviewView.m */; };
+		0DDB4A7C1EFC163F001122BB /* HQLPhotoPickerBaseController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DDB4A7B1EFC163F001122BB /* HQLPhotoPickerBaseController.m */; };
 		4A38A15C1EEE742100CF2143 /* UIImage+Color.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A38A15B1EEE742100CF2143 /* UIImage+Color.m */; };
 		4A9CF0621EE136E7009ED1E7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A9CF0611EE136E7009ED1E7 /* main.m */; };
 		4A9CF06D1EE136E7009ED1E7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4A9CF06C1EE136E7009ED1E7 /* Assets.xcassets */; };
@@ -49,6 +50,8 @@
 /* Begin PBXFileReference section */
 		0D7133E11EF0352D0057B502 /* HQLPreviewView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLPreviewView.h; sourceTree = "<group>"; };
 		0D7133E21EF0352D0057B502 /* HQLPreviewView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLPreviewView.m; sourceTree = "<group>"; };
+		0DDB4A7A1EFC163F001122BB /* HQLPhotoPickerBaseController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLPhotoPickerBaseController.h; sourceTree = "<group>"; };
+		0DDB4A7B1EFC163F001122BB /* HQLPhotoPickerBaseController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLPhotoPickerBaseController.m; sourceTree = "<group>"; };
 		4A38A15A1EEE742100CF2143 /* UIImage+Color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Color.h"; sourceTree = "<group>"; };
 		4A38A15B1EEE742100CF2143 /* UIImage+Color.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Color.m"; sourceTree = "<group>"; };
 		4A9CF05D1EE136E7009ED1E7 /* HQLPhotoPicker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HQLPhotoPicker.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -178,6 +181,8 @@
 				4A9CF0BE1EE7B723009ED1E7 /* HQLPhotoPreViewController.m */,
 				4AC132D11EF1184600184999 /* HQLPhotoPickerModalController.h */,
 				4AC132D21EF1184600184999 /* HQLPhotoPickerModalController.m */,
+				0DDB4A7A1EFC163F001122BB /* HQLPhotoPickerBaseController.h */,
+				0DDB4A7B1EFC163F001122BB /* HQLPhotoPickerBaseController.m */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -302,7 +307,7 @@
 				TargetAttributes = {
 					4A9CF05C1EE136E7009ED1E7 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = X8GXYMZ6FW;
+						DevelopmentTeam = 98B5P59X79;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -371,6 +376,7 @@
 				4A9CF0A61EE6811B009ED1E7 /* HQLPhotoPickerCell.m in Sources */,
 				4A9CF0971EE56C24009ED1E7 /* HQLMainController.m in Sources */,
 				0D7133E31EF0352D0057B502 /* HQLPreviewView.m in Sources */,
+				0DDB4A7C1EFC163F001122BB /* HQLPhotoPickerBaseController.m in Sources */,
 				4A9CF0BF1EE7B723009ED1E7 /* HQLPhotoPreViewController.m in Sources */,
 				4A9CF0931EE2B35B009ED1E7 /* HQLPhotoHelper.m in Sources */,
 				4A9CF0A31EE680FA009ED1E7 /* HQLPhotoPickerController.m in Sources */,
@@ -495,10 +501,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = X8GXYMZ6FW;
+				DEVELOPMENT_TEAM = 98B5P59X79;
 				INFOPLIST_FILE = HQLPhotoPicker/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = cn.weplus.HQLPhotoPicker2;
+				PRODUCT_BUNDLE_IDENTIFIER = cn.weplus.HQLPhotoPicker1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -507,10 +513,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = X8GXYMZ6FW;
+				DEVELOPMENT_TEAM = 98B5P59X79;
 				INFOPLIST_FILE = HQLPhotoPicker/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = cn.weplus.HQLPhotoPicker2;
+				PRODUCT_BUNDLE_IDENTIFIER = cn.weplus.HQLPhotoPicker1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

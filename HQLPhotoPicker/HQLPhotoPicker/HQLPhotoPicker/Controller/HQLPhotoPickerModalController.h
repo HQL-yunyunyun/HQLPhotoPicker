@@ -8,10 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
-#import "HQLPhotoManager.h"
-#import "HQLPhotoHelper.h"
+#import "HQLPhotoPicker.h"
 
-@class HQLPhotoAlbumModel, HQLPhotoPickerModalController;
+@class HQLPhotoPickerModalController;
 
 @protocol HQLPhotoPickerModalControllerDelegate <NSObject>
 
