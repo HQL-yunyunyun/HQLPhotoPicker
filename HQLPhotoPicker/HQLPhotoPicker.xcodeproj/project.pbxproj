@@ -104,6 +104,7 @@
 		4AC132F11EFBA83600184999 /* playButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = playButton.png; sourceTree = "<group>"; };
 		4AC132F21EFBA83600184999 /* takePhotoButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = takePhotoButton.png; sourceTree = "<group>"; };
 		4AC132F31EFBA83600184999 /* video_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = video_icon.png; sourceTree = "<group>"; };
+		4AC1335B1EFBA98100184999 /* HQLPhotoPicker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HQLPhotoPicker.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -188,6 +189,7 @@
 				4A9CF0861EE15CBC009ED1E7 /* HQLPhotoManager.m */,
 				4A9CF0911EE2B35B009ED1E7 /* HQLPhotoHelper.h */,
 				4A9CF0921EE2B35B009ED1E7 /* HQLPhotoHelper.m */,
+				4AC1335B1EFBA98100184999 /* HQLPhotoPicker.h */,
 			);
 			path = Helper;
 			sourceTree = "<group>";
