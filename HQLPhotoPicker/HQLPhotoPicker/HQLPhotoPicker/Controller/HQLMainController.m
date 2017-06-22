@@ -21,7 +21,7 @@
 #define HQLPhotoAlbumCellReuseId @"HQLPhotoAlbumCellReuseId"
 #define kTableViewCellHeight 60
 
-@interface HQLMainController () <UITableViewDelegate, UITableViewDataSource, HQLPhotoPickerModalControllerDelegate>
+@interface HQLMainController () <UITableViewDelegate, UITableViewDataSource, HQLPhotoPickerModalControllerDelegate, HQLPhotoLibraryChangeObserver>
 
 @property (strong, nonatomic) UITableView *tableView;
 @property (strong, nonatomic) HQLPhotoManager *photoManager;
@@ -36,6 +36,11 @@
     [super viewDidLoad];
     
     [self controllerConfig];
+}
+
+- (void)dealloc {
+    [self.photoManager unregisterChangeObserver:self];
+    NSLog(@"dealloc ---> %@", NSStringFromClass([self class]));
 }
 
 #pragma mark - event
@@ -72,6 +77,14 @@
             break;
         }
     }
+}
+
+#pragma mark - photo manager delegate
+
+- (void)photoLibraryDidChange:(PHChange *)changeInstance changedAlbum:(HQLPhotoAlbumModel *)album changeResult:(PHFetchResultChangeDetails *)changeResult changeIndex:(NSArray<NSNumber *> *)changeIndex changeType:(HQLPhotoLibraryDidChangeType)changeType {
+    NSUInteger index = [self.photoManager.albumArray indexOfObject:album];
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
+    [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationTop];
 }
 
 #pragma mark - photo picker modal controller delegate
@@ -152,6 +165,7 @@
         _photoManager.isLivePhotoOpen = YES;
         _photoManager.isGifOpen = YES;
         _photoManager.ascendingByCreationDate = YES;
+        [_photoManager registerChangeObserver:self];
     }
     return _photoManager;
 }

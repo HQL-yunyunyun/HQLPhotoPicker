@@ -1,4 +1,4 @@
-//
+
 //  HQLPhotoPickerModalController.m
 //  HQLPhotoPicker
 //
@@ -19,7 +19,7 @@
 #define HQLTakePhotoCellReuseId @"HQLTakePhotoCellReuseId"
 #define kColumnCount 4
 
-@interface HQLPhotoPickerModalController () <UINavigationControllerDelegate, UIImagePickerControllerDelegate, UICollectionViewDelegate, UICollectionViewDataSource, HQLPreviewViewDelegate, HQLPhotoPreviewViewDelegate, HQLPhotoManagerDelegate>
+@interface HQLPhotoPickerModalController () <UINavigationControllerDelegate, UIImagePickerControllerDelegate, UICollectionViewDelegate, UICollectionViewDataSource, HQLPreviewViewDelegate, HQLPhotoPreviewViewDelegate, HQLPhotoLibraryChangeObserver>
 
 @property (strong, nonatomic) HQLPreviewView *previewView;
 @property (strong, nonatomic) UICollectionView *collectionView;
@@ -52,6 +52,7 @@
 }
 
 - (void)dealloc {
+    [self.photoManager unregisterChangeObserver:self];
     NSLog(@"dealloc ---> %@", NSStringFromClass([self class]));
 }
 
@@ -94,7 +95,7 @@
             NSLog(@"succes : %d , error : %@, identifier : %@", isSuccess, error, identifier);
         }];
     } else if ([mediaType isEqualToString:@"public.movie"]) { // 视频
-        [self.photoManager saveVideoWithVideoUrl:[NSURL URLWithString:info[UIImagePickerControllerMediaURL]] toAlbum:self.albumModel complete:^(BOOL isSuccess, NSString *error, NSString *identifier) {
+        [self.photoManager saveVideoWithVideoUrl:info[UIImagePickerControllerMediaURL] toAlbum:self.albumModel complete:^(BOOL isSuccess, NSString *error, NSString *identifier) {
             NSLog(@"succes : %d , error : %@, identifier : %@", isSuccess, error, identifier);
         }];
     } else {
@@ -460,7 +461,7 @@
 - (HQLPhotoManager *)photoManager {
     if (!_photoManager) {
         _photoManager = [HQLPhotoManager shareManager];
-        _photoManager.delegate = self;
+        [_photoManager registerChangeObserver:self];
     }
     return _photoManager;
 }

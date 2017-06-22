@@ -23,7 +23,7 @@ typedef enum {
     HQLPhotoLibraryDidNotChange , // 未知状态
 } HQLPhotoLibraryDidChangeType;
 
-@protocol HQLPhotoManagerDelegate <NSObject>
+@protocol HQLPhotoLibraryChangeObserver <NSObject>
 
 @optional
 - (void)photoLibraryDidChange:(PHChange *)changeInstance changedAlbum:(HQLPhotoAlbumModel *)album changeResult:(PHFetchResultChangeDetails *)changeResult changeIndex:(NSArray <NSNumber *>*)changeIndex changeType:(HQLPhotoLibraryDidChangeType)changeType;
@@ -40,9 +40,11 @@ typedef enum {
 @property (assign, nonatomic) BOOL isGifOpen; // 是否开启gif
 @property (strong, nonatomic) PHCachingImageManager *imageManager;
 
-@property (assign, nonatomic) id <HQLPhotoManagerDelegate>delegate;
-
 + (instancetype)shareManager;
+
+/* photo library change observer */
+- (void)registerChangeObserver:(id <HQLPhotoLibraryChangeObserver>)observer;
+- (void)unregisterChangeObserver:(id <HQLPhotoLibraryChangeObserver>)observer;
 
 // 获取权限
 - (void)requestPhotoAuthorizationWithCompleteHandler:(void(^)(PHAuthorizationStatus status))completeHandler;

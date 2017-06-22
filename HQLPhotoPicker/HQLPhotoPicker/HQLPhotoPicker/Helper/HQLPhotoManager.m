@@ -16,6 +16,7 @@
 @interface HQLPhotoManager () <PHPhotoLibraryChangeObserver>
 
 @property (strong, nonatomic) PHPhotoLibrary *photoLibrary;
+@property (strong, nonatomic) NSMutableArray <id <HQLPhotoLibraryChangeObserver>>*observerArray;
 
 @end
 
@@ -41,7 +42,23 @@
 
 - (void)dealloc {
     [self.photoLibrary unregisterChangeObserver:self];
+    [self.observerArray removeAllObjects];
+    self.observerArray = nil;
     NSLog(@"dealloc ---> %@", NSStringFromClass([self class]));
+}
+
+#pragma mark - observer method
+
+- (void)registerChangeObserver:(id<HQLPhotoLibraryChangeObserver>)observer {
+    if (observer) {
+        [self.observerArray addObject:observer];
+    }
+}
+
+- (void)unregisterChangeObserver:(id<HQLPhotoLibraryChangeObserver>)observer {
+    if (observer) {
+        [self.observerArray removeObject:observer];
+    }
 }
 
 #pragma mark - event
@@ -501,14 +518,15 @@
                     
                     type = HQLPhotoLibraryDidMove;
                 }
-            
-                // 代理
-                if ([self.delegate respondsToSelector:@selector(photoLibraryDidChange:changedAlbum:changeResult: changeIndex:changeType:)]) {
-                    // 在主线程中刷新UI
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        [self.delegate photoLibraryDidChange:changeInstance changedAlbum:album changeResult:fetchResult changeIndex:indexArray changeType:type];
-                    });
-                }
+                
+                // observer method
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    for (id <HQLPhotoLibraryChangeObserver> observer in weakSelf.observerArray) {
+                        if ([observer respondsToSelector:@selector(photoLibraryDidChange:changedAlbum:changeResult:changeIndex:changeType:)]) {
+                            [observer photoLibraryDidChange:changeInstance changedAlbum:album changeResult:fetchResult changeIndex:indexArray changeType:type];
+                        }
+                    }
+                });
             }
         }
     }
@@ -525,6 +543,13 @@
 }
 
 #pragma mark - getter
+
+- (NSMutableArray<id<HQLPhotoLibraryChangeObserver>> *)observerArray {
+    if (!_observerArray) {
+        _observerArray = [NSMutableArray array];
+    }
+    return _observerArray;
+}
 
 - (PHCachingImageManager *)imageManager {
     if (!_imageManager) {
