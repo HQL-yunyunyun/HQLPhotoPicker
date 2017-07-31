@@ -14,4 +14,7 @@
 #import "HQLPhotoModel.h"
 #import "HQLPhotoAlbumModel.h"
 
+#import "HQLTakePhotoCell.h"
+#import "HQLPhotoPickerCell.h"
+
 #endif /* HQLPhotoPicker_h */

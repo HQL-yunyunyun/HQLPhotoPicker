@@ -26,7 +26,7 @@
 @property (assign, nonatomic) BOOL isShowSelectedBorder; // 是否显示选中时的边框
 
 /**
- 设置选中时的效果
+ 设置选中时的效果 --- 只是显示选中边框的动画
 
  @param isSelected 是否选中
  @param animated 是否有选中动画

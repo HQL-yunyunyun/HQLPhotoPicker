@@ -186,8 +186,10 @@
     self.livePhoto = nil;
     self.livePhotoView.livePhoto = nil;
     
-    self.thumbnail = nil;
-    self.thumbnailView.image = nil;
+//    self.thumbnail = nil;
+//    self.thumbnailView.image = nil;
+//    
+//    [self setVideoViewThumbnail:nil];
     
     [self activityIndicatorViewAnimate:NO];
 }
@@ -220,7 +222,7 @@
 
 - (void)activityIndicatorViewAnimate:(BOOL)yesOrNo {
     if (yesOrNo) {
-        [self resetProperty];
+//        [self resetProperty];
         [self.activityIndicatorView setHidden:NO];
         [self.activityIndicatorView startAnimating];
     } else {
@@ -357,7 +359,13 @@
         _thumbnail = nil;
         return;
     }
-    [self resetProperty];
+//    [self resetProperty];
+    
+    [self.scrollView.subviews enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        if (obj != self.activityIndicatorView) {
+            [obj setHidden:YES];
+        }
+    }];
     _thumbnail = thumbnail;
     self.thumbnailView.image = thumbnail;
     [self.thumbnailView setHidden:NO];
@@ -366,13 +374,23 @@
 }
 
 - (void)setVideoViewThumbnail:(UIImage *)thumbnail {
-    [self resetProperty];
+//    [self resetProperty];
+    
+    [self.scrollView.subviews enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        if (obj != self.activityIndicatorView) {
+            [obj setHidden:YES];
+        }
+    }];
     self.videoView.frame = self.bounds;
     [self.videoView setHidden:NO];
     [self.videoView setThumbnail:thumbnail];
 }
 
 #pragma mark - getter
+
+- (UIImage *)videoViewThumbnail {
+    return self.videoView.thumbnail;
+}
 
 - (UIImageView *)thumbnailView {
     if (!_thumbnailView) {

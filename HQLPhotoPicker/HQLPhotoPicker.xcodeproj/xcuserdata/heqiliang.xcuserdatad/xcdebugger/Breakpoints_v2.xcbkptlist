@@ -42,11 +42,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "HQLPhotoPicker/HQLPhotoPicker/Controller/HQLMainController.m"
-            timestampString = "519376917.704732"
+            timestampString = "523198452.660784"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "114"
-            endingLineNumber = "114"
+            startingLineNumber = "118"
+            endingLineNumber = "118"
             landmarkName = "-tableView:didSelectRowAtIndexPath:"
             landmarkType = "7">
          </BreakpointContent>
@@ -57,29 +57,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "HQLPhotoPicker/HQLPhotoPicker/View/HQLPhotoPreviewView.m"
-            timestampString = "519052859.143118"
+            filePath = "HQLPhotoPicker/HQLPhotoPicker/Helper/HQLPhotoManager.m"
+            timestampString = "521697023.140306"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "175"
-            endingLineNumber = "175"
-            landmarkName = "-resetProperty"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "HQLPhotoPicker/HQLPhotoPicker/Controller/HQLPhotoPickerModalController.m"
-            timestampString = "519377508.009051"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "93"
-            endingLineNumber = "93"
-            landmarkName = "-imagePickerController:didFinishPickingMediaWithInfo:"
+            startingLineNumber = "288"
+            endingLineNumber = "288"
+            landmarkName = "-fetchAllAlbumWithCompleteBlock:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

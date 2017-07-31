@@ -8,29 +8,17 @@
 
 #import "HQLPhotoPickerModalController.h"
 
-#import "HQLPhotoPickerCell.h"
 #import "HQLPreviewView.h"
 #import "HQLPhotoPreviewView.h"
-#import "HQLTakePhotoCell.h"
 
 #import "UIView+Frame.h"
 
-#define HQLPhotoPickerCellReuseId @"HQLPhotoPickerCellReuseId"
-#define HQLTakePhotoCellReuseId @"HQLTakePhotoCellReuseId"
-#define kColumnCount 4
-
-@interface HQLPhotoPickerModalController () <UINavigationControllerDelegate, UIImagePickerControllerDelegate, UICollectionViewDelegate, UICollectionViewDataSource, HQLPreviewViewDelegate, HQLPhotoPreviewViewDelegate, HQLPhotoLibraryChangeObserver>
+@interface HQLPhotoPickerModalController () <UINavigationControllerDelegate, UIImagePickerControllerDelegate, HQLPreviewViewDelegate, HQLPhotoPreviewViewDelegate>
 
 @property (strong, nonatomic) HQLPreviewView *previewView;
-@property (strong, nonatomic) UICollectionView *collectionView;
-@property (strong, nonatomic) UICollectionViewFlowLayout *flowLayout;
 
 @property (strong, nonatomic) UIButton *closeButton;
-@property (strong, nonatomic) UIButton *confirmButton;
 
-@property (strong, nonatomic) NSMutableArray <NSIndexPath *>*selectedCellIndexPathArray;
-
-@property (strong, nonatomic) HQLPhotoManager *photoManager;
 @end
 
 @implementation HQLPhotoPickerModalController
@@ -39,37 +27,37 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+}
+
+#pragma mark - event
+
+- (void)controllerConfig {
+    [super controllerConfig];
     
     [self.view setBackgroundColor:[UIColor whiteColor]];
     
     [self previewView];
-    [self collectionView];
+    
+    [self.view addSubview:self.thumbnailCollectionView];
+    self.thumbnailCollectionView.y = self.view.height * 0.5;
+    self.thumbnailCollectionView.height = self.view.height * 0.5;
+    
     [self closeButton];
-    [self confirmButton];
+    
+    [self.view addSubview:self.confirmButton];
+    [self.confirmButton setImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"confirmButton" ofType:@"png"]] forState:UIControlStateNormal];
+    [self.confirmButton setFrame:CGRectMake(self.view.width - 16 - 24, 36, 24, 17)];
     
     self.maxSelectCount = 1;
     self.isShowTakePhotoCell = YES;
+    
+    self.collectionViewShowSelectedBorder = YES;
 }
-
-- (void)dealloc {
-    [self.photoManager unregisterChangeObserver:self];
-    NSLog(@"dealloc ---> %@", NSStringFromClass([self class]));
-}
-
-#pragma mark - event
 
 - (void)closeButtonDidClick:(UIButton *)button {
     [self.photoManager removeAllSelectedAsset];
     if ([self.delegate respondsToSelector:@selector(photoPickerModalControllerDidClickCloseButton:)]) {
         [self.delegate photoPickerModalControllerDidClickCloseButton:self];
-    }
-}
-
-- (void)confirmButtonDidClick:(UIButton *)button {
-    
-    if ([self.delegate respondsToSelector:@selector(photoPickerModalController:didFinishPickingPhotoWithPhotoAssetArray:)]) {
-        [self.delegate photoPickerModalController:self didFinishPickingPhotoWithPhotoAssetArray:[self.photoManager getSelectedAsset]];
-        [self.photoManager removeAllSelectedAsset];
     }
 }
 
@@ -178,30 +166,6 @@
     }
 }
 
-#pragma mark - collection data source
-
-- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
-    return 1;
-}
-
-- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    return self.albumModel.count + (self.isShowTakePhotoCell ? 1 : 0);
-}
-
-- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
-    
-    if (self.isShowTakePhotoCell && indexPath.item == 0) { // 显示拍照的cell
-        return [collectionView dequeueReusableCellWithReuseIdentifier:HQLTakePhotoCellReuseId forIndexPath:indexPath];
-    }
-    
-    NSInteger sign = self.isShowTakePhotoCell ? 1 : 0;
-    HQLPhotoPickerCell *cell = (HQLPhotoPickerCell *)[collectionView dequeueReusableCellWithReuseIdentifier:HQLPhotoPickerCellReuseId forIndexPath:indexPath];
-    cell.photoModel = self.albumModel.photoArray[indexPath.item - sign];
-    cell.isShowCheckButton = NO;
-    cell.isShowSelectedBorder = YES;
-    return cell;
-}
-
 #pragma mark - preview View delegate
 
 - (NSUInteger)numberOfPhotos:(HQLPreviewView *)previewView {
@@ -220,6 +184,12 @@
         case HQLPhotoModelMediaTypePhoto: {
             [model requestHighDefinitionImageWithProgressHandler:^(double progress, NSError * _Nullable error, BOOL * _Nonnull stop, NSDictionary * _Nullable info) {
                 
+                if (!photoPreviewView.thumbnail) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        photoPreviewView.thumbnail = model.thumbnailImage;
+                    });
+                }
+                
             } resultHandler:^(UIImage *highDefinitionImage, NSString *error) {
                 if (![error isEqualToString:@""]) {
                     // 发生错误
@@ -234,6 +204,12 @@
         }
         case HQLPhotoModelMediaTypePhotoGif: {
             [model requestOriginalImageDataWithProgressHandler:^(double progress, NSError * _Nullable error, BOOL * _Nonnull stop, NSDictionary * _Nullable info) {
+                
+                if (!photoPreviewView.thumbnail) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        photoPreviewView.thumbnail = model.thumbnailImage;
+                    });
+                }
                 
             } resultHandler:^(NSData *imageData, NSString *byteString, NSString *error) {
                 if (![error isEqualToString:@""]) {
@@ -251,6 +227,12 @@
         case HQLPhotoModelMediaTypeLivePhoto: {
             [model requestLivePhotoWithProgressHandler:^(double progress, NSError * _Nullable error, BOOL * _Nonnull stop, NSDictionary * _Nullable info) {
                 
+                if (!photoPreviewView.thumbnail) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        photoPreviewView.thumbnail = model.thumbnailImage;
+                    });
+                }
+                
             } resultHandler:^(PHLivePhoto *livePhoto, NSString *error) {
                 if (![error isEqualToString:@""]) {
                     [HQLPhotoHelper showAlertViewWithTitle:@"错误" message:error controller:weakSelf];
@@ -265,6 +247,13 @@
         }
         case HQLPhotoModelMediaTypeVideo: {
             [model requestPlayerItemWithProgressHandler:^(double progress, NSError * _Nullable error, BOOL * _Nonnull stop, NSDictionary * _Nullable info) {
+
+                
+                if (!photoPreviewView.videoViewThumbnail) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [photoPreviewView setVideoViewThumbnail:model.thumbnailImage];
+                    });
+                }
                 
             } resultHandler:^(AVPlayerItem *playerItem, NSString *error) {
                 if (![error isEqualToString:@""]) {
@@ -321,15 +310,15 @@
         }
         switch (changeType) {
             case HQLPhotoLibraryDidRemove: { // 删除
-                [self.collectionView deleteItemsAtIndexPaths:indexPathArray];
+                [self.thumbnailCollectionView deleteItemsAtIndexPaths:indexPathArray];
                 break;
             }
             case HQLPhotoLibraryDidChange: { // 改变
-                [self.collectionView reloadItemsAtIndexPaths:indexPathArray];
+                [self.thumbnailCollectionView reloadItemsAtIndexPaths:indexPathArray];
                 break;
             }
             case HQLPhotoLibraryDidInsert: { // 插入
-                [self.collectionView insertItemsAtIndexPaths:indexPathArray];
+                [self.thumbnailCollectionView insertItemsAtIndexPaths:indexPathArray];
                 break;
             }
             case HQLPhotoLibraryDidMove: { // 移动和其他都不一样
@@ -337,7 +326,7 @@
                     [changeResult enumerateMovesWithBlock:^(NSUInteger fromIndex, NSUInteger toIndex) {
                         NSIndexPath *fromPath = [NSIndexPath indexPathForItem:fromIndex inSection:0];
                         NSIndexPath *toPath = [NSIndexPath indexPathForItem:toIndex inSection:0];
-                        [self.collectionView moveItemAtIndexPath:fromPath toIndexPath:toPath];
+                        [self.thumbnailCollectionView moveItemAtIndexPath:fromPath toIndexPath:toPath];
                     }];
                 }
                 break;
@@ -350,35 +339,19 @@
 #pragma mark - setter
 
 - (void)setIsShowTakePhotoCell:(BOOL)isShowTakePhotoCell {
-    _isShowTakePhotoCell = isShowTakePhotoCell;
-    [self.collectionView reloadData];
+    [super setIsShowTakePhotoCell:isShowTakePhotoCell];
     [self.previewView reloadData];
 }
 
 - (void)setAlbumModel:(HQLPhotoAlbumModel *)albumModel {
-    _albumModel = albumModel;
-    
-    [self.collectionView reloadData];
+    [super setAlbumModel:albumModel];
     [self.previewView reloadData];
     
     // 更新selectedCellIndexPath
     [self updateSelectedCellIndexPath];
 }
 
-- (void)setMaxSelectCount:(NSUInteger)maxSelectCount {
-    _maxSelectCount = maxSelectCount <= 0 ? 1 : (maxSelectCount >= 9 ? 9 : maxSelectCount);
-    
-    [self.photoManager removeAllSelectedAsset];
-}
-
 #pragma mark - getter
-
-- (NSMutableArray<NSIndexPath *> *)selectedCellIndexPathArray {
-    if (!_selectedCellIndexPathArray) {
-        _selectedCellIndexPathArray = [NSMutableArray array];
-    }
-    return _selectedCellIndexPathArray;
-}
 
 - (UIButton *)closeButton {
     if (!_closeButton) {
@@ -391,20 +364,6 @@
         [self.view addSubview:_closeButton];
     }
     return _closeButton;
-}
-
-- (UIButton *)confirmButton {
-    if (!_confirmButton) {
-        _confirmButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_confirmButton setImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"confirmButton" ofType:@"png"]] forState:UIControlStateNormal];
-        [_confirmButton setFrame:CGRectMake(self.view.width - 16 - 24, 36, 24, 17)];
-        
-        [_confirmButton addTarget:self action:@selector(confirmButtonDidClick:) forControlEvents:UIControlEventTouchUpInside];
-        
-        [self.view addSubview:_confirmButton];
-        
-    }
-    return _confirmButton;
 }
 
 - (HQLPreviewView *)previewView {
@@ -421,49 +380,6 @@
         [self.view addSubview:_previewView];
     }
     return _previewView;
-}
-
-- (UICollectionView *)collectionView {
-    if (!_collectionView) {
-        _collectionView = [[UICollectionView alloc] initWithFrame:CGRectMake(0, self.view.height * 0.5, self.view.width, self.view.height * 0.5) collectionViewLayout:self.flowLayout];
-        _collectionView.delegate = self;
-        _collectionView.dataSource = self;
-        _collectionView.showsVerticalScrollIndicator = NO;
-        _collectionView.showsHorizontalScrollIndicator = NO;
-        [_collectionView setBackgroundColor:[UIColor whiteColor]];
-        
-        [_collectionView registerClass:[HQLPhotoPickerCell class] forCellWithReuseIdentifier:HQLPhotoPickerCellReuseId];
-        [_collectionView registerClass:[HQLTakePhotoCell class] forCellWithReuseIdentifier:HQLTakePhotoCellReuseId];
-        
-        [self.view addSubview:_collectionView];
-    }
-    return _collectionView;
-}
-
-- (UICollectionViewFlowLayout *)flowLayout {
-    if (!_flowLayout) {
-        _flowLayout = [[UICollectionViewFlowLayout alloc] init];
-        
-        CGFloat itemWidth = (self.view.width - (kColumnCount - 1)) / kColumnCount;
-        NSInteger width = (NSInteger)itemWidth;
-        CGFloat temp = itemWidth - width;
-        CGFloat spacing = 1 + (temp * kColumnCount) / (kColumnCount - 1);
-        
-        _flowLayout.minimumLineSpacing = spacing;
-        _flowLayout.minimumInteritemSpacing = spacing;
-        
-        _flowLayout.itemSize = CGSizeMake(width, width);
-        
-    }
-    return _flowLayout;
-}
-
-- (HQLPhotoManager *)photoManager {
-    if (!_photoManager) {
-        _photoManager = [HQLPhotoManager shareManager];
-        [_photoManager registerChangeObserver:self];
-    }
-    return _photoManager;
 }
 
 @end

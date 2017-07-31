@@ -36,5 +36,6 @@
 - (void)activityIndicatorViewAnimate:(BOOL)yesOrNo;
 
 - (void)setVideoViewThumbnail:(UIImage *)thumbnail;
+- (UIImage *)videoViewThumbnail;
 
 @end

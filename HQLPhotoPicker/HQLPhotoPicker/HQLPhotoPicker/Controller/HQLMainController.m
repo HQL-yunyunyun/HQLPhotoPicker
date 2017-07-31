@@ -21,7 +21,7 @@
 #define HQLPhotoAlbumCellReuseId @"HQLPhotoAlbumCellReuseId"
 #define kTableViewCellHeight 60
 
-@interface HQLMainController () <UITableViewDelegate, UITableViewDataSource, HQLPhotoPickerModalControllerDelegate, HQLPhotoLibraryChangeObserver>
+@interface HQLMainController () <UITableViewDelegate, UITableViewDataSource, HQLPhotoPickerModalControllerDelegate, HQLPhotoLibraryChangeObserver, HQLPhotoPickerControllerSelectedDelegate>
 
 @property (strong, nonatomic) UITableView *tableView;
 @property (strong, nonatomic) HQLPhotoManager *photoManager;
@@ -95,7 +95,9 @@
     }];
 }
 
-- (void)photoPickerModalController:(HQLPhotoPickerModalController *)controller didFinishPickingPhotoWithPhotoAssetArray:(NSMutableArray<HQLPhotoModel *> *)photoAssetArray {
+#pragma mark - <HQLPhotoPickerControllerSelectedDelegate>
+
+- (void)photoPickerController:(HQLPhotoPickerBaseController *)controller didFinishPickingPhotoWithPhotoAssetArray:(NSMutableArray<HQLPhotoModel *> *)photoAssetArray {
     [self dismissViewControllerAnimated:YES completion:^{
         
     }];
@@ -108,9 +110,11 @@
 //    HQLPhotoPickerController *controller = [[HQLPhotoPickerController alloc] init];
 //    controller.albumModel = self.photoManager.albumArray[indexPath.row];
 //    [self.navigationController pushViewController:controller animated:YES];
+    
     HQLPhotoPickerModalController *controller = [[HQLPhotoPickerModalController alloc] init];
     controller.albumModel = self.photoManager.albumArray[indexPath.row];
     controller.delegate = self;
+    controller.selectedDelegate = self;
     controller.maxSelectCount = 9;
     [self presentViewController:controller animated:YES completion:^{
         

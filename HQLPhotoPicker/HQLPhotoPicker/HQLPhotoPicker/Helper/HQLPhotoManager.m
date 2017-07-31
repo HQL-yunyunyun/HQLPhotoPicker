@@ -412,7 +412,9 @@
     option.progressHandler = progressHandler;
     
     return [self.imageManager requestPlayerItemForVideo:asset options:option resultHandler:^(AVPlayerItem * _Nullable playerItem, NSDictionary * _Nullable info) {
+        NSLog(@"before current thread %@", [NSThread currentThread]);
         dispatch_async(dispatch_get_main_queue(), ^{
+            NSLog(@"after current thread %@", [NSThread currentThread]);
             resultHandler ? resultHandler(playerItem, info) : nil;
         });
     }];
