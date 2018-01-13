@@ -45,7 +45,7 @@
 #pragma mark - photo preview view delegate
 
 - (void)photoPreviewViewDidClick:(HQLPhotoPreviewView *)previewView {
-    [self.navigationController.navigationBar setHidden:!self.navigationController.navigationBar.isHidden];
+    [self.navigationController setNavigationBarHidden:!self.navigationController.navigationBar.isHidden animated:YES];
     if (self.navigationController.navigationBar.isHidden) {
         [previewView videoViewHideControlView];
     } else {

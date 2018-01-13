@@ -345,6 +345,7 @@
 
 - (void)setAlbumModel:(HQLPhotoAlbumModel *)albumModel {
     [super setAlbumModel:albumModel];
+    
     [self.previewView reloadData];
     
     // 更新selectedCellIndexPath

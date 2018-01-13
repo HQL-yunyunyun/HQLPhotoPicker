@@ -41,13 +41,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "HQLPhotoPicker/HQLPhotoPicker/Controller/HQLMainController.m"
-            timestampString = "523198452.660784"
+            filePath = "HQLPhotoPicker/HQLPhotoPicker/Helper/HQLPhotoManager.m"
+            timestampString = "521697023.140306"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "118"
-            endingLineNumber = "118"
-            landmarkName = "-tableView:didSelectRowAtIndexPath:"
+            startingLineNumber = "288"
+            endingLineNumber = "288"
+            landmarkName = "-fetchAllAlbumWithCompleteBlock:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -57,13 +57,61 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "HQLPhotoPicker/HQLPhotoPicker/Helper/HQLPhotoManager.m"
-            timestampString = "521697023.140306"
+            filePath = "HQLPhotoPicker/HQLPhotoPicker/View/HQLPhotoPreviewView.m"
+            timestampString = "523269927.333473"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "288"
-            endingLineNumber = "288"
-            landmarkName = "-fetchAllAlbumWithCompleteBlock:"
+            startingLineNumber = "364"
+            endingLineNumber = "364"
+            landmarkName = "-setThumbnail:"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[HQLPhotoPreviewView setThumbnail:]"
+                  moduleName = "HQLPhotoPicker"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/heqiliang/Desktop/Demo/HQLPhotoPicker/HQLPhotoPicker/HQLPhotoPicker/HQLPhotoPicker/View/HQLPhotoPreviewView.m"
+                  timestampString = "523269927.573429"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "364"
+                  endingLineNumber = "364"
+                  offsetFromSymbolStart = "112">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__36-[HQLPhotoPreviewView setThumbnail:]_block_invoke"
+                  moduleName = "HQLPhotoPicker"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/heqiliang/Desktop/Demo/HQLPhotoPicker/HQLPhotoPicker/HQLPhotoPicker/HQLPhotoPicker/View/HQLPhotoPreviewView.m"
+                  timestampString = "523269927.576168"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "364"
+                  endingLineNumber = "364"
+                  offsetFromSymbolStart = "24">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "HQLPhotoPicker/HQLPhotoPicker/Controller/HQLPhotoPickerModalController.m"
+            timestampString = "523269968.761782"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "230"
+            endingLineNumber = "230"
+            landmarkName = "-previewView:renderPhotoPreviewView:atIndex:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
